@@ -71,9 +71,14 @@ int main(int argc, char **argv){
 		printf("division:%s\n", (char *)r);
 		free(r);
 	}
-	r = modulo(argv[1], argv[2], atoi(argv[3]));
+	r = modulo(argv[1], argv[2], 0);
 	if(r){
 		printf("modulo:%s\n", (char *)r);
+		free(r);
+	}
+	r = modulo(argv[1], argv[2], atoi(argv[3]));
+	if(r){
+		printf("modulo etendu:%s\n",  (char *)r);
 		free(r);
 	}
 	r = racine_carree(argv[1], atoi(argv[3]),1);

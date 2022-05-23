@@ -104,7 +104,7 @@ void *reallocation(void **ptr, unsigned long int size){
 }
 int equal(void *num1, void *num2){
 	char *n1 = num1, *n2 = num2,
-		*dot1, *dot2, /**pdot, dot[2] = {0, 0},*/
+		*dot1, *dot2, *pdot, dot[2] = {0, 0},
 		*val1, *val2,
 		v1[2] = { 0, 0 }, v2[2] = { 0, 0 },
 		neg1 = 0, neg2 = 0;
@@ -1332,7 +1332,7 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 		free(reste);
 		reste = pvirgule;
 	}
-	/*	if(virgule)
+		if(virgule)
 			dix = multiplication("1","1");
 		if(virgule){
 			do{
@@ -1362,8 +1362,7 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 			free(reste);
 			free(dix);
 			reste = temp;
-		}
-	}*/
+	}
 	if(zero_)
 		free(zero_);
 	if(neg1){
