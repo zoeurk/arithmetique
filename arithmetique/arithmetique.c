@@ -234,14 +234,14 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(n2_);
 	return n1_;
 }
-#define LOG(fn)\
+#define LOG(fn, msg)\
 	char *n = multiplication(num, "1"), *n_, buffer[internal_buflen];\
 	unsigned long long int i;\
 	long double result;\
 	memset(buffer, 0, internal_buflen);\
 	for(n = n, i = 1;equal(n, "1000") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, i *= 2){\
 		if(i*2 < i){\
-			fprintf(stderr, "Nombre trop long.\n");\
+			fprintf(stderr, "Nombre trop long pour %s.\n", msg);\
 			exit(EXIT_FAILURE);\
 		}\
 	}\
@@ -256,8 +256,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	return n_;
 
 void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
-	LOG(logl);
+	LOG(logl, "le logarithme neperiene");
 }
 void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
-	LOG(log10l);
+	LOG(log10l, "le logarithme en base 10");
 }
