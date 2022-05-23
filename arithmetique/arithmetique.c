@@ -8,7 +8,7 @@ const unsigned long int BUFFER = 56;
 
 #define INTERNAL_BUFLEN \
 	if(buffer[internal_buflen-1] != 0){\
-		fprintf(stderr, "Tampon interne trop petit\n");\
+		fprintf(stderr, "Tampon (internal_buflen) interne trop petit\n");\
 		exit(0);\
 	}
 	
