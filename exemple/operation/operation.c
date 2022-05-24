@@ -1382,7 +1382,7 @@ char *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	/*last pour eviter une boucle plus bas*/
 	char *num1_ = NULL, *pnum1_,*dix = NULL, *pdix, buffer[32], *buf, *pbuf, *result, *presult, *check = NULL, *test/*, *last = NULL*/;
 	if(equal(num1, "0") < 0){
-		fprintf(stderr, "Erreur: %s < 0\n", (char *)num1);
+		fprintf(stderr, "racine_carre: Erreur: %s < 0\n", (char *)num1);
 		return NULL;
 	}
 	if(equal(num1, "0") == 0){
