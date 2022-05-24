@@ -1,3 +1,9 @@
 # arithmetique  
 Librairie de fonction mathematique.  
-Libre d'usage, de modification et (re/)distribution
+Libre d'usage, de modification et (re/)distribution  
+libtoolize  
+aclocal  
+autoreconf --install  
+./configure --exec-prefix=/usr --prefix=/usr  
+make  
+make install  
