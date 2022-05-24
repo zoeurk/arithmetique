@@ -104,7 +104,7 @@ void *reallocation(void **ptr, unsigned long int size){
 }
 int equal(void *num1, void *num2){
 	char *n1 = num1, *n2 = num2,
-		*dot1, *dot2, *pdot, dot[2] = {0, 0},
+		*dot1, *dot2, /**pdot, dot[2] = {0, 0},*/
 		*val1, *val2,
 		v1[2] = { 0, 0 }, v2[2] = { 0, 0 },
 		neg1 = 0, neg2 = 0;
@@ -1222,11 +1222,13 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 			reste = temp;
 		}
 		if(neg1){
-			temp = allocation((void **)&temp,strlen(reste)+1, sizeof(char));
-			*temp = '-';
-			strcpy(&temp[1], reste);
-			free(reste);
-			reste = temp;
+			if(*reste != '0'){
+				temp = allocation((void **)&temp,strlen(reste)+1, sizeof(char));
+				*temp = '-';
+				strcpy(&temp[1], reste);
+				free(reste);
+				reste = temp;
+			}
 		}
 		return reste;
 	}
@@ -1332,7 +1334,7 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 		free(reste);
 		reste = pvirgule;
 	}
-		if(virgule)
+	/*	if(virgule)
 			dix = multiplication("1","1");
 		if(virgule){
 			do{
@@ -1362,15 +1364,18 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 			free(reste);
 			free(dix);
 			reste = temp;
-	}
+		}
+	}*/
 	if(zero_)
 		free(zero_);
 	if(neg1){
 		temp = allocation((void **)&temp,strlen(reste)+1, sizeof(char));
-		*temp = '-';
-		strcpy(&temp[1], reste);
-		free(reste);
-		reste = temp;
+		if(*reste != '0'){
+			*temp = '-';
+			strcpy(&temp[1], reste);
+			free(reste);
+			reste = temp;
+		}
 	}
 	free(dividende);
 	free(diviseur);
@@ -1381,7 +1386,7 @@ char *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	/*last pour eviter une boucle plus bas*/
 	char *num1_ = NULL, *pnum1_,*dix = NULL, *pdix, buffer[32], *buf, *pbuf, *result, *presult, *check = NULL, *test/*, *last = NULL*/;
 	if(equal(num1, "0") < 0){
-		fprintf(stderr, "racine_carree: Erreur: %s < 0\n", (char *)num1);
+		fprintf(stderr, "racine_carre: Erreur: %s < 0\n", (char *)num1);
 		return NULL;
 	}
 	if(equal(num1, "0") == 0){

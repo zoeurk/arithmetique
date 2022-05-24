@@ -1222,11 +1222,13 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 			reste = temp;
 		}
 		if(neg1){
-			temp = allocation((void **)&temp,strlen(reste)+1, sizeof(char));
-			*temp = '-';
-			strcpy(&temp[1], reste);
-			free(reste);
-			reste = temp;
+			if(*reste != '0'){
+				temp = allocation((void **)&temp,strlen(reste)+1, sizeof(char));
+				*temp = '-';
+				strcpy(&temp[1], reste);
+				free(reste);
+				reste = temp;
+			}
 		}
 		return reste;
 	}
@@ -1368,10 +1370,12 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 		free(zero_);
 	if(neg1){
 		temp = allocation((void **)&temp,strlen(reste)+1, sizeof(char));
-		*temp = '-';
-		strcpy(&temp[1], reste);
-		free(reste);
-		reste = temp;
+		if(*reste != '0'){
+			*temp = '-';
+			strcpy(&temp[1], reste);
+			free(reste);
+			reste = temp;
+		}
 	}
 	free(dividende);
 	free(diviseur);
