@@ -97,7 +97,7 @@ char *tangente(char *arg, char *format,unsigned long internal_buflen,int i_deg, 
 	return pbuf;
 }
 #define POWER(fn) \
-	if(equal(num1, "0") < 0){\
+	if(equal(num1, "0") < 0 && strchr(num2,'.'){\
 		free(n1);\
 		free(n2);\
 		if((n1 = calloc(5,sizeof(char))) == NULL){\
