@@ -1,6 +1,6 @@
 # arithmetique  
 Librairie de fonction mathematique.  
-Libre d'usage, de modification et (re/)distribution  
+les librairies sont libre d'usage, de modification et (re/)distribution  
 libtoolize  
 aclocal  
 autoreconf --install  
