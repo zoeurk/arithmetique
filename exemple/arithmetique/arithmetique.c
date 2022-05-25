@@ -240,7 +240,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	long double result;\
 	if(equal(num, "0") < 0){\
 		free(n);\
-		fprintf(stderr, "%s: < 0\n", msg);\
+		fprintf(stderr, "%s: %s < 0\n", msg, (char *)num);\
 		return NULL;\
 	}\
 	memset(buffer, 0, internal_buflen);\
