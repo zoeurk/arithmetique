@@ -239,6 +239,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	unsigned long long int i;\
 	long double result;\
 	if(equal(num, "0") < 0){\
+		free(n);\
 		fprintf(stderr, "%s: < 0\n", msg);\
 		return NULL;\
 	}\
