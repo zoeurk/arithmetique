@@ -102,8 +102,8 @@ struct elements{
 	struct elements *next;
 	struct elements *prev;
 };
-#define ELEMENTS\
-	for(el = NULL, len = multiplication("1", "1"); equal(n2, len) != 0; plen = addition(len, "1"), free(len), len = plen){\
+#define ELEMENTS(init)\
+	for(el = NULL, len = multiplication("1", init); equal(n2, len) != 0; plen = addition(len, "1"), free(len), len = plen){\
 		if(el == NULL){\
 			el = calloc(1, sizeof(struct elements));\
 			el->value = multiplication(num1, "1");\
@@ -161,7 +161,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	char *n1 = multiplication(num1,"1"), *n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
 		*n1_ = n1, *n2_ = n2,
-		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val;
+		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
 	long double pseudo_;
 	int eq, set = 0, neg = 0;
@@ -247,10 +247,53 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			}
 		}else pseudo = multiplication(buffer,"1");
 		free(n1_);
-		ELEMENTS;
+		ELEMENTS("0");
+		//printf("%s\n", len);
+		//exit(0);
 		rebut = pseudo;
 		do{
-			POWER_PROSSESS;
+			//printf("%s\n", len);
+			//exit(0);
+			mod = modulo(len,"2", 0);
+			//exit(0);
+	plen = soustraction(len, mod);
+	free(len);
+	len = plen;
+	plen = division(len,"2", 0, 0);
+	free(len);
+	pplen = multiplication(plen, "1");
+	len = plen;
+	//printf("%s\n",el->value);
+	if(el)
+		val = multiplication(el->value,el->value);
+	for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+		free(pel->value);
+		pel->value = multiplication(val, "1");
+		pel = pel->next;
+	}
+	free(len);
+	if(val)
+		free(val);
+	if(equal(mod,"1") == 0){
+		if(rebut == NULL){
+			rebut = multiplication(pel->value, "1");
+		}else{
+			prebut = multiplication(rebut, pel->value);
+			free(rebut);
+			rebut = prebut;
+		}
+	}
+	if(pel && pel->prev)
+		pel->prev->next = NULL;
+	while(pel){
+		pnext = pel->next;
+		free(pel->value);
+		free(pel);
+		pel = pnext;
+	}
+	len = pplen;
+	free(mod);
+			//POWER_PROSSESS;
 		}while(equal(pplen,"0") != 0);
 		free(pplen);
 		free(n2);
@@ -272,9 +315,43 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			n2 = n2_;
 		}
 		while(equal(n2,"1") != 0){
-			ELEMENTS;
+			ELEMENTS("1");
 			do{
-				POWER_PROSSESS;
+					mod = modulo(len,"2", 0);
+	plen = soustraction(len, mod);
+	free(len);
+	len = plen;
+	plen = division(len,"2", 0, 0);
+	free(len);
+	pplen = multiplication(plen, "1");
+	len = plen;
+	val = multiplication(el->value,el->value);
+	for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+		free(pel->value);
+		pel->value = multiplication(val, "1");
+		pel = pel->next;
+	}
+	free(len);
+	free(val);
+	if(equal(mod,"1") == 0){
+		if(rebut == NULL){
+			rebut = multiplication(pel->value, "1");
+		}else{
+			prebut = multiplication(rebut, pel->value);
+			free(rebut);
+			rebut = prebut;
+		}
+	}
+	if(pel && pel->prev)
+		pel->prev->next = NULL;
+	while(pel){
+		pnext = pel->next;
+		free(pel->value);
+		free(pel);
+		pel = pnext;
+	}
+	len = pplen;
+	free(mod);
 			}while(equal(pplen,"0") != 0);
 			free(n1);
 			free(n2);
