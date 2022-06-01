@@ -340,7 +340,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		return NULL;\
 	}\
 	memset(buffer, 0, internal_buflen);\
-	for(n = n, i = 1;i * 2 > i && equal(n, "1000") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, i *= 2);;\
+	for(n = n, i = 1;i * 2 > i && equal(n, "1") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, i *= 2);;\
 	if(i*2 < i){\
 		fprintf(stderr, "Nombre trop long pour %s.\n", msg);\
 		exit(EXIT_FAILURE);\
