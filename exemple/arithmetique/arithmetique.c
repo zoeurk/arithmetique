@@ -119,7 +119,7 @@ struct elements{
 		}\
 	}
 
-/*#define POWER_PROSSESS\
+#define POWER_PROSSESS\
 	mod = modulo(len,"2", 0);\
 	plen = soustraction(len, mod);\
 	free(len);\
@@ -154,7 +154,7 @@ struct elements{
 		pel = pnext;\
 	}\
 	len = pplen;\
-	free(mod);*/
+	free(mod);
 
 void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	struct elements *el, *pel, *pnext;
@@ -253,42 +253,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		//exit(0);
 		rebut = pseudo;
 		do{
-			mod = modulo(len,"2", 0);
-			plen = soustraction(len, mod);
-			free(len);
-			len = plen;
-			plen = division(len,"2", 0, 0);
-			free(len);
-			pplen = multiplication(plen, "1");
-			len = plen;
-			if(el)
-				val = multiplication(el->value,el->value);
-			for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
-				free(pel->value);
-				pel->value = multiplication(val, "1");
-				pel = pel->next;
-			}
-			free(len);
-			free(val);
-			if(equal(mod,"1") == 0){
-				if(rebut == NULL){
-					rebut = multiplication(pel->value, "1");
-				}else{
-					prebut = multiplication(rebut, pel->value);
-					free(rebut);
-					rebut = prebut;
-				}
-			}
-			if(pel && pel->prev)
-				pel->prev->next = NULL;
-			while(pel){
-				pnext = pel->next;
-				free(pel->value);
-				free(pel);
-				pel = pnext;
-			}
-			len = pplen;
-			free(mod);
+			POWER_PROSSESS;
 		}while(equal(pplen,"0") != 0);
 		free(pplen);
 		free(n2);
