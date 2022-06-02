@@ -366,6 +366,14 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		fprintf(stderr, "%s: %s < 0\n", msg, (char *)num);\
 		return NULL;\
 	}\
+	if(equal(n,"0") == 0){\
+		if((n_ = malloc(4*sizeof(char))) == NULL){\
+			perror("malloc()");\
+			exit(EXIT_FAILURE);\
+		}\
+		strcpy(n_,"inf");\
+		return n_;\
+	}\
 	memset(buffer, 0, internal_buflen);\
 	for(n = n, i = 1;i * 2 > i && equal(n, "1000") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, i *= 2);;\
 	if(i*2 < i){\
