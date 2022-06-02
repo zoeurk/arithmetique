@@ -151,7 +151,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(n1);
 			n1 = n1_;
 		}
-		if(equal(n1, "0") < 0 && strchr(num2,'.')){
+		if(neg && strchr(num2,'.')){
 			free(n1);
 			free(n2);
 			free(i);
