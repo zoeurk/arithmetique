@@ -142,6 +142,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		n2_ = multiplication(n2,"-1");
 		free(n2);
 		n2 = n2_;
+	}
+	if(equal(n1, "0") < 0){
 		neg = 1;
 	}
 	if((v = strchr(n2, '.')) != NULL){
