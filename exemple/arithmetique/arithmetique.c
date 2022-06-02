@@ -369,11 +369,11 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		return NULL;\
 	}\
 	if(equal(n,"0") == 0){\
-		if((n_ = malloc(4*sizeof(char))) == NULL){\
+		if((n_ = malloc(5*sizeof(char))) == NULL){\
 			perror("malloc()");\
 			exit(EXIT_FAILURE);\
 		}\
-		strcpy(n_,"inf");\
+		strcpy(n_,"-inf");\
 		return n_;\
 	}\
 	memset(buffer, 0, internal_buflen);\
