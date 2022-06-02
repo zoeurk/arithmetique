@@ -291,9 +291,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(n2);
 			n2 = n2_;
 		}
-		//printf("Merde\n");
 		while(equal(n2,"1") != 0){
-			printf("%s\n", n1);
 			ELEMENTS("1");
 			do{
 				mod = modulo(len,"2", 0);
@@ -352,7 +350,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(n2);
 		free(i);
 		return rebut;
-		//printf("%s\n", "MERDE");
 	}
 	fprintf(stderr,"puissance: Erreur de calcule:%s.\n", rebut);
 	return NULL;
