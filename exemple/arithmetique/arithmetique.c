@@ -349,8 +349,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(n1);
 		free(n2);
 		free(i);
-		rebut = multiplication(num1,"1");
-		return rebut;
+		if(equal(num2,"1") == 0){
+			rebut = multiplication(num1,num2);
+			return rebut;
+		}
 	}
 	fprintf(stderr,"puissance: Erreur de calcule:%s.\n", rebut);
 	return NULL;
