@@ -102,8 +102,8 @@ struct elements{
 	struct elements *next;
 	struct elements *prev;
 };
-#define ELEMENTS(init, fn)\
-	for(el = NULL, len = multiplication("1", "1"); equal(n2, len) != 0; plen = fn(len, "1"), free(len), len = plen){\
+#define ELEMENTS(init)\
+	for(el = NULL, len = multiplication("1", "1"); equal(n2, len) != 0; plen = addition(len, "1"), free(len), len = plen){\
 		if(el == NULL){\
 			el = calloc(1, sizeof(struct elements));\
 			el->value = multiplication(num1, "1");\
@@ -119,7 +119,7 @@ struct elements{
 		}\
 	}
 
-#define POWER_PROSSESS\
+/*#define POWER_PROSSESS\
 	mod = modulo(len,"2", 0);\
 	plen = soustraction(len, mod);\
 	free(len);\
@@ -154,11 +154,12 @@ struct elements{
 		pel = pnext;\
 	}\
 	len = pplen;\
-	free(mod);
+	free(mod);*/
 
 void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	struct elements *el, *pel, *pnext;
-	char *n1 = multiplication(num1,"1"), *n2 = multiplication(num2,"1"),
+	char *n1 = multiplication(num1,"1"),
+		*n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
 		*n1_ = n1, *n2_ = n2,
 		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
@@ -172,6 +173,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(i);
 		n1 = multiplication("1","1");
 		return n1;
+	}
+	if(equal(n2,"0") < 0){
+		n2 = multiplication(n2,"-1");
+		neg = 1;
 	}
 	if((v = strchr(n2, '.')) != NULL){
 		if(equal(n1, "0") < 0){
@@ -246,14 +251,73 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				free(i);
 				i = i_;
 			}
-		}else pseudo = multiplication(buffer,"1");
-		free(n1_);
-		ELEMENTS("0", soustraction);
+		}else{ pseudo = multiplication(buffer,"1");
+		}
+		//free(n1_);
+		//printf("%s\n", n2);
+		if(equal(n2,"0") < 0){
+			n2_ = multiplication(n2,"-1");
+			free(n2);
+			n2 = n2_;
+			//printf("%s::%s\n", n2,i);
+		//exit(0);
+			/*free(n2);
+			printf("ARGH!!!\n");
+			n2 = multiplication(num2, "-1");
+			printf("%s\n", n2);
+			n2 = strchr(n2,'.');
+			n2 = 0;
+			n2--;*/
+			//exit(0);
+			//z = multiplication(num2, "-1");			
+		}/*else{
+			//printf("%s:%s\n", n2, i);
+			//z = multiplication(num2, "1" );
+		}*/
+		//exit(0);
+		ELEMENTS("1");
+		//free(z);
+		//free(z);
 		//printf("%s\n", len);
 		//exit(0);
 		rebut = pseudo;
 		do{
-			POWER_PROSSESS;
+				mod = modulo(len,"2", 0);
+	plen = soustraction(len, mod);
+	free(len);
+	len = plen;
+	plen = division(len,"2", 0, 0);
+	free(len);
+	pplen = multiplication(plen, "1");
+	len = plen;
+	if(el)
+		val = multiplication(el->value,el->value);
+	for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+		free(pel->value);
+		pel->value = multiplication(val, "1");
+		pel = pel->next;
+	}
+	free(len);
+	free(val);
+	if(equal(mod,"1") == 0){
+		if(rebut == NULL){
+			rebut = multiplication(pel->value, "1");
+		}else{
+			prebut = multiplication(rebut, pel->value);
+			free(rebut);
+			rebut = prebut;
+		}
+	}
+	if(pel && pel->prev)
+		pel->prev->next = NULL;
+	while(pel){
+		pnext = pel->next;
+		free(pel->value);
+		free(pel);
+		pel = pnext;
+	}
+	len = pplen;
+	free(mod);
 		}while(equal(pplen,"0") != 0);
 		free(pplen);
 		free(n2);
@@ -267,7 +331,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			n1_ = division("1", rebut, virgule, approximation);
 			free(rebut);
 			return n1_;
-		}else return rebut;
+		}else{
+			free(n1);
+			return rebut;}
 	}else{
 		if(equal(n2,"0") < 0){
 			n2_ = multiplication(n2,"-1");
@@ -275,7 +341,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			n2 = n2_;
 		}
 		while(equal(n2,"1") != 0){
-			ELEMENTS("1", addition);
+			ELEMENTS("1");
 			do{
 					mod = modulo(len,"2", 0);
 	plen = soustraction(len, mod);
@@ -324,6 +390,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			}else return rebut;
 		}
 	}
+	
 	if(i != NULL)
 		free(i);
 	if(n2_)
@@ -340,7 +407,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		return NULL;\
 	}\
 	memset(buffer, 0, internal_buflen);\
-	for(n = n, i = 1;i * 2 > i && equal(n, "1") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, i *= 2);;\
+	for(n = n, i = 1;i * 2 > i && equal(n, "1000") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, i *= 2);;\
 	if(i*2 < i){\
 		fprintf(stderr, "Nombre trop long pour %s.\n", msg);\
 		exit(EXIT_FAILURE);\
