@@ -57,7 +57,7 @@ const unsigned long int BUFFER = 56;
 	val = fn(strtold(t,NULL));\
 	snprintf(buffer,  internal_buflen,format, val);\
 	if(buffer[internal_buflen-1] != 0){\
-		fprintf(stderr, "Tampon interne trop petit\n");\
+		fprintf(stderr, "Tampon interne trop petit (internal_buflen)\n");\
 		exit(0);\
 	}\
 	free(t);\
@@ -125,7 +125,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
 		*n1_ = n1, *n2_ = n2,
-		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
+		*i = multiplication("1","0"),
+		*mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
 	long double pseudo_;
 	int eq, set = 0, neg = 0;
@@ -189,7 +190,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		strcpy(dot_, pdot_+1);
 		pdot_ = strchr(dot_, 'L');
 		*pdot_ = 0;
-		if((p = strchr(v_,'.')) != NULL && strlen(p+1) > (unsigned long int)atol(dot_)){
+		if((p = strchr(v_,'.')) != NULL && 
+			strlen(p+1) > (unsigned long int)atol(dot_)
+		){
 			fprintf(stderr,"Warning `%s`:\n\tTrop de chiffre apres la virgule.\n\tUtilisation de la valeur: ", v_);
 			fprintf(stderr, format, strtold(v_, NULL));
 			fprintf(stderr,"\n");
@@ -198,7 +201,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		pseudo_ = powl(strtold(n1_, NULL), strtold(v_, NULL));
 		sprintf(buffer, format, pseudo_);
 		if(buffer[internal_buflen-1] != 0){
-			fprintf(stderr, "buffer interne trop court\n");
+			fprintf(stderr, "buffer interne trop court (internal_buflen)\n");
 			exit(EXIT_FAILURE);
 		}
 		if(equal(i,"0") != 0){
@@ -237,7 +240,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				len = plen;
 				if(el)
 					val = multiplication(el->value,el->value);
-				for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+				for(pel = el, len = len, plen = NULL;
+					equal(len, "0") != 0;
+					plen = soustraction(len,"1"), free(len), len = plen
+				){
 					free(pel->value);
 					pel->value = multiplication(val, "1");
 					pel = pel->next;
@@ -299,7 +305,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				pplen = multiplication(plen, "1");
 				len = plen;
 				val = multiplication(el->value,el->value);
-				for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+				for(pel = el, len = len, plen = NULL;
+						equal(len, "0") != 0;
+						plen = soustraction(len,"1"), free(len), len = plen
+				){
 					free(pel->value);
 					pel->value = multiplication(val, "1");
 					pel = pel->next;
