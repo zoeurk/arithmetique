@@ -346,6 +346,11 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				return rebut;
 			}
 		}
+		free(n1);
+		free(n2);
+		free(i);
+		rebut = multiplication(num1,"1");
+		return rebut;
 	}
 	fprintf(stderr,"puissance: Erreur de calcule:%s.\n", rebut);
 	return NULL;
