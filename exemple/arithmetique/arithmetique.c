@@ -103,7 +103,7 @@ struct elements{
 	struct elements *prev;
 };
 #define ELEMENTS(init)\
-	for(el = NULL, len = multiplication("1", "1"); equal(n2, len) != 0; plen = addition(len, "1"), free(len), len = plen){\
+	for(el = NULL, len = multiplication("1", init); equal(n2, len) != 0; plen = addition(len, "1"), free(len), len = plen){\
 		if(el == NULL){\
 			el = calloc(1, sizeof(struct elements));\
 			el->value = multiplication(num1, "1");\
@@ -205,7 +205,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			exit(EXIT_FAILURE);
 		}
 		if(equal(i,"0") != 0){
-			//printf("*********\n");
 			while(equal(i,"0") != 0){
 				if(set == 0){ 
 					pseudo = multiplication(buffer, buffer);
@@ -225,7 +224,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(n2);
 			n2 = n2_;			
 		}
-		ELEMENTS("1");
+		ELEMENTS("0");
 		rebut = pseudo;
 		do{
 				mod = modulo(len,"2", 0);
@@ -252,9 +251,11 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 					if(rebut == NULL){
 						rebut = multiplication(pel->value, "1");
 					}else{
-						prebut = multiplication(rebut, pel->value);
-						free(rebut);
-						rebut = prebut;
+						if(pel && pel->value){
+							prebut = multiplication(rebut, pel->value);
+							free(rebut);
+							rebut = prebut;
+						}
 					}
 				}
 				if(pel && pel->prev)
@@ -345,11 +346,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				return rebut;
 			}
 		}
-		rebut = multiplication(n1, "1");
-		free(n1);
-		free(n2);
-		free(i);
-		return rebut;
 	}
 	fprintf(stderr,"puissance: Erreur de calcule:%s.\n", rebut);
 	return NULL;
