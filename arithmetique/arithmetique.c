@@ -373,7 +373,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 #define LOG(fn, msg)\
 	char *n = multiplication(num, "1"), *n_, buffer[internal_buflen], *i = multiplication("1", "1"), *pi = i, *result;\
 	memset(buffer,0, internal_buflen);\
-	if(equal(n, "0") < 0){\
+	if(equal(n, "0") <= 0){\
 		free(n);\
 		free(i);\
 		fprintf(stderr, "%s: %s <= 0\n", msg, (char *)num);\
