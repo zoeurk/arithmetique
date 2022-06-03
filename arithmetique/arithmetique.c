@@ -385,6 +385,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}\*/\
 	snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
 	result = multiplication(i, buffer);\
+	free(i);\
+	free(n);\
 	/*snprintf(buffer, internal_buflen, format, result);\
 	if(buffer[internal_buflen-1] != 0){\
 		fprintf(stderr,"Tampon (internal_buflen) trop petit\n");\
