@@ -140,11 +140,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}
 	if(equal(n2,"0") < 0){
 		n2_ = multiplication(n2,"-1");
+		neg = 1;
 		free(n2);
 		n2 = n2_;
-	}
-	if(equal(n1, "0") < 0){
-		neg = 1;
 	}
 	if((v = strchr(n2, '.')) != NULL){
 		if(equal(n1, "0") < 0){
@@ -153,7 +151,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(n1);
 			n1 = n1_;
 		}
-		if(neg && strchr(num2,'.')){
+		if(equal(num1,"0") < 0 && strchr(num2,'.')){
 			free(n1);
 			free(n2);
 			free(i);
@@ -224,6 +222,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		if(equal(n2,"0") < 0){
 			n2_ = multiplication(n2,"-1");
 			free(n2);
+			//free(n1);
 			n2 = n2_;			
 		}
 		ELEMENTS("0");
@@ -253,9 +252,19 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 					if(rebut == NULL){
 						rebut = multiplication(pel->value, "1");
 					}else{
+						//printf("============\n");
 						if(pel && pel->value){
 							prebut = multiplication(rebut, pel->value);
-							free(rebut);
+							//printf("==>%s\n", prebut);
+							/*if(rebut){
+								printf("***>>>%s\n", rebut);
+								//free(rebut);
+								rebut = NULL;
+							//free(rebut);
+								rebut = prebut;
+							}*/
+							//exit(0);
+							//free(rebut);
 							rebut = prebut;
 						}
 					}
@@ -285,8 +294,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				free(n1);
 				return n1_;
 			}else{
+				prebut = multiplication(rebut, "1");
 				free(n1);
-				return rebut;
+				free(rebut);
+				return prebut;
 			}
 	}else{
 		if(equal(n2,"0") < 0){
