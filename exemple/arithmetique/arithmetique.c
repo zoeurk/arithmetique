@@ -367,10 +367,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	if(equal(num, "0") < 0){\
 		free(n);\
 		free(i);\
-		fprintf(stderr, "%s: %s < 0\n", msg, (char *)num);\
+		fprintf(stderr, "%s: %s <= 0\n", msg, (char *)num);\
 		return NULL;\
 	}\
-	if(equal(n,"0") == 0){\
+	if(equal(n,"0") == 0  || equal(n,"-0")){\
 		if((n_ = malloc(5*sizeof(char))) == NULL){\
 			perror("malloc()");\
 			exit(EXIT_FAILURE);\
