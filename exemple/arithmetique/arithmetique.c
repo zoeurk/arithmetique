@@ -131,7 +131,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	long double pseudo_;
 	int eq, set = 0, neg = 0;
 	memset(buffer, 0, internal_buflen);
-	if(equal(num2, "0") == 0){
+	if(equal(num2, "0") == 0 || equal(num2,"-0") == 0){
 		free(n1);
 		free(n2);
 		free(i);
@@ -206,7 +206,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			fprintf(stderr, "buffer interne trop court (internal_buflen)\n");
 			exit(EXIT_FAILURE);
 		}
-		if(equal(i,"0") != 0){
+		if(equal(i,"0") != 0 || equal(i,"-0") != 0 ){
 			while(equal(i,"0") != 0){
 				if(set == 0){ 
 					pseudo = multiplication(buffer, buffer);
@@ -375,6 +375,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			perror("malloc()");\
 			exit(EXIT_FAILURE);\
 		}\
+		free(i);\
+		free(n);\
 		strcpy(n_,"-inf");\
 		return n_;\
 	}\
