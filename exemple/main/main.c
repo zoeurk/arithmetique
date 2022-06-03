@@ -11,7 +11,7 @@
 int main(int argc, char **argv){
 	int ret, i, v;
 	unsigned long int sz = 56;
-	char *r, format[16], *check;
+	char *r, *format, *check;
 	if(argc < 4){
 		fprintf(stderr, "usage:\n\t%s num1 num2 virgule(>= 0) [internal_buflen(default = 56)]\n", argv[0]);
 		exit(EXIT_FAILURE);
@@ -24,14 +24,24 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 	if(v > 0){
-		if(strlen(argv[3]) > 5){
+		/*if(strlen(argv[3]) > 5){
 			fprintf(stderr,"Erreur: format trop long.\n");
 			exit(EXIT_FAILURE);
+		}*/
+		if((format = malloc(strlen(argv[3])+5)) == NULL){
+			perror("malloc()");
+			exit(0);
 		}
 		strcpy(format,"%.");
 		strcat(format,argv[3]);
 		strcat(format,"Lf");
-	}else strcpy(format,"%Lf"); 
+	}else{
+		if((format = malloc(3)) == NULL){
+			perror("malloc()");
+			exit(EXIT_FAILURE);
+		}
+		strcpy(format,"%Lf");
+	}
 	for(i = 1; i < 3; i++)
 		if((ret = strtype(argv[i])) != 0)
 			switch(ret){
@@ -200,5 +210,6 @@ int main(int argc, char **argv){
 		printf("Logarithme 10 de '%s': %s\n", argv[2], r);
 		free(r);
 	}
+	free(format);
 	return 0;
 }
