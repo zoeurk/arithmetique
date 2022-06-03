@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include "../operation/operation.h"
+#include "arithmetique.h"
 
 #define INTERNAL_BUFLEN \
 	if(buffer[internal_buflen-1] != 0){\
@@ -81,16 +82,16 @@
 			return NULL;\
 		}\
 	}
-char *cosinus(char *arg, char *format,unsigned long internal_buflen, int i_deg, int o_deg, unsigned long int virgule, int approximation){
+void *cosinus(char *arg, char *format,unsigned long internal_buflen, int i_deg, int o_deg, unsigned long int virgule, int approximation){
 	TRIGO(cosl);
 	return pbuf;
 }
 
-char *sinus(char *arg, char *format,unsigned long internal_buflen,int i_deg, int o_deg, unsigned long int virgule, int approximation){
+void *sinus(char *arg, char *format,unsigned long internal_buflen,int i_deg, int o_deg, unsigned long int virgule, int approximation){
 	TRIGO(sinl);
 	return pbuf;
 }
-char *tangente(char *arg, char *format,unsigned long internal_buflen,int i_deg, int o_deg, unsigned long int virgule, int approximation){
+void *tangente(char *arg, char *format,unsigned long internal_buflen,int i_deg, int o_deg, unsigned long int virgule, int approximation){
 	TRIGO(tanl);
 	return pbuf;
 }
