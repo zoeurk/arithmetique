@@ -360,9 +360,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	return NULL;
 }
 #define LOG(fn, msg)\
-	char *n = multiplication(num, "1"), *n_, buffer[internal_buflen];\
-	unsigned long long int i;\
-	long double result;\
+	char *n = multiplication(num, "1"), *n_, buffer[internal_buflen], *i = multiplication("1", "1"), *pi = i, *result;\
+	/*unsigned long long int i;\
+	long double result;*/\
+	memset(buffer,0, internal_buflen);\
 	if(equal(num, "0") < 0){\
 		free(n);\
 		fprintf(stderr, "%s: %s < 0\n", msg, (char *)num);\
@@ -377,20 +378,21 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		return n_;\
 	}\
 	memset(buffer, 0, internal_buflen);\
-	for(n = n, i = 1;i * 2 > i && equal(n, "10") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, i *= 2);;\
-	if(i*2 < i){\
+	for(n = n, i = i;equal(n, "10") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
+	/*if(i*2 < i){\
 		fprintf(stderr, "Nombre trop long pour %s.\n", msg);\
 		exit(EXIT_FAILURE);\
-	}\
-	result = i*fn(strtold(n, NULL));\
-	snprintf(buffer, internal_buflen, format, result);\
+	}\*/\
+	snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
+	result = multiplication(i, buffer);\
+	/*snprintf(buffer, internal_buflen, format, result);\
 	if(buffer[internal_buflen-1] != 0){\
 		fprintf(stderr,"Tampon (internal_buflen) trop petit\n");\
 		exit(EXIT_FAILURE);\
-	}\
-	n_ = multiplication(buffer, "1");\
-	free(n);\
-	return n_;
+	}*/\
+	/*n_ = multiplication(buffer, "1");\
+	free(n);*/\
+	return result;
 
 void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
 	LOG(logl, "le logarithme neperiene");
