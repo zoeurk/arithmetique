@@ -4,8 +4,6 @@
 #include <string.h>
 #include "../operation/operation.h"
 
-const unsigned long int BUFFER = 56;
-
 #define INTERNAL_BUFLEN \
 	if(buffer[internal_buflen-1] != 0){\
 		fprintf(stderr, "Tampon (internal_buflen) interne trop petit\n");\
@@ -396,7 +394,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	return result;
 
 void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
-	LOG(logl, "le logarithme neperiene");
+	LOG(logl, "le logarithme neperien");
 }
 void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
 	LOG(log10l, "le logarithme en base 10");
