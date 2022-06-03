@@ -36,7 +36,7 @@ int main(int argc, char **argv){
 		strcat(format,argv[3]);
 		strcat(format,"Lf");
 	}else{
-		if((format = malloc(3)) == NULL){
+		if((format = malloc(4)) == NULL){
 			perror("malloc()");
 			exit(EXIT_FAILURE);
 		}
