@@ -366,6 +366,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	memset(buffer,0, internal_buflen);\
 	if(equal(num, "0") < 0){\
 		free(n);\
+		free(i);\
 		fprintf(stderr, "%s: %s < 0\n", msg, (char *)num);\
 		return NULL;\
 	}\
@@ -379,21 +380,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}\
 	memset(buffer, 0, internal_buflen);\
 	for(n = n, i = i;equal(n, "10") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
-	/*if(i*2 < i){\
-		fprintf(stderr, "Nombre trop long pour %s.\n", msg);\
-		exit(EXIT_FAILURE);\
-	}\*/\
 	snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
 	result = multiplication(i, buffer);\
 	free(i);\
 	free(n);\
-	/*snprintf(buffer, internal_buflen, format, result);\
-	if(buffer[internal_buflen-1] != 0){\
-		fprintf(stderr,"Tampon (internal_buflen) trop petit\n");\
-		exit(EXIT_FAILURE);\
-	}*/\
-	/*n_ = multiplication(buffer, "1");\
-	free(n);*/\
 	return result;
 
 void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
