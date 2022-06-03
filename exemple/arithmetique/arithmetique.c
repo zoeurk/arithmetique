@@ -361,28 +361,24 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 }
 #define LOG(fn, msg)\
 	char *n = multiplication(num, "1"), *n_, buffer[internal_buflen], *i = multiplication("1", "1"), *pi = i, *result;\
-	/*unsigned long long int i;\
-	long double result;*/\
 	memset(buffer,0, internal_buflen);\
-	if(equal(num, "0") < 0){\
+	if(equal(n, "0") < 0){\
 		free(n);\
 		free(i);\
 		fprintf(stderr, "%s: %s <= 0\n", msg, (char *)num);\
 		return NULL;\
 	}\
-	if(equal(n,"0") == 0  || equal(n,"-0")){\
-		if((n_ = malloc(5*sizeof(char))) == NULL){\
-			perror("malloc()");\
-			exit(EXIT_FAILURE);\
-		}\
-		free(i);\
-		free(n);\
-		strcpy(n_,"-inf");\
-		return n_;\
-	}\
 	memset(buffer, 0, internal_buflen);\
-	for(n = n, i = i;equal(n, "10") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
-	snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
+	if(equal(n,"10") > 0){\
+		for(n = n, i = i;equal(n, "10") > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
+		snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
+	}else{\
+		snprintf(buffer,internal_buflen,format, logl(strtold(n,NULL)));\
+	}\
+	if(buffer[internal_buflen -1] != 0){\
+		fprintf(stderr,"Tampon interne (internal_buflen) trop court\n");\
+		exit(EXIT_FAILURE);\
+	}\
 	result = multiplication(i, buffer);\
 	free(i);\
 	free(n);\
