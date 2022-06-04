@@ -12,7 +12,7 @@
 	}
 	
 #define TRIGO(fn) \
-	char *arg_ = NULL, *t_arg, pi[512], npi[512], *pi_ = NULL, *temp, *t = NULL, *mul, buffer[internal_buflen], *pbuf, *form;\
+	char *arg_ = NULL, *t_arg, pi[58], npi[58], *pi_ = NULL, *temp, *t = NULL, *mul, buffer[internal_buflen], *pbuf, *form;\
 	long double val, format_;\
 	form = format+2;\
 	format_ = strtold(form,NULL);\
@@ -399,4 +399,10 @@ void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned
 }
 void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
 	LOG(log10l, "le logarithme en base 10");
+}
+void *exponetiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
+	char exp[66];
+	memset(exp, 0, 66);
+	sprintf(exp, "%.62Lf\n", expl(1));
+	return puissance(exp, num, internal_buflen, format, virgule, approximation);
 }
