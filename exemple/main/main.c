@@ -7,6 +7,7 @@
 /*BUFFER > 1*/
 //const unsigned long int BUFFER = 56;
 
+const unsigned long int BUFFER = 56;
 
 int main(int argc, char **argv){
 	int ret, i, v;
@@ -28,7 +29,7 @@ int main(int argc, char **argv){
 			fprintf(stderr,"Erreur: format trop long.\n");
 			exit(EXIT_FAILURE);
 		}*/
-		if((format = malloc(strlen(argv[3])+5)) == NULL){
+		if((format = malloc(strlen(argv[3])+7)) == NULL){
 			perror("malloc()");
 			exit(0);
 		}
@@ -187,6 +188,7 @@ int main(int argc, char **argv){
 	printf("\t\t\t===\n");
 	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]), 1);
 	if(r){
+		//*r = 0;
 		printf("%s^%s  = %s\n", argv[1], argv[2], r);
 		free(r);
 	}
@@ -208,6 +210,16 @@ int main(int argc, char **argv){
 	r = log_10(argv[2], sz, format,atoi(argv[3]), 1);
 	if(r){
 		printf("Logarithme 10 de '%s': %s\n", argv[2], r);
+		free(r);
+	}
+	r = exponetiel(argv[1], sz, format, atoi(argv[3]), 1);
+	if(r){
+		printf("Exponentiel '%s': %s\n", argv[1], r);
+		free(r);
+	}
+	r = exponetiel(argv[2], sz, format, atoi(argv[3]), 1);
+	if(r){
+		printf("Exponentiel '%s': %s\n", argv[2], r);
 		free(r);
 	}
 	free(format);
