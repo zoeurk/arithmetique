@@ -120,29 +120,23 @@ struct elements{
 
 void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	struct elements *el, *pel, *pnext;
-	char *n1 = multiplication(num1,"1"),
-		*n2 = multiplication(num2,"1"),
+	char *n1 = multiplication(num1,"1"), *n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
 		*n1_ = n1, *n2_ = n2,
-		*i = multiplication("1","0"),
-		*mod, *len, *plen, *pplen, *val = NULL;
+		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
 	long double pseudo_;
 	int eq, set = 0, neg = 0;
 	memset(buffer, 0, internal_buflen);
-	if(equal(num2, "0") == 0 || equal(num2,"-0") == 0){
+	if(equal(num2, "0") == 0){
 		free(n1);
 		free(n2);
 		free(i);
 		n1 = multiplication("1","1");
 		return n1;
 	}
-	if(equal(n2,"0") < 0){
-		n2_ = multiplication(n2,"-1");
+	if(equal(num2,"0") < 0)
 		neg = 1;
-		free(n2);
-		n2 = n2_;
-	}
 	if((v = strchr(n2, '.')) != NULL){
 		if(equal(n1, "0") < 0){
 			neg = 1;
@@ -150,7 +144,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(n1);
 			n1 = n1_;
 		}
-		if(equal(num1,"0") < 0 && strchr(num2,'.')){
+		if(equal(n1, "0") < 0 && strchr(num2,'.')){
 			free(n1);
 			free(n2);
 			free(i);
@@ -189,9 +183,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		strcpy(dot_, pdot_+1);
 		pdot_ = strchr(dot_, 'L');
 		*pdot_ = 0;
-		if((p = strchr(v_,'.')) != NULL && 
-			strlen(p+1) > (unsigned long int)atol(dot_)
-		){
+		if((p = strchr(v_,'.')) != NULL && strlen(p+1) > (unsigned long int)atol(dot_)){
 			fprintf(stderr,"Warning `%s`:\n\tTrop de chiffre apres la virgule.\n\tUtilisation de la valeur: ", v_);
 			fprintf(stderr, format, strtold(v_, NULL));
 			fprintf(stderr,"\n");
@@ -200,10 +192,11 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		pseudo_ = powl(strtold(n1_, NULL), strtold(v_, NULL));
 		sprintf(buffer, format, pseudo_);
 		if(buffer[internal_buflen-1] != 0){
-			fprintf(stderr, "buffer interne trop court (internal_buflen)\n");
+			fprintf(stderr, "buffer interne trop court\n");
 			exit(EXIT_FAILURE);
 		}
-		if(equal(i,"0") != 0 || equal(i,"-0") != 0 ){
+		if(equal(i,"0") != 0){
+			//printf("*********\n");
 			while(equal(i,"0") != 0){
 				if(set == 0){ 
 					pseudo = multiplication(buffer, buffer);
@@ -218,86 +211,62 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				i = i_;
 			}
 		}else pseudo = multiplication(buffer,"1");
-		if(equal(n2,"0") < 0){
-			n2_ = multiplication(n2,"-1");
-			free(n2);
-			//free(n1);
-			n2 = n2_;			
-		}
+		free(n1_);
 		ELEMENTS("0");
+		//printf("%s\n", len);
+		//exit(0);
 		rebut = pseudo;
 		do{
-				mod = modulo(len,"2", 0);
-				plen = soustraction(len, mod);
-				free(len);
-				len = plen;
-				plen = division(len,"2", 0, 0);
-				free(len);
-				pplen = multiplication(plen, "1");
-				len = plen;
-				if(el)
-					val = multiplication(el->value,el->value);
-				for(pel = el, len = len, plen = NULL;
-					equal(len, "0") != 0;
-					plen = soustraction(len,"1"), free(len), len = plen
-				){
-					free(pel->value);
-					pel->value = multiplication(val, "1");
-					pel = pel->next;
-				}
-				free(len);
-				free(val);
-				if(equal(mod,"1") == 0){
-					if(rebut == NULL){
-						rebut = multiplication(pel->value, "1");
-					}else{
-						//printf("============\n");
-						if(pel && pel->value){
-							prebut = multiplication(rebut, pel->value);
-							//printf("==>%s\n", prebut);
-							/*if(rebut){
-								printf("***>>>%s\n", rebut);
-								//free(rebut);
-								rebut = NULL;
-							//free(rebut);
-								rebut = prebut;
-							}*/
-							//exit(0);
-							//free(rebut);
-							rebut = prebut;
-						}
-					}
-				}
-				if(pel && pel->prev)
-					pel->prev->next = NULL;
-				while(pel){
-					pnext = pel->next;
-					free(pel->value);
-					free(pel);
-					pel = pnext;
-				}
-				len = pplen;
-				free(mod);
-			}while(equal(pplen,"0") != 0);
-			free(pplen);
-			free(n2);
-			pseudo = NULL;
-			free(v_);
-			free(i);
-			i = NULL;
-			if(pseudo)
-				free(pseudo);
-			if(neg){
-				n1_ = division("1", rebut, virgule, approximation);
-				free(rebut);
-				free(n1);
-				return n1_;
-			}else{
-				prebut = multiplication(rebut, "1");
-				free(n1);
-				free(rebut);
-				return prebut;
+			mod = modulo(len,"2", 0);
+			plen = soustraction(len, mod);
+			free(len);
+			len = plen;
+			plen = division(len,"2", 0, 0);
+			free(len);
+			pplen = multiplication(plen, "1");
+			len = plen;
+			if(el)
+				val = multiplication(el->value,el->value);
+			for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+				free(pel->value);
+				pel->value = multiplication(val, "1");
+				pel = pel->next;
 			}
+			free(len);
+			free(val);
+			if(equal(mod,"1") == 0){
+				if(rebut == NULL){
+					rebut = multiplication(pel->value, "1");
+				}else{
+					prebut = multiplication(rebut, pel->value);
+					free(rebut);
+					rebut = prebut;
+				}
+			}
+			if(pel && pel->prev)
+				pel->prev->next = NULL;
+			while(pel){
+				pnext = pel->next;
+				free(pel->value);
+				free(pel);
+				pel = pnext;
+			}
+			len = pplen;
+			free(mod);
+		}while(equal(pplen,"0") != 0);
+		free(pplen);
+		free(n2);
+		pseudo = NULL;
+		free(v_);
+		free(i);
+		i = NULL;
+		if(pseudo)
+			free(pseudo);
+		if(neg){
+			n1_ = division("1", rebut, virgule, approximation);
+			free(rebut);
+			return n1_;
+		}else return rebut;
 	}else{
 		if(equal(n2,"0") < 0){
 			n2_ = multiplication(n2,"-1");
@@ -307,67 +276,63 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		while(equal(n2,"1") != 0){
 			ELEMENTS("1");
 			do{
-				mod = modulo(len,"2", 0);
-				plen = soustraction(len, mod);
-				free(len);
-				len = plen;
-				plen = division(len,"2", 0, 0);
-				free(len);
-				pplen = multiplication(plen, "1");
-				len = plen;
-				val = multiplication(el->value,el->value);
-				for(pel = el, len = len, plen = NULL;
-						equal(len, "0") != 0;
-						plen = soustraction(len,"1"), free(len), len = plen
-				){
-					free(pel->value);
-					pel->value = multiplication(val, "1");
-					pel = pel->next;
-				}
-				free(len);
-				free(val);
-				if(equal(mod,"1") == 0){
-					if(rebut == NULL){
-						rebut = multiplication(pel->value, "1");
-					}else{
-						prebut = multiplication(rebut, pel->value);
-						free(rebut);
-						rebut = prebut;
-					}
-				}
-				if(pel && pel->prev)
-					pel->prev->next = NULL;
-				while(pel){
-					pnext = pel->next;
-					free(pel->value);
-					free(pel);
-					pel = pnext;
-				}
-				len = pplen;
-				free(mod);
+					mod = modulo(len,"2", 0);
+	plen = soustraction(len, mod);
+	free(len);
+	len = plen;
+	plen = division(len,"2", 0, 0);
+	free(len);
+	pplen = multiplication(plen, "1");
+	len = plen;
+	val = multiplication(el->value,el->value);
+	for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+		free(pel->value);
+		pel->value = multiplication(val, "1");
+		pel = pel->next;
+	}
+	free(len);
+	free(val);
+	if(equal(mod,"1") == 0){
+		if(rebut == NULL){
+			rebut = multiplication(pel->value, "1");
+		}else{
+			prebut = multiplication(rebut, pel->value);
+			free(rebut);
+			rebut = prebut;
+		}
+	}
+	if(pel && pel->prev)
+		pel->prev->next = NULL;
+	while(pel){
+		pnext = pel->next;
+		free(pel->value);
+		free(pel);
+		pel = pnext;
+	}
+	len = pplen;
+	free(mod);
 			}while(equal(pplen,"0") != 0);
 			free(n1);
 			free(n2);
 			free(i);
 			free(pplen);
-			if(equal(num2,"0") < 0){
+			if(neg){
 				n1_ = division("1", rebut, virgule, approximation);
 				free(rebut);
 				return n1_;
-			}else{ 
-				return rebut;
-			}
-		}
-		free(n1);
-		free(n2);
-		free(i);
-		if(equal(num2,"1") == 0){
-			rebut = multiplication(num1,num2);
-			return rebut;
+			}else return rebut;
 		}
 	}
-	fprintf(stderr,"puissance: Erreur de calcule:%s.\n", rebut);
-	return NULL;
+	if(i != NULL)
+		free(i);
+	if(n2_)
+		free(n2_);
+	if(neg){
+		rebut = division("1", n1_, virgule, approximation);
+		free(n1_);
+		n1_ = rebut;
+	}
+	return n1_;
 }
 #define LOG(fn, msg)\
 	char *n = multiplication(num, "1"), *n_, buffer[internal_buflen], *i = multiplication("1", "1"), *pi = i, *result;\
@@ -376,7 +341,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			if(equal(n, "0") < 0){\
 			free(n);\
 			free(i);\
-			fprintf(stderr, "Erreur: %s: %s < 0\n", msg, (char *)num);\
+			fprintf(stderr, "Erreur: %s: %s < 0 [-nan]\n", msg, (char *)num);\
 			return NULL;\
 		}else{\
 			free(n);\
@@ -408,7 +373,7 @@ void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned
 void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
 	LOG(log10l, "le logarithme en base 10");
 }
-void *exponetiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
+void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	char exp[66];
 	memset(exp, 0, 66);
 	sprintf(exp, "%.62Lf\n", expl(1));
