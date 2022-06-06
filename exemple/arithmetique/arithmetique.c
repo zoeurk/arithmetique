@@ -183,7 +183,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		strcpy(dot_, pdot_+1);
 		pdot_ = strchr(dot_, 'L');
 		*pdot_ = 0;
-		if((p = strchr(v_,'.')) != NULL && strlen(p+1) > (unsigned long int)atol(dot_)){
+		if((p = strchr(v_,'.')) != NULL && strlen(p+1) > strtoul(dot_, NULL,10)){
 			fprintf(stderr,"Warning `%s`:\n\tTrop de chiffre apres la virgule.\n\tUtilisation de la valeur: ", v_);
 			fprintf(stderr, format, strtold(v_, NULL));
 			fprintf(stderr,"\n");
@@ -276,41 +276,41 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		while(equal(n2,"1") != 0){
 			ELEMENTS("1");
 			do{
-					mod = modulo(len,"2", 0);
-	plen = soustraction(len, mod);
-	free(len);
-	len = plen;
-	plen = division(len,"2", 0, 0);
-	free(len);
-	pplen = multiplication(plen, "1");
-	len = plen;
-	val = multiplication(el->value,el->value);
-	for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
-		free(pel->value);
-		pel->value = multiplication(val, "1");
-		pel = pel->next;
-	}
-	free(len);
-	free(val);
-	if(equal(mod,"1") == 0){
-		if(rebut == NULL){
-			rebut = multiplication(pel->value, "1");
-		}else{
-			prebut = multiplication(rebut, pel->value);
-			free(rebut);
-			rebut = prebut;
-		}
-	}
-	if(pel && pel->prev)
-		pel->prev->next = NULL;
-	while(pel){
-		pnext = pel->next;
-		free(pel->value);
-		free(pel);
-		pel = pnext;
-	}
-	len = pplen;
-	free(mod);
+				mod = modulo(len,"2", 0);
+				plen = soustraction(len, mod);
+				free(len);
+				len = plen;
+				plen = division(len,"2", 0, 0);
+				free(len);
+				pplen = multiplication(plen, "1");
+				len = plen;
+				val = multiplication(el->value,el->value);
+				for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+					free(pel->value);
+					pel->value = multiplication(val, "1");
+					pel = pel->next;
+				}
+				free(len);
+				free(val);
+				if(equal(mod,"1") == 0){
+					if(rebut == NULL){
+						rebut = multiplication(pel->value, "1");
+					}else{
+						prebut = multiplication(rebut, pel->value);
+						free(rebut);
+						rebut = prebut;
+					}
+				}
+				if(pel && pel->prev)
+					pel->prev->next = NULL;
+				while(pel){
+					pnext = pel->next;
+					free(pel->value);
+					free(pel);
+					pel = pnext;
+				}
+				len = pplen;
+				free(mod);
 			}while(equal(pplen,"0") != 0);
 			free(n1);
 			free(n2);
