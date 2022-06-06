@@ -373,10 +373,18 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	char *n = multiplication(num, "1"), *n_, buffer[internal_buflen], *i = multiplication("1", "1"), *pi = i, *result;\
 	memset(buffer,0, internal_buflen);\
 	if(equal(n, "0") <= 0){\
-		free(n);\
-		free(i);\
-		fprintf(stderr, "Erreur: %s: %s <= 0\n", msg, (char *)num);\
-		return NULL;\
+			if(equal(n, "0") < 0){\
+			free(n);\
+			free(i);\
+			fprintf(stderr, "Erreur: %s: %s <= 0\n", msg, (char *)num);\
+			return NULL;\
+		}else{
+			free(n);
+			free(i);
+			n_ = calloc(5*sizeof(char));
+			strcpy(n_, "-inf");
+			return n_
+		}
 	}\
 	memset(buffer, 0, internal_buflen);\
 	if(equal(n,"10") > 0){\
