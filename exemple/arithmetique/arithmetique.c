@@ -378,13 +378,13 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(i);\
 			fprintf(stderr, "Erreur: %s: %s < 0\n", msg, (char *)num);\
 			return NULL;\
-		}else{
-			free(n);
-			free(i);
-			n_ = calloc(5*sizeof(char));
-			strcpy(n_, "inf");
-			return n_
-		}
+		}else{\
+			free(n);\
+			free(i);\
+			n_ = malloc(5*sizeof(char));\
+			strcpy(n_, "inf");\
+			return n_;\
+		}\
 	}\
 	memset(buffer, 0, internal_buflen);\
 	if(equal(n,"10") > 0){\
