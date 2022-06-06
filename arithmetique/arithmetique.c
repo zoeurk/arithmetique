@@ -376,7 +376,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			if(equal(n, "0") < 0){\
 			free(n);\
 			free(i);\
-			fprintf(stderr, "Erreur: %s: %s <= 0\n", msg, (char *)num);\
+			fprintf(stderr, "Erreur: %s: %s < 0\n", msg, (char *)num);\
 			return NULL;\
 		}else{
 			free(n);
