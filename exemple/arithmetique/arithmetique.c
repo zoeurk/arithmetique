@@ -135,15 +135,17 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		n1 = multiplication("1","1");
 		return n1;
 	}
-	if(equal(num2,"0") < 0)
+	if(equal(num2,"0") < 0){
 		neg = 1;
+		n2 = multiplication(num2, "-1");
+	}
 	if((v = strchr(n2, '.')) != NULL){
-		if(equal(n1, "0") < 0){
-			neg = 1;
-			n1_ = multiplication(n1, "-1");
-			free(n1);
-			n1 = n1_;
-		}
+		//if(equal(n1, "0") < 0){
+			//neg = 1;
+			//n1_ = multiplication(n1, "-1");
+			//free(n1);
+			//n1 = n1_;
+		//}
 		if(equal(n1, "0") < 0 && strchr(num2,'.')){
 			free(n1);
 			free(n2);
@@ -175,6 +177,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				i = i_;
 			}
 		}while(eq > 0);
+		/*if(equal(num2, "0") < 0){
+			printf("ok\n");
+			exit(0);
+		}*/
 		pdot_ = strchr(format,'.');
 		if((dot_ = calloc(strlen(format), sizeof(char))) == NULL){
 			perror("calloc()");
@@ -196,6 +202,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			exit(EXIT_FAILURE);
 		}
 		if(equal(i,"0") != 0){
+			//printf("*********\n");
 			while(equal(i,"0") != 0){
 				if(set == 0){ 
 					pseudo = multiplication(buffer, buffer);
@@ -261,13 +268,16 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		i = NULL;
 		if(pseudo)
 			free(pseudo);
-		if(neg){
+		if(neg == 1){
+			//printf("******\n");
 			n1_ = division("1", rebut, virgule, approximation);
+			//printf("==>%s::%s::%i\n", n1_, rebut, neg);
 			free(rebut);
 			return n1_;
-		}else return rebut;
+		}else{ 
+				return rebut;
+		}
 	}else{
-			printf("*********\n");
 		if(equal(n2,"0") < 0){
 			n2_ = multiplication(n2,"-1");
 			free(n2);
@@ -317,9 +327,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(i);
 			free(pplen);
 			if(neg){
-				n1_ = division("1", rebut, virgule, approximation);
-				free(rebut);
-				return n1_;
+				//n1_ = division("1", rebut, virgule, approximation);
+				//free(rebut);
+				return rebut;
 			}else return rebut;
 		}
 	}
@@ -328,8 +338,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	if(n2_)
 		free(n2_);
 	if(neg){
-		rebut = division("1", n1_, virgule, approximation);
-		free(n1_);
+		printf("=============================\n");
+		//rebut = division("1", n1_, virgule, approximation);
+		//free(n1_);
 		n1_ = rebut;
 	}
 	return n1_;
