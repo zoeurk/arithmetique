@@ -93,6 +93,10 @@ void *sinus(char *arg, char *format,unsigned long internal_buflen,int i_deg, int
 }
 void *tangente(char *arg, char *format,unsigned long internal_buflen,int i_deg, int o_deg, unsigned long int virgule, int approximation){
 	TRIGO(tanl);
+	/*char *cos, *sin, *pbuf;
+	cos = cosinus(arg, format, internal_buflen, i_deg, o_deg, virgule, approximation);
+	sin = sinus(arg, format, internal_buflen, i_deg, o_deg, virgule, approximation);
+	pbuf = division(sin, cos, virgule, 1);*/
 	return pbuf;
 }
 
