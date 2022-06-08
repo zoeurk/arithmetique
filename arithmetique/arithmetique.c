@@ -102,7 +102,7 @@ struct elements{
 	struct elements *prev;
 };
 #define ELEMENTS(init)\
-	for(el = NULL, len = multiplication("1", init); equal(n2, len) != 0; plen = addition(len, "1"), free(len), len = plen){\
+	for(el = NULL, len = multiplication("1", init); equal(n2, len) > 0; plen = addition(len, "1"), free(len), len = plen){\
 		if(el == NULL){\
 			el = calloc(1, sizeof(struct elements));\
 			el->value = multiplication(num1, "1");\
@@ -196,7 +196,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			exit(EXIT_FAILURE);
 		}
 		if(equal(i,"0") != 0){
-			//printf("*********\n");
 			while(equal(i,"0") != 0){
 				if(set == 0){ 
 					pseudo = multiplication(buffer, buffer);
@@ -268,6 +267,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			return n1_;
 		}else return rebut;
 	}else{
+			printf("*********\n");
 		if(equal(n2,"0") < 0){
 			n2_ = multiplication(n2,"-1");
 			free(n2);
