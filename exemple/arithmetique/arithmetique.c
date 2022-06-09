@@ -342,9 +342,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	if(n2_)
 		free(n2_);
 	if(neg){
-		printf("=============================\n");
-		//rebut = division("1", n1_, virgule, approximation);
-		//free(n1_);
+		rebut = division("1", n1_, virgule, approximation);
+		free(n1_);
 		n1_ = rebut;
 	}
 	return n1_;
