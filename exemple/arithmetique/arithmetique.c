@@ -361,7 +361,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(n);\
 			free(i);\
 			n_ = malloc(5*sizeof(char));\
-			strcpy(n_, "inf");\
+			strcpy(n_, "-inf");\
 			return n_;\
 		}\
 	}\
