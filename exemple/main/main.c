@@ -210,12 +210,12 @@ int main(int argc, char **argv){
 		printf("Logarithme 10 de '%s': %s\n", argv[2], r);
 		free(r);
 	}
-	r = exponentiel(argv[1], sz, format, atoi(argv[3]), 1, -1);
+	r = exponentiel(argv[1], sz, format, atoi(argv[3]), 1);
 	if(r){
 		printf("Exponentiel '%s': %s\n", argv[1], r);
 		free(r);
 	}
-	r = exponentiel(argv[2], sz, format, atoi(argv[3]), 1, -1);
+	r = exponentiel(argv[2], sz, format, atoi(argv[3]), 1);
 	if(r){
 		printf("Exponentiel '%s': %s\n", argv[2], r);
 		free(r);
