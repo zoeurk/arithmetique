@@ -208,7 +208,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}
 		if(equal(i,"0") != 0){
 			while(equal(i,"0") != 0){
-				printf("******\n");
 				if(set == 0){ 
 					pseudo = multiplication(buffer, buffer);
 					set = 1;
