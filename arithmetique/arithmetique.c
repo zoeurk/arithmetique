@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <math.h>
 #include "../operation/operation.h"
 #include "arithmetique.h"
 

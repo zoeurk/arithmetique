@@ -1,10 +1,12 @@
---- arithmetique.c	2022-06-14 00:20:29.513551147 +0200
-+++ arithmetique.c	2022-06-14 00:23:05.402270590 +0200
-@@ -1,7 +1,6 @@
- #include <stdio.h>
+--- arithmetique.c	2022-06-14 00:52:07.158008375 +0200
++++ arithmetique.c	2022-06-14 00:52:33.646038936 +0200
+@@ -2,9 +2,7 @@
  #include <stdlib.h>
+ #include <math.h>
  #include <string.h>
 -#include <math.h>
  #include "../operation/operation.h"
- #include "arithmetique.h"
+-#include "arithmetique.h"
  
+ #ifdef _MATH_H
+ #define INTERNAL_BUFLEN \
