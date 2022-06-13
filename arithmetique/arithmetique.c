@@ -126,7 +126,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	struct elements *el, *pel, *pnext;
 	char *n1 = multiplication(num1,"1"), *n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
-		*n1_ = n1, *n2_ = n2, *last = NULL,
+		*n1_ = n1, *n2_ = n2,
 		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
 	long double pseudo_;
@@ -391,9 +391,13 @@ void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned
 void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
 	LOG(log10l, "le logarithme en base 10");
 }
-void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
-	char exp[66];
+void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation, int E_dot){
+	char exp[66], *dot;
 	memset(exp, 0, 66);
 	sprintf(exp, "%.62Lf\n", expl(1));
+	if(E_dot >= 0){
+		dot = strchr(exp,'.');
+		*(dot+1+E_dot) = 0;
+	}
 	return puissance(exp, num, internal_buflen, format, virgule, approximation);
 }
