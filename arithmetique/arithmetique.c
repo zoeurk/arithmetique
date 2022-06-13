@@ -203,7 +203,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		pseudo_ = powl(strtold(n1_, NULL), strtold(v_, NULL));
 		sprintf(buffer, format, pseudo_);
 		if(buffer[internal_buflen-1] != 0){
-			fprintf(stderr, "buffer interne trop court\n");
+			fprintf(stderr, "buffer interne trop court (internal_buflen)\n");
 			exit(EXIT_FAILURE);
 		}
 		if(equal(i,"0") != 0){
@@ -276,7 +276,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(pseudo);
 		if(neg == 1){
 			//printf("******\n");
-			printf("*********************************************\n");
 			n1_ = division("1", rebut, virgule, approximation);
 			//printf("==>%s::%s::%i\n", n1_, rebut, neg);
 			free(rebut);
