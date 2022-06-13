@@ -208,6 +208,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}
 		if(equal(i,"0") != 0){
 			while(equal(i,"0") != 0){
+				printf("******\n");
 				if(set == 0){ 
 					pseudo = multiplication(buffer, buffer);
 					set = 1;
@@ -227,25 +228,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		//exit(0);
 		rebut = pseudo;
 		do{
-			if(last && strcmp(last, rebut) == 0){
-				free(last);
-				break;
-			}else{
-				if(!last){
-					if((last = calloc(strlen(rebut)+1, sizeof(char))) == NULL){
-						perror("calloc()");
-						exit(EXIT_FAILURE);
-					}
-					strcpy(last, rebut);
-				}else{
-					if((last = realloc(last, strlen(rebut)+1)) == NULL){
-						perror("calloc()");
-						exit(EXIT_FAILURE);
-					}
-					strcpy(last, rebut);
-				}
-			}
-			//printf("%s\n", rebut);
+			//printf("%s::%s\n", pplen, rebut);
+			//printf("******\n");
 			mod = modulo(len,"2", 0);
 			plen = soustraction(len, mod);
 			free(len);
