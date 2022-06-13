@@ -184,9 +184,6 @@ int main(int argc, char **argv){
 	printf("\t\t\t===\n");
 	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]), 1);
 	if(r){
-		//printf("%s\n", r);
-		/*if(equal(argv[2], "0") < 0)
-			printf("%s\n", (char *)division("1", r, 16, 1));*/
 		printf("%s^%s  = %s\n", argv[1], argv[2], r);
 		free(r);
 	}
