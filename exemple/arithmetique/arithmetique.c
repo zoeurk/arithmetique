@@ -126,7 +126,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	struct elements *el, *pel, *pnext;
 	char *n1 = multiplication(num1,"1"), *n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
-		*n1_ = n1, *n2_ = n2,
+		*n1_ = n1, *n2_ = n2, *last = NULL,
 		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
 	long double pseudo_;
@@ -170,6 +170,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*v = 0;
 		pseudo = buffer;
 		do{
+			//printf("******\n");
 			pseudo_ = strtold(n1, NULL);
 			sprintf(buffer, format, pseudo_);
 			if((eq = equal(n1, pseudo)) > 0){
@@ -206,7 +207,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			exit(EXIT_FAILURE);
 		}
 		if(equal(i,"0") != 0){
-			//printf("*********\n");
 			while(equal(i,"0") != 0){
 				if(set == 0){ 
 					pseudo = multiplication(buffer, buffer);
@@ -227,6 +227,25 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		//exit(0);
 		rebut = pseudo;
 		do{
+			if(last && strcmp(last, rebut) == 0){
+				free(last);
+				break;
+			}else{
+				if(!last){
+					if((last = calloc(strlen(rebut)+1, sizeof(char))) == NULL){
+						perror("calloc()");
+						exit(EXIT_FAILURE);
+					}
+					strcpy(last, rebut);
+				}else{
+					if((last = realloc(last, strlen(rebut)+1)) == NULL){
+						perror("calloc()");
+						exit(EXIT_FAILURE);
+					}
+					strcpy(last, rebut);
+				}
+			}
+			//printf("%s\n", rebut);
 			mod = modulo(len,"2", 0);
 			plen = soustraction(len, mod);
 			free(len);
@@ -274,6 +293,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(pseudo);
 		if(neg == 1){
 			//printf("******\n");
+			printf("*********************************************\n");
 			n1_ = division("1", rebut, virgule, approximation);
 			//printf("==>%s::%s::%i\n", n1_, rebut, neg);
 			free(rebut);
@@ -282,6 +302,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				return rebut;
 		}
 	}else{
+		printf("====+++====\n");
 		if(equal(n2,"0") < 0){
 			n2_ = multiplication(n2,"-1");
 			free(n2);
