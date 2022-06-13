@@ -129,7 +129,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*n1_ = n1, *n2_ = n2,
 		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
-	long double pseudo_, ld = 0;
+	long double pseudo_;
 	int eq, set = 0, neg = 0;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
@@ -203,7 +203,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		pseudo_ = powl(strtold(n1_, NULL), strtold(v_, NULL));
 		sprintf(buffer, format, pseudo_);
 		if(buffer[internal_buflen-1] != 0){
-			fprintf(stderr, "buffer interne trop court\n");
+			fprintf(stderr, "buffer interne trop court (internal_buflen)\n");
 			exit(EXIT_FAILURE);
 		}
 		if(equal(i,"0") != 0){
@@ -227,7 +227,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		//exit(0);
 		rebut = pseudo;
 		do{
-			//printf("*******\n");
+			//printf("%s::%s\n", pplen, rebut);
+			//printf("******\n");
 			mod = modulo(len,"2", 0);
 			plen = soustraction(len, mod);
 			free(len);
@@ -275,7 +276,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(pseudo);
 		if(neg == 1){
 			//printf("******\n");
-			//printf("*********************************************\n");
 			n1_ = division("1", rebut, virgule, approximation);
 			//printf("==>%s::%s::%i\n", n1_, rebut, neg);
 			free(rebut);
@@ -284,7 +284,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				return rebut;
 		}
 	}else{
-		//printf("====+++====\n");
+		printf("====+++====\n");
 		if(equal(n2,"0") < 0){
 			n2_ = multiplication(n2,"-1");
 			free(n2);
@@ -390,9 +390,15 @@ void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned
 void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule,int approximation){
 	LOG(log10l, "le logarithme en base 10");
 }
-void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
-	char exp[66];
+void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation, int E_dot){
+	char exp[66], *dot;
 	memset(exp, 0, 66);
 	sprintf(exp, "%.62Lf\n", expl(1));
+	if(E_dot >= 0){
+		dot = strchr(exp,'.');
+		*(dot+1+E_dot) = 0;
+		if(E_dot == 0)
+			*dot = 0;
+	}
 	return puissance(exp, num, internal_buflen, format, virgule, approximation);
 }
