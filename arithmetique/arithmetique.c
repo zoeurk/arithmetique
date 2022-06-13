@@ -129,7 +129,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*n1_ = n1, *n2_ = n2,
 		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
-	long double pseudo_;
+	long double pseudo_, ld = 0;
 	int eq, set = 0, neg = 0;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
@@ -170,7 +170,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*v = 0;
 		pseudo = buffer;
 		do{
-			printf("******\n");
+			//printf("******\n");
 			pseudo_ = strtold(n1, NULL);
 			sprintf(buffer, format, pseudo_);
 			if((eq = equal(n1, pseudo)) > 0){
@@ -227,6 +227,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		//exit(0);
 		rebut = pseudo;
 		do{
+			//printf("*******\n");
 			mod = modulo(len,"2", 0);
 			plen = soustraction(len, mod);
 			free(len);
@@ -274,7 +275,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(pseudo);
 		if(neg == 1){
 			//printf("******\n");
-			printf("*********************************************\n");
+			//printf("*********************************************\n");
 			n1_ = division("1", rebut, virgule, approximation);
 			//printf("==>%s::%s::%i\n", n1_, rebut, neg);
 			free(rebut);
@@ -283,7 +284,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				return rebut;
 		}
 	}else{
-		printf("====+++====\n");
+		//printf("====+++====\n");
 		if(equal(n2,"0") < 0){
 			n2_ = multiplication(n2,"-1");
 			free(n2);
@@ -390,8 +391,8 @@ void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigne
 	LOG(log10l, "le logarithme en base 10");
 }
 void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
-	char exp_[66];
-	memset(exp_, 0, 66);
-	sprintf(exp_, "%Lf\n", expl(1));
-	return puissance(exp_, num, internal_buflen, format, virgule, approximation);
+	char exp[66];
+	memset(exp, 0, 66);
+	sprintf(exp, "%.62Lf\n", expl(1));
+	return puissance(exp, num, internal_buflen, format, virgule, approximation);
 }
