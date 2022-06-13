@@ -398,6 +398,8 @@ void *exponentiel(void *num,unsigned long int internal_buflen, char *format, uns
 	if(E_dot >= 0){
 		dot = strchr(exp,'.');
 		*(dot+1+E_dot) = 0;
+		if(E_dot == 0)
+			*dot = 0;
 	}
 	return puissance(exp, num, internal_buflen, format, virgule, approximation);
 }
