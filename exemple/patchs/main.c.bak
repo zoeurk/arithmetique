@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include "../arithmetique/arithmetique.h"
 #include "../operation/operation.h"
 /*BUFFER > 1*/
 //const unsigned long int BUFFER = 56;
