@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <math.h>
+#include <math.h>
 #include "../operation/operation.h"
 #include "../arithmetique/arithmetique.h"
 /*BUFFER > 1*/
@@ -120,8 +120,14 @@ int main(int argc, char **argv){
 		free(r);
 		free(check);
 	}
+
+	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]), 1);
+	if(r){
+		printf("%s^%s  = %s\n", argv[1], argv[2], r);
+		free(r);
+	}
+	#ifdef _MATH_H
 	printf("\t\tTrigonometrie:\n");
-#ifdef _MATH_H
 	r = cosinus(argv[1], format, sz,0, 0, atoi(argv[3]), 0);
 	if(r){
 		printf("le cosinus de \'%s\':%s\n", argv[1],r);
@@ -152,14 +158,7 @@ int main(int argc, char **argv){
 		printf("la tangente de \'%s\':%s\n", argv[2], r);
 		free(r);
 	}
-#endif
 	printf("\t\t\t===\n");
-	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]), 1);
-	if(r){
-		printf("%s^%s  = %s\n", argv[1], argv[2], r);
-		free(r);
-	}
-#ifdef _MATH_H
 	r = log_n(argv[1], sz, format,atoi(argv[3]), 1);
 	if(r){
 		printf("Logarithme Neperien de '%s': %s\n", argv[1], r);
@@ -190,7 +189,7 @@ int main(int argc, char **argv){
 		printf("Exponentiel '%s': %s\n", argv[2], r);
 		free(r);
 	}
-#endif
+	#endif
 	free(format);
 	return 0;
 }

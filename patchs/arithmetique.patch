@@ -1,0 +1,9 @@
+--- arithmetique.c	2022-06-13 22:06:10.675167027 +0200
++++ arithmetique.c	2022-06-13 22:11:18.463852186 +0200
+@@ -1,6 +1,5 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <math.h>
+ #include <string.h>
+ #include "../operation/operation.h"
+ #include "arithmetique.h"

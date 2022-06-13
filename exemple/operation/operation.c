@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "operation.h"
+
 
 #define DOT_INIT \
 	dot1 = strchr(n1, '.'); \
@@ -1369,7 +1371,7 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 	if(zero_)
 		free(zero_);
 	if(neg1){
-		if(equal(reste,"0") != 0){
+		if(equal(reste, "0") != 0){
 			temp = allocation((void **)&temp,strlen(reste)+1, sizeof(char));
 			*temp = '-';
 			strcpy(&temp[1], reste);
@@ -1505,3 +1507,115 @@ char *racine_carree(void *num1, unsigned long int virgule, int approximation){
 		presult[strlen(presult)-1] = 0;
 	return presult;
 }
+#ifndef _MATH_H
+
+void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
+	struct elements *el, *pel, *pnext;
+	char *n1 = multiplication(num1,"1"),
+		*n2 = multiplication(num2,"1"),
+		buffer[internal_buflen], *v, 
+		*n1_ = n1, *n2_ = n2,
+		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
+	char *rebut =  NULL, *prebut;
+	int neg = 0;
+	long double ld = 1;
+	memset(buffer, 0, internal_buflen);
+	if(equal(num2, "0") == 0){
+		free(n1);
+		free(n2);
+		free(i);
+		n1 = multiplication("1","1");
+		return n1;
+	}
+	if(equal(num2,"0") < 0){
+		neg = 1;
+		free(n2);
+		n2 = multiplication(num2, "-1");
+	}
+	if((v = strchr(n2, '.')) != NULL){
+		//if(equal(n1, "0") < 0){
+			//neg = 1;
+			//n1_ = multiplication(n1, "-1");
+			//free(n1);
+			//n1 = n1_;
+		//}
+		fprintf(stderr,"WARNING: Puissance non scalaire impossible.\n");
+		free(n1);
+		free(n2);
+		return NULL;
+	}else{
+		//printf("====+++====\n");
+		if(equal(n2,"0") < 0){
+			n2_ = multiplication(n2,"-1");
+			free(n2);
+			n2 = n2_;
+		}
+		while(equal(n2,"1") != 0){
+			ELEMENTS("1");
+			do{
+				mod = modulo(len,"2", 0);
+				plen = soustraction(len, mod);
+				free(len);
+				len = plen;
+				plen = division(len,"2", 0, 0);
+				free(len);
+				pplen = multiplication(plen, "1");
+				len = plen;
+				ld = strtold(el->value, NULL);
+				if(ld * ld == INFINITY){
+					val = multiplication(el->value,el->value);
+				}else{
+					ld *= ld;
+					snprintf(buffer,internal_buflen, format, ld);
+					val = multiplication(buffer, "1");
+				}
+				for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+					free(pel->value);
+					pel->value = multiplication(val, "1");
+					pel = pel->next;
+				}
+				free(len);
+				free(val);
+				if(equal(mod,"1") == 0){
+					if(rebut == NULL){
+						rebut = multiplication(pel->value, "1");
+					}else{
+						prebut = multiplication(rebut, pel->value);
+						free(rebut);
+						rebut = prebut;
+					}
+				}
+				if(pel && pel->prev)
+					pel->prev->next = NULL;
+				while(pel){
+					pnext = pel->next;
+					free(pel->value);
+					free(pel);
+					pel = pnext;
+				}
+				len = pplen;
+				free(mod);
+			}while(equal(pplen,"0") != 0);
+			free(n1);
+			free(n2);
+			free(i);
+			free(pplen);
+			if(neg){
+				//n1_ = division("1", rebut, virgule, approximation);
+				//free(rebut);
+				return rebut;
+			}else return rebut;
+		}
+	}
+	if(i != NULL)
+		free(i);
+	if(n2_)
+		free(n2_);
+	if(neg){
+		rebut = division("1", n1_, virgule, approximation);
+		free(n1_);
+		n1_ = rebut;
+	}
+	return n1_;
+}
+#endif
