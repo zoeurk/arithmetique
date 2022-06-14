@@ -4,7 +4,6 @@
 #include <math.h>
 #include "operation.h"
 
-
 #define DOT_INIT \
 	dot1 = strchr(n1, '.'); \
 	dot2 = strchr(n2, '.'); \
@@ -1508,8 +1507,284 @@ char *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	return presult;
 }
 #ifndef _MATH_H
-
 void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
+	struct elements *el, *pel, *pnext;
+	char *n1 = multiplication(num1,"1"),
+		*n2 = multiplication(num2,"1"),
+		buffer[internal_buflen], *v, 
+		*n1_ = n1, *n2_ = n2,
+		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
+	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
+	long double pseudo_, ld = 1;
+	int eq, set = 0, neg = 0, z = 0;
+	memset(buffer, 0, internal_buflen);
+	if(equal(num2, "0") == 0){
+		free(n1);
+		free(n2);
+		free(i);
+		n1 = multiplication("1","1");
+		return n1;
+	}
+	if(equal(num2,"0") < 0){
+		neg = 1;
+		free(n2);
+		n2 = multiplication(num2, "-1");
+	}
+	if((v = strchr(n2, '.')) != NULL){
+		fprintf(stderr, "Puissance non scalaire rejete dans ce mode\n");
+		exit(EXIT_FAILURE);
+		//if(equal(n1, "0") < 0){
+			//neg = 1;
+			//n1_ = multiplication(n1, "-1");
+			//free(n1);
+			//n1 = n1_;
+		//}
+		/*if(equal(n1, "0") < 0 && strchr(num2,'.')){
+			free(n1);
+			free(n2);
+			free(i);
+			if((n1 = calloc(5,sizeof(char))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			strcpy(n1, "-nan");
+			return n1;
+		}*/
+		/*if((v_ = calloc(strlen(n2)+2,sizeof(char))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		strcpy(v_+1, v);
+		*v_ = '0';
+		*v = 0;
+		pseudo = buffer;
+		do{
+			pseudo_ = strtold(n1, NULL);
+			sprintf(buffer, format, pseudo_);
+			if((eq = equal(n1, pseudo)) > 0){
+				n1_ = racine_carree(n1, virgule,approximation);
+				free(n1);
+				n1 = n1_;
+				i_ = addition(i, "1");
+				free(i);
+				i = i_;
+			}
+		}while(eq > 0);*/
+		/*if(equal(num2, "0") < 0){
+			printf("ok\n");
+			exit(0);
+		}*/
+		/*pdot_ = strchr(format,'.');
+		if((dot_ = calloc(strlen(format), sizeof(char))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}*/
+		/*strcpy(dot_, pdot_+1);
+		pdot_ = strchr(dot_, 'L');
+		*pdot_ = 0;
+		if((p = strchr(v_,'.')) != NULL && strlen(p+1) > strtoul(dot_, NULL,10)){
+			fprintf(stderr,"Warning `%s`:\n\tTrop de chiffre apres la virgule.\n\tUtilisation de la valeur: ", v_);
+			fprintf(stderr, format, strtold(v_, NULL));
+			fprintf(stderr,"\n");
+		}
+		free(dot_);
+		pseudo_ = powl(strtold(n1_, NULL), strtold(v_, NULL));
+		snprintf(buffer, internal_buflen,format, pseudo_);
+		if(buffer[internal_buflen-1] != 0){
+			fprintf(stderr, "buffer interne trop court (internal_buflen\n");
+			exit(EXIT_FAILURE);
+		}
+		if(equal(i,"0") != 0){
+			while(equal(i,"0") != 0){
+				if(set == 0){ 
+					pseudo = multiplication(buffer, buffer);
+					set = 1;
+				}else{
+					p = pseudo;
+					pseudo = multiplication(p, buffer);
+					free(p);
+				}
+				i_ = soustraction(i, "1");
+				free(i);
+				i = i_;
+			}
+		}else pseudo = multiplication(buffer,"1");
+		free(n1_);*/
+		ELEMENTS("0");
+		//printf("%s\n", len);
+		//exit(0);
+		rebut = pseudo;
+		do{
+			mod = modulo(len,"2", 0);
+			plen = soustraction(len, mod);
+			free(len);
+			len = plen;
+			plen = division(len,"2", 0, 0);
+			free(len);
+			pplen = multiplication(plen, "1");
+			len = plen;
+			if(equal(buffer,el->value) != 0)
+			/*if(ld * ld == INFINITY)*/{
+				val = multiplication(el->value,el->value);
+			}else{
+				ld *= ld;
+				snprintf(buffer,internal_buflen, format, ld);
+				val = multiplication(buffer, "1");
+			}
+			/*if(el)
+				ld = strtold(el->value, NULL);
+			if(ld * ld == INFINITY){
+				val = multiplication(el->value,el->value);
+			}else{
+				ld *= ld;
+				snprintf(buffer,internal_buflen, format, ld);
+				val = multiplication(buffer, "1");
+			}*/
+			//printf("****************\n");
+			if(el){
+				//val = multiplication(el->value,el->value);
+				ld = strtold(el->value, NULL);
+				if(ld * ld == INFINITY){
+					val = multiplication(el->value,el->value);
+				}else{
+					ld *= ld;
+					sprintf(buffer, format, ld);
+					if(buffer[internal_buflen-1] != 0){
+						fprintf(stderr,"Tampon interne trop court (internal_buflen)\n");
+					}
+					val = multiplication(buffer, "1");
+				}
+			}
+			for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+				free(pel->value);
+				pel->value = multiplication(val, "1");
+				pel = pel->next;
+			}
+			free(len);
+			free(val);
+			if(equal(mod,"1") == 0){
+				if(rebut == NULL){
+					rebut = multiplication(pel->value, "1");
+				}else{
+					prebut = multiplication(rebut, pel->value);
+					free(rebut);
+					rebut = prebut;
+				}
+			}
+			if(pel && pel->prev)
+				pel->prev->next = NULL;
+			while(pel){
+				pnext = pel->next;
+				free(pel->value);
+				free(pel);
+				pel = pnext;
+			}
+			len = pplen;
+			free(mod);
+		}while(equal(pplen,"0") != 0);
+		free(pplen);
+		free(n2);
+		pseudo = NULL;
+		free(v_);
+		free(i);
+		i = NULL;
+		if(pseudo)
+			free(pseudo);
+		if(neg == 1){
+			//printf("******\n");
+			//printf("*********************************************\n");
+			n1_ = division("1", rebut, virgule, approximation);
+			//printf("==>%s::%s::%i\n", n1_, rebut, neg);
+			free(rebut);
+			return n1_;
+		}else{ 
+				return rebut;
+		}
+	}else{
+		//printf("====+++====\n");
+		if(equal(n2,"0") < 0){
+			n2_ = multiplication(n2,"-1");
+			free(n2);
+			n2 = n2_;
+		}
+		while(equal(n2,"1") != 0){
+			ELEMENTS("1");
+			int z = 0;
+			do{
+			//printf("====>%s\n", n2);
+				mod = modulo(len,"2", 0);
+				plen = soustraction(len, mod);
+				free(len);
+				len = plen;
+				plen = division(len,"2", 0, 0);
+				free(len);
+				pplen = multiplication(plen, "1");
+				len = plen;
+				ld = strtold(el->value, NULL);
+				snprintf(buffer,internal_buflen,format,ld);
+				if(buffer[internal_buflen-1] != 0){
+					fprintf(stderr, "Tampon trop petit (internal_buflen)\n");
+					exit(EXIT_FAILURE);
+				}
+				z++;
+				if(equal(buffer,el->value) != 0)
+				/*if(ld * ld == INFINITY)*/{
+					val = multiplication(el->value,el->value);
+				}else{
+					ld *= ld;
+					snprintf(buffer,internal_buflen, format, ld);
+					val = multiplication(buffer, "1");
+				}
+				for(pel = el, len = len, plen = NULL;equal(len, "0") != 0;plen = soustraction(len,"1"), free(len), len = plen){
+					free(pel->value);
+					pel->value = multiplication(val, "1");
+					pel = pel->next;
+				}
+				free(len);
+				free(val);
+				if(equal(mod,"1") == 0){
+					if(rebut == NULL){
+						rebut = multiplication(pel->value, "1");
+					}else{
+						prebut = multiplication(rebut, pel->value);
+						free(rebut);
+						rebut = prebut;
+					}
+				}
+				if(pel && pel->prev)
+					pel->prev->next = NULL;
+				while(pel){
+					pnext = pel->next;
+					free(pel->value);
+					free(pel);
+					pel = pnext;
+				}
+				len = pplen;
+				free(mod);
+			}while(equal(pplen,"0") != 0);
+			free(n1);
+			free(n2);
+			free(i);
+			free(pplen);
+			if(neg){
+				n1_ = division("1", rebut, virgule, approximation);
+				free(rebut);
+				return n1_;
+			}else return rebut;
+		}
+	}
+	if(i != NULL)
+		free(i);
+	if(n2_)
+		free(n2_);
+	if(neg){
+		rebut = division("1", n1_, virgule, approximation);
+		free(n1_);
+		n1_ = rebut;
+	}
+	return n1_;
+}
+/*void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	struct elements *el, *pel, *pnext;
 	char *n1 = multiplication(num1,"1"),
 		*n2 = multiplication(num2,"1"),
@@ -1617,5 +1892,5 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		n1_ = rebut;
 	}
 	return n1_;
-}
+}*/
 #endif
