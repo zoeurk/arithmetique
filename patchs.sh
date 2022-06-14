@@ -4,13 +4,13 @@ then
 	for P in $(ls patchs/*.patch)
 	do
 		FILE=`echo $P | sed -e 's#^.*/\(.*\)\.patch#\1/\1.c#' -e 's/^/exemple\//'`
-		patch -i $P $FILE
+		echo "patch -i $P $FILE"
 	done
 elif [ "$1" = "R" ]
 then
 	for P in $(ls patchs/*.patch)
 	do
 		FILE=`echo $P | sed -e 's#^.*/\(.*\)\.patch#\1/\1.c#' -e 's/^/exemple\//'`
-		patch -R -i $P $FILE
+		echo "patch -R -i $P $FILE"
 	done
 fi
