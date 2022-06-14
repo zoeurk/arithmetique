@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <math.h>
 #include "../operation/operation.h"
 #include "arithmetique.h"
 
@@ -9,7 +10,7 @@
 #define INTERNAL_BUFLEN \
 	if(buffer[internal_buflen-1] != 0){\
 		fprintf(stderr, "Tampon (internal_buflen) interne trop petit\n");\
-		exit(0);\
+		exit(EXIT_FAILURE);\
 	}
 	
 #define TRIGO(fn) \
@@ -58,7 +59,7 @@
 	snprintf(buffer,  internal_buflen,format, val);\
 	if(buffer[internal_buflen-1] != 0){\
 		fprintf(stderr, "Tampon interne trop petit (internal_buflen)\n");\
-		exit(0);\
+		exit(EXIT_FAILURE);\
 	}\
 	free(t);\
 	t = multiplication(buffer,"1");\
@@ -109,8 +110,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*n1_ = n1, *n2_ = n2,
 		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
-	long double pseudo_, ld = 0;
-	int eq, set = 0, neg = 0;
+	long double pseudo_, ld = 1;
+	int eq, set = 0, neg = 0, z = 0;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
 		free(n1);
@@ -151,7 +152,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*v = 0;
 		pseudo = buffer;
 		do{
-			//printf("******\n");
 			pseudo_ = strtold(n1, NULL);
 			sprintf(buffer, format, pseudo_);
 			if((eq = equal(n1, pseudo)) > 0){
@@ -182,9 +182,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}
 		free(dot_);
 		pseudo_ = powl(strtold(n1_, NULL), strtold(v_, NULL));
-		sprintf(buffer, format, pseudo_);
+		snprintf(buffer, internal_buflen,format, pseudo_);
 		if(buffer[internal_buflen-1] != 0){
-			fprintf(stderr, "buffer interne trop court\n");
+			fprintf(stderr, "buffer interne trop court (internal_buflen\n");
 			exit(EXIT_FAILURE);
 		}
 		if(equal(i,"0") != 0){
@@ -208,7 +208,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		//exit(0);
 		rebut = pseudo;
 		do{
-			//printf("*******\n");
 			mod = modulo(len,"2", 0);
 			plen = soustraction(len, mod);
 			free(len);
@@ -234,7 +233,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 					val = multiplication(el->value,el->value);
 				}else{
 					ld *= ld;
-					snprintf(buffer,internal_buflen, format, ld);
+					sprintf(buffer, format, ld);
+					if(buffer[internal_buflen-1] != 0){
+						fprintf(stderr,"Tampon interne trop court (internal_buflen)\n");
+					}
 					val = multiplication(buffer, "1");
 				}
 			}
@@ -292,7 +294,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}
 		while(equal(n2,"1") != 0){
 			ELEMENTS("1");
+			int z = 0;
 			do{
+			//printf("====>%s\n", n2);
 				mod = modulo(len,"2", 0);
 				plen = soustraction(len, mod);
 				free(len);
@@ -302,7 +306,14 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				pplen = multiplication(plen, "1");
 				len = plen;
 				ld = strtold(el->value, NULL);
-				if(ld * ld == INFINITY){
+				snprintf(buffer,internal_buflen,format,ld);
+				if(buffer[internal_buflen-1] != 0){
+					fprintf(stderr, "Tampon trop petit (internal_buflen)\n");
+					exit(EXIT_FAILURE);
+				}
+				z++;
+				if(equal(buffer,el->value) != 0)
+				/*if(ld * ld == INFINITY)*/{
 					val = multiplication(el->value,el->value);
 				}else{
 					ld *= ld;
@@ -341,9 +352,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(i);
 			free(pplen);
 			if(neg){
-				//n1_ = division("1", rebut, virgule, approximation);
-				//free(rebut);
-				return rebut;
+				n1_ = division("1", rebut, virgule, approximation);
+				free(rebut);
+				return n1_;
 			}else return rebut;
 		}
 	}
