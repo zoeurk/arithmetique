@@ -429,7 +429,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			}
 		}else pseudo = multiplication(buffer,"1");
 		free(n1_);
-		ELEMENTS("0", soustraction);
+		ELEMENTS("0");
 		//printf("%s\n", len);
 		//exit(0);
 		rebut = pseudo;
@@ -491,7 +491,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			n2 = n2_;
 		}
 		while(equal(n2,"1") != 0){
-			ELEMENTS("1", addition);
+			ELEMENTS("1");
 			do{
 					mod = modulo(len,"2", 0);
 	plen = soustraction(len, mod);
