@@ -1,5 +1,5 @@
---- arithmetique.c	2022-06-14 14:59:23.031042867 +0200
-+++ arithmetique.c	2022-06-14 15:00:39.456178498 +0200
+--- patchs/arithmetique.c	2022-06-14 18:42:57.238397359 +0200
++++ patchs/arithmetique.c.bak	2022-06-14 18:43:43.986433372 +0200
 @@ -1,8 +1,6 @@
  #include <stdio.h>
  #include <stdlib.h>
