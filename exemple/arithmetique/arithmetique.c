@@ -227,9 +227,17 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			}*/
 			//printf("****************\n");
 			if(el){
+				ld = strtold(el->value, NULL);
+				ld = ld*ld;
+				snprintf(buffer,internal_buflen,format,ld);
+				if(buffer[internal_buflen-1] != 0){
+					fprintf(stderr, "Tampon trop petit (internal_buflen)\n");
+					exit(EXIT_FAILURE);
+				}
 				//val = multiplication(el->value,el->value);
 				ld = strtold(el->value, NULL);
-				if(ld * ld == INFINITY){
+				if(equal(buffer,el->value) != 0){
+				//(ld * ld == INFINITY){
 					val = multiplication(el->value,el->value);
 				}else{
 					ld *= ld;
