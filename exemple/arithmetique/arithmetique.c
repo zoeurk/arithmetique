@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <math.h>
 #include "../operation/operation.h"
 #include "arithmetique.h"
 
@@ -111,7 +110,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
 	long double pseudo_, ld = 1;
-	int eq, set = 0, neg = 0;
+	int eq, set = 0, neg = 0, z = 0;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
 		free(n1);
@@ -313,16 +312,18 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				free(len);
 				pplen = multiplication(plen, "1");
 				len = plen;
-				ld = strtold(el->value, NULL);
-				ld = ld*ld;
-				snprintf(buffer,internal_buflen,format,ld);
-				if(buffer[internal_buflen-1] != 0){
-					fprintf(stderr, "Tampon trop petit (internal_buflen)\n");
-					exit(EXIT_FAILURE);
+				if(z == 0){
+					ld = strtold(el->value, NULL);
+					ld = ld*ld;
+					snprintf(buffer,internal_buflen,format,ld);
+					if(buffer[internal_buflen-1] != 0){
+						fprintf(stderr, "Tampon trop petit (internal_buflen)\n");
+						exit(EXIT_FAILURE);
+					}
 				}
-				z++;
-				if(equal(buffer,el->value) != 0)
+				if(z || equal(buffer,el->value) != 0)
 				/*if(ld * ld == INFINITY)*/{
+					z = 1;
 					val = multiplication(el->value,el->value);
 				}else{
 					snprintf(buffer,internal_buflen, format, ld);
