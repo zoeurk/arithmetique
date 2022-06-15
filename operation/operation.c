@@ -1531,7 +1531,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		n2 = multiplication(num2, "-1");
 	}
 	if((v = strchr(n2, '.')) != NULL){
-		fprintf(stderr, "Puissance non scalaire rejete dans ce mode\n");
+		fprintf(stderr, "Puissance non scalaire rejete dans ce mode (librairie compilee sans la librairie math.h\n");
 		exit(EXIT_FAILURE);
 		//if(equal(n1, "0") < 0){
 			//neg = 1;
