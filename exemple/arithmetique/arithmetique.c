@@ -110,7 +110,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*i = multiplication("1","0"), *mod, *len, *plen, *pplen, *val = NULL;
 	char *i_, *v_, *pseudo = NULL, *p, *dot_, *pdot_, *rebut =  NULL, *prebut;
 	long double pseudo_, ld = 1;
-	int eq, set = 0, neg = 0, z = 0;
+	int eq, set = 0, neg = 0;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
 		free(n1);
@@ -203,8 +203,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}else pseudo = multiplication(buffer,"1");
 		free(n1_);
 		ELEMENTS("0");
-		//printf("%s\n", len);
-		//exit(0);
 		rebut = pseudo;
 		do{
 			mod = modulo(len,"2", 0);
@@ -215,16 +213,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(len);
 			pplen = multiplication(plen, "1");
 			len = plen;
-			/*if(el)
-				ld = strtold(el->value, NULL);
-			if(ld * ld == INFINITY){
-				val = multiplication(el->value,el->value);
-			}else{
-				ld *= ld;
-				snprintf(buffer,internal_buflen, format, ld);
-				val = multiplication(buffer, "1");
-			}*/
-			//printf("****************\n");
 			if(el){
 				ld = strtold(el->value, NULL);
 				ld = ld*ld;
@@ -237,8 +225,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				ld = strtold(el->value, NULL);
 				if(equal(buffer,el->value) != 0){
 				//(ld * ld == INFINITY){
-					val = carre(el->value);
+					val = multiplication(el->value,el->value);
 				}else{
+					//printf("******\n");
 					ld *= ld;
 					sprintf(buffer, format, ld);
 					if(buffer[internal_buflen-1] != 0){
@@ -301,9 +290,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}
 		while(equal(n2,"1") != 0){
 			ELEMENTS("1");
-			int z = 0;
+			//int z = 0;
 			do{
-			//printf("====>%s\n", n2);
+				//printf("====>%s\n", n2);
 				mod = modulo(len,"2", 0);
 				plen = soustraction(len, mod);
 				free(len);
@@ -312,20 +301,17 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				free(len);
 				pplen = multiplication(plen, "1");
 				len = plen;
-				if(z == 0){
-					ld = strtold(el->value, NULL);
-					ld = ld*ld;
-					snprintf(buffer,internal_buflen,format,ld);
-					if(buffer[internal_buflen-1] != 0){
-						fprintf(stderr, "Tampon trop petit (internal_buflen)\n");
-						exit(EXIT_FAILURE);
-					}
+				ld = strtold(el->value, NULL);
+				//ld = ld*ld;
+				snprintf(buffer,internal_buflen,format,ld);
+				if(buffer[internal_buflen-1] != 0){
+					fprintf(stderr, "Tampon trop petit (internal_buflen)\n");
+					exit(EXIT_FAILURE);
 				}
-				if(z || equal(buffer,el->value) != 0)
-				/*if(ld * ld == INFINITY)*/{
-					z = 1;
+				if(equal(buffer,el->value) != 0){
 					val = multiplication(el->value,el->value);
 				}else{
+					ld *= ld;
 					snprintf(buffer,internal_buflen, format, ld);
 					if(buffer[internal_buflen-1] != 0){
 						fprintf(stderr, "Tampon trop petit (internal_buflen)\n");
