@@ -237,7 +237,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				ld = strtold(el->value, NULL);
 				if(equal(buffer,el->value) != 0){
 				//(ld * ld == INFINITY){
-					val = multiplication(el->value,el->value);
+					val = carre(el->value);
 				}else{
 					ld *= ld;
 					sprintf(buffer, format, ld);
