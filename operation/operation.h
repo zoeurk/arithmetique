@@ -35,7 +35,7 @@ void *soustraction(void *num1, void *num2);
 void *multiplication(void *num1, void *num2);
 void *division(void *num1, void *num2, unsigned long int virgule, int approximation);
 void *modulo(void *num1, void *num2, unsigned long int virgule);
-char *racine_carree(void *num1, unsigned long int virgule, int approximation);
+void *racine_carree(void *num1, unsigned long int virgule, int approximation);
 #ifndef _MATH_H
 
 # if __GNUC_PREREQ (3, 3)
