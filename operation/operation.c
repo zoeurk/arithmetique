@@ -111,7 +111,6 @@ int equal(void *num1, void *num2){
 		neg1 = 0, neg2 = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
 				val1_len = 0, val2_len = 0, ii;
-	//long long ii = 0;
 	/*printf("******\n");
 	exit(0);*/
 	for(val1 = n1; *val1 == '-' || *val1 == '+'; val1++)
@@ -467,7 +466,6 @@ void *soustraction(void *num1, void *num2){
 	unsigned long int dot1_len = 0, dot2_len = 0,
 				val1_len = 0, val2_len = 0,
 				buflen = 0, z = 1;
-	long long int ii = 0, ij = 0;
 	unsigned long int ii_ = 0, ij_ =0;
 	NEG;
 	if(neg1 || neg2){
@@ -480,8 +478,8 @@ void *soustraction(void *num1, void *num2){
 					perror("realloc()");
 					exit(0);
 				}
-				for(pbuf = &buffer[strlen(buffer)+1], ii_ = ii = strlen(buffer); buffer != pbuf; pbuf--, ii--, ii_--)
-					*pbuf = buffer[ii];
+				for(pbuf = &buffer[strlen(buffer)+1], ii_ = strlen(buffer); buffer != pbuf; pbuf--, ii_--)
+					*pbuf = buffer[ii_];
 				*buffer = '-';
 				return buffer;
 			}else{
@@ -520,17 +518,17 @@ void *soustraction(void *num1, void *num2){
 	if(dot2 != NULL && dot2_len == 0)
 		val2_len--;
 	if(dot1_len > dot2_len){
-		for(ii = (long long int)dot1_len, ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii--, ii_--){
+		for(ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii_--){
 			if(buflen + 1 >= BUFFER){
 				z++;
 				buflen = 0;
 				pbuf = reallocation((void **)&buffer,z*BUFFER);
 			}
-			sprintf(pbuf, "%c", dot1[ii-1]);
+			sprintf(pbuf, "%c", dot1[ii_-1]);
 			pbuf++;
 			buflen++;
 		}
-		for(ii = ii, ii_ = ii_, ij = dot2_len, ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii--, ii_--, ij--, ij_--){
+		for(ii_ = ii_, ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii_--, ij_--){
 			v1[0] = dot1[ii_-1];
 			v2[0] = dot2[ij_-1];
 			v1[0] = atoi(v1);
@@ -553,7 +551,7 @@ void *soustraction(void *num1, void *num2){
 		}
 	}
 	if(dot2_len > dot1_len){
-		for(ii = dot2_len, ii_ = dot2_len; ii_ > 0 && ii_ != dot1_len; ii--, ii_--){
+		for(ii_ = dot2_len; ii_ > 0 && ii_ != dot1_len; ii_--){
 			v1[0] = dot2[ii_-1];
 			v1[0] = atoi(v1);
 			if(v1[0] - retenue > 0){
@@ -572,7 +570,7 @@ void *soustraction(void *num1, void *num2){
 			pbuf++;
 			buflen++;
 		}
-		for(ii = ii, ii_ = ii_, ij = dot1_len, ij_ = dot1_len; ii_ > 0 && ij_ > 0; ii--, ij--, ii_--, ij_--){
+		for(ii_ = ii_, ij_ = dot1_len; ii_ > 0 && ij_ > 0; ii_--, ij_--){
 			v1[0] = dot1[ii_-1];
 			v2[0] = dot2[ij_-1];
 			v1[0] = atoi(v1);
@@ -595,7 +593,7 @@ void *soustraction(void *num1, void *num2){
 		}
 	}else{
 		if(dot1_len == dot2_len){
-			for(ii = dot1_len, ii_ = dot1_len; ii_ > 0 && ii_ != dot2_len; ii--, ii_--){
+			for(ii_ = dot1_len; ii_ > 0 && ii_ != dot2_len; ii_--){
 				v1[0] = dot1[ii_-1];
 				v1[0] = atoi(v1);
 				if(v1[0] - retenue >= 0){
@@ -612,9 +610,9 @@ void *soustraction(void *num1, void *num2){
 				pbuf++;
 				buflen++;
 			}
-			for(ii = ii, ii_ = ii_ , ij = dot2_len, ij_ = dot2_len; ii > 0 && ij > 0; ii--, ij--, ii_--, ij_--){
-				v1[0] = dot1[ii-1];
-				v2[0] = dot2[ij-1];
+			for(ii_ = ii_ , ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii_--, ij_--){
+				v1[0] = dot1[ii_-1];
+				v2[0] = dot2[ij_-1];
 				v1[0] = atoi(v1);
 				v2[0] = atoi(v2);
 				if(v1[0] - retenue >= v2[0]){
@@ -645,9 +643,9 @@ void *soustraction(void *num1, void *num2){
 		pbuf++;
 		buflen++;
 	}
-	for(ptr1 = val1, ptr2 = val2, ii_ = ii = val1_len - (neg1 == 1), ij_ = ij = val2_len - (dot2_len > 0);
+	for(ptr1 = val1, ptr2 = val2, ii_ = val1_len - (neg1 == 1), ij_ = val2_len - (dot2_len > 0);
 		ii_ > 0 && ij_ > 0;
-		ii--, ij--, ii_--, ij_--, ptr1--, ptr2--
+		ii_--, ij_--, ptr1--, ptr2--
 	){
 		v1[0] = *ptr1;
 		v2[0] = *ptr2 ;
@@ -669,7 +667,7 @@ void *soustraction(void *num1, void *num2){
 		pbuf++;
 		buflen++;
 	}
-	for(ii = ii, ii_ = ii_; ii_ > 0; ii--, ii_--, ptr1--){
+	for(ii_ = ii_; ii_ > 0; ii_--, ptr1--){
 		if((ptr1 +1) == n1)break;
 		v1[0] = *ptr1;
 		v1[0] = atoi(v1);
@@ -691,7 +689,7 @@ void *soustraction(void *num1, void *num2){
 		pbuf++;
 		buflen++;
 	}
-	for(ij = ij-1, ptr2 = ptr2, ij_ = ij_-1; ij_ > 0 && ij_ != ~(unsigned long int)0; ij--,ij_--, ptr2++){
+	for(ptr2 = ptr2, ij_ = ij_-1; ij_ > 0 && ij_ != ~(unsigned long int)0; ij_--, ptr2++){
 		v2[0] = *ptr2;
 		v2[0] = atoi(v2);
 		if(v2[0] - retenue < 0){
