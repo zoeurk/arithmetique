@@ -110,8 +110,8 @@ int equal(void *num1, void *num2){
 		v1[2] = { 0, 0 }, v2[2] = { 0, 0 },
 		neg1 = 0, neg2 = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
-				val1_len = 0, val2_len = 0;
-	long long ii = 0;
+				val1_len = 0, val2_len = 0, ii;
+	//long long ii = 0;
 	/*printf("******\n");
 	exit(0);*/
 	for(val1 = n1; *val1 == '-' || *val1 == '+'; val1++)
@@ -196,7 +196,7 @@ int equal(void *num1, void *num2){
 				return 1;
 			else	return -1;
 		}
-	for(val1 = val1, val2 = val2, ii = 0;ii < (long long int)val1_len; ii++, val1++, val2++){
+	for(val1 = val1, val2 = val2, ii = 0;ii < val1_len; ii++, val1++, val2++){
 		v1[0] = *val1;
 		v2[0] = *val2;
 		v1[0] = atoi(v1);
@@ -468,6 +468,7 @@ void *soustraction(void *num1, void *num2){
 				val1_len = 0, val2_len = 0,
 				buflen = 0, z = 1;
 	long long int ii = 0, ij = 0;
+	unsigned long int ii_ = 0, ij_ =0;
 	NEG;
 	if(neg1 || neg2){
 		if(neg1 && neg2){
@@ -479,7 +480,7 @@ void *soustraction(void *num1, void *num2){
 					perror("realloc()");
 					exit(0);
 				}
-				for(pbuf = &buffer[strlen(buffer)+1], ii = strlen(buffer); buffer != pbuf; pbuf--, ii--)
+				for(pbuf = &buffer[strlen(buffer)+1], ii_ = ii = strlen(buffer); buffer != pbuf; pbuf--, ii--, ii_--)
 					*pbuf = buffer[ii];
 				*buffer = '-';
 				return buffer;
@@ -519,7 +520,7 @@ void *soustraction(void *num1, void *num2){
 	if(dot2 != NULL && dot2_len == 0)
 		val2_len--;
 	if(dot1_len > dot2_len){
-		for(ii = (long long int)dot1_len; ii >= 0 && (unsigned long int)ii != dot2_len; ii--){
+		for(ii = (long long int)dot1_len, ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii--, ii_--){
 			if(buflen + 1 >= BUFFER){
 				z++;
 				buflen = 0;
@@ -529,9 +530,9 @@ void *soustraction(void *num1, void *num2){
 			pbuf++;
 			buflen++;
 		}
-		for(ii = ii, ij = dot2_len; ii > 0 && ij > 0; ii--, ij--){
-			v1[0] = dot1[ii-1];
-			v2[0] = dot2[ij-1];
+		for(ii = ii, ii_ = ii_, ij = dot2_len, ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii--, ii_--, ij--, ij_--){
+			v1[0] = dot1[ii_-1];
+			v2[0] = dot2[ij_-1];
 			v1[0] = atoi(v1);
 			v2[0] = atoi(v2);
 			if(v1[0] - retenue >= v2[0]){
@@ -552,8 +553,8 @@ void *soustraction(void *num1, void *num2){
 		}
 	}
 	if(dot2_len > dot1_len){
-		for(ii = dot2_len; ii > 0 && ii != (long long int)dot1_len; ii--){
-			v1[0] = dot2[ii-1];
+		for(ii = dot2_len, ii_ = dot2_len; ii_ > 0 && ii_ != dot1_len; ii--, ii_--){
+			v1[0] = dot2[ii_-1];
 			v1[0] = atoi(v1);
 			if(v1[0] - retenue > 0){
 				result = 10 - v1[0] - retenue;
@@ -571,9 +572,9 @@ void *soustraction(void *num1, void *num2){
 			pbuf++;
 			buflen++;
 		}
-		for(ii = ii, ij = dot1_len; ii > 0 && ij > 0; ii--, ij--){
-			v1[0] = dot1[ii-1];
-			v2[0] = dot2[ij-1];
+		for(ii = ii, ii_ = ii_, ij = dot1_len, ij_ = dot1_len; ii_ > 0 && ij_ > 0; ii--, ij--, ii_--, ij_--){
+			v1[0] = dot1[ii_-1];
+			v2[0] = dot2[ij_-1];
 			v1[0] = atoi(v1);
 			v2[0] = atoi(v2);
 			if(v1[0] - retenue >= v2[0]){
@@ -594,8 +595,8 @@ void *soustraction(void *num1, void *num2){
 		}
 	}else{
 		if(dot1_len == dot2_len){
-			for(ii = dot1_len; ii > 0 && (unsigned long int)ii != dot2_len; ii--){
-				v1[0] = dot1[ii-1];
+			for(ii = dot1_len, ii_ = dot1_len; ii_ > 0 && ii_ != dot2_len; ii--, ii_--){
+				v1[0] = dot1[ii_-1];
 				v1[0] = atoi(v1);
 				if(v1[0] - retenue >= 0){
 					result = 10 - v1[0] - retenue;
@@ -611,7 +612,7 @@ void *soustraction(void *num1, void *num2){
 				pbuf++;
 				buflen++;
 			}
-			for(ii = ii, ij = dot2_len; ii > 0 && ij > 0; ii--, ij--){
+			for(ii = ii, ii_ = ii_ , ij = dot2_len, ij_ = dot2_len; ii > 0 && ij > 0; ii--, ij--, ii_--, ij_--){
 				v1[0] = dot1[ii-1];
 				v2[0] = dot2[ij-1];
 				v1[0] = atoi(v1);
@@ -644,9 +645,9 @@ void *soustraction(void *num1, void *num2){
 		pbuf++;
 		buflen++;
 	}
-	for(ptr1 = val1, ptr2 = val2, ii = val1_len - (neg1 == 1), ij = val2_len - (dot2_len > 0);
-		ii > 0 && ij > 0;
-		ii--, ij--, ptr1--, ptr2--
+	for(ptr1 = val1, ptr2 = val2, ii_ = ii = val1_len - (neg1 == 1), ij_ = ij = val2_len - (dot2_len > 0);
+		ii_ > 0 && ij_ > 0;
+		ii--, ij--, ii_--, ij_--, ptr1--, ptr2--
 	){
 		v1[0] = *ptr1;
 		v2[0] = *ptr2 ;
@@ -668,7 +669,7 @@ void *soustraction(void *num1, void *num2){
 		pbuf++;
 		buflen++;
 	}
-	for(ii = ii; ii > 0; ii--, ptr1--){
+	for(ii = ii, ii_ = ii_; ii_ > 0; ii--, ii_--, ptr1--){
 		if((ptr1 +1) == n1)break;
 		v1[0] = *ptr1;
 		v1[0] = atoi(v1);
@@ -690,7 +691,7 @@ void *soustraction(void *num1, void *num2){
 		pbuf++;
 		buflen++;
 	}
-	for(ij = ij-1, ptr2 = ptr2; ij > 0; ij--, ptr2++){
+	for(ij = ij-1, ptr2 = ptr2, ij_ = ij_-1; ij_ > 0 && ij_ != ~(unsigned long int)0; ij--,ij_--, ptr2++){
 		v2[0] = *ptr2;
 		v2[0] = atoi(v2);
 		if(v2[0] - retenue < 0){
@@ -725,10 +726,13 @@ void *soustraction(void *num1, void *num2){
 		buflen++;
 	}
 	pbuf = buffer;
-	ij = strlen(pbuf);
-	pret = allocation((void **)&ret, ij, sizeof(char));
-	for(ii = ij-1, pret = pret; ii >= 0; ii--, pret++)
-		*pret = pbuf[ii];
+	ij_ = strlen(pbuf);
+	pret = allocation((void **)&ret, ij_, sizeof(char));
+	int stop = 0;
+	for(ii_ = ij_-1, pret = ret; stop == 0; ii_--, pret++){
+		*pret = pbuf[ii_];
+		stop = (ii_ == 0) ? 1 :0;
+	}
 	if(equal("0",ret) == 0){
 		strcpy(ret,"0");
 	}
@@ -748,7 +752,7 @@ void *multiplication(void *num1, void *num2){
 		retenue = 0, neg = 0, neg1 = 0, neg2 = 0, z = 0;
 	unsigned long int dot1_len = 0, dot2_len = 1, dot_len = 1,
 				buflen = 0, iz = 1, zero = 0;
-	long long int ii = 0, ij = 0,ii_ = 0,x = 0;
+	unsigned long int ii = 0, ij = 0,ii_ = 0,x = 0;
 	NEG;
 	NEG_TEST;
 	if(equal("0", n1) == 0 || equal("0", n2) == 0){
@@ -887,7 +891,7 @@ void *multiplication(void *num1, void *num2){
 	if(total && dot_len > 0){
 		if(strlen(total) < dot_len){
 			pbuf = allocation((void **)&buffer, dot_len +1, sizeof(char));
-			for(result = &buffer[dot_len +1], ii = strlen(total)-1;ii >= 0;result--,ii--)
+			for(result = &buffer[dot_len +1], ii = strlen(total)-1;ii != ~(unsigned long int)0;result--,ii--)
 				*result = total[ii];
 			for(result = result, ii = 0;(unsigned long int)ii < dot_len-strlen(total);ii++, result--)
 				*result = '0';
@@ -939,7 +943,7 @@ void *division(void *num1, void *num2, unsigned long int virgule, int approximat
 		*temp = NULL, *temp_ = NULL, t[2] = {0, 0}, *result = NULL, *pr, point = 0, *arrondi = NULL,
 		neg = 0, neg1 = 0, neg2 = 0;
 	unsigned long int buflen = 0, qbuf = 1, len = 0, virgule_ = 0, zero = 0, nreste = 0, qreste = 1;
-	long long int ii = 0;
+	unsigned long int ii = 0;
 	int x;
 	NEG;
 	NEG_TEST;
@@ -1038,7 +1042,7 @@ void *division(void *num1, void *num2, unsigned long int virgule, int approximat
 	*pr = *t;
 	pr++;
 	buflen++;
-	while(((unsigned long int)ii <= len || equal(reste,"0") != 0)){
+	while(ii <= len || equal(reste,"0") != 0){
 		temp = multiplication(reste, "10");
 		free(reste);
 		reste = temp;
@@ -1169,7 +1173,7 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 		*temp = NULL, *temp_ = NULL, t[2] = {0, 0}, point = 0, *pvirgule,
 		neg1 = 0, *dix, *pdix;
 	unsigned long int len = 0, virgule_ = 0, zero = 0, nreste = 0, qreste = 1;
-	long long int ii = 0;
+	unsigned long int ii = 0;
 	int x;
 	for(n1 = n1; *n1 == '-' || *n1 == '+'; n1++) 
 		if(*n1 == '-')
@@ -1296,11 +1300,11 @@ void *modulo(void *num1, void *num2, unsigned long int virgule){
 		free(temp);
 		free(temp_);
 	}
-	while(((unsigned long int)ii <= len)){
+	while(ii <= len){
 		temp = multiplication(reste, "10");
 		free(reste);
 		reste = temp;
-		if((unsigned long int)ii <= len){
+		if(ii <= len){
 			t[0] = dividende[ii];
 			t[1] = 0;
 			temp = addition(reste, t);
