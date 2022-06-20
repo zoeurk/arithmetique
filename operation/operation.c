@@ -256,7 +256,7 @@ void *addition(void *num1, void *num2){
 	unsigned long int dot1_len = 0, dot2_len = 0,
 				val1_len = 0, val2_len = 0,
 				buflen = 0, z = 1;
-	long long int ii = 0, ij = 0;
+	unsigned long int ii = 0, ij = 0;
 	NEG;
 	if(neg1 || neg2){
 		if(neg1 && neg2)
@@ -420,7 +420,7 @@ void *addition(void *num1, void *num2){
 	}
 	ij = strlen(buffer);
 	pret = allocation((void **)&ret, ij, sizeof(char));
-	for(ii = ij-1, pret = pret; ii >= 0; ii--, pret++)
+	for(ii = ij-1, pret = pret; ii != ~(unsigned long int)0; ii--, pret++)
 		*pret = buffer[ii];
 	free(buffer);
 	buffer = ret;
@@ -741,8 +741,8 @@ void *soustraction(void *num1, void *num2){
 	return ret;
 }
 void *multiplication(void *num1, void *num2){
-	char *n1 = num1, *n2 = num2,
-		*dot1, *dot2,
+	char *n1 = num1, *n2 = num2, *n1_ = NULL, *n2_ = NULL,
+		*dot1 = NULL, *dot2 = NULL, *pdot,
 		v1[2] = { 0, 0 }, v2[2] = { 0, 0 }, temp[3] = { 0, 0, 0},
 		*buffer = NULL,
 		*resultat = NULL, 
@@ -759,12 +759,37 @@ void *multiplication(void *num1, void *num2){
 		return resultat;
 	}
 	ZERO;
+	n1_ = allocation((void **)&n1_, strlen(n1), sizeof(char));
+	strcpy(n1_, n1);
+	n2_ = allocation((void **)&n2_, strlen(n2), sizeof(char));
+	strcpy(n2_, n2);
+	n1 = n1_;
+	n2 = n2_;
 	dot1 = strchr(n1, '.');
 	dot2 = strchr(n2, '.');
 	dot1_len = (dot1) ? strlen(dot1) -1: 0;
 	dot2_len = (dot2) ? strlen(dot2) -1: 0;
 	dot_len = dot1_len + dot2_len;
 	pbuf = allocation((void **)&resultat, BUFFER, sizeof(char));
+	if(dot1){
+		pdot = dot1;
+		while(1){
+			*pdot = *(pdot +1);
+			if(*pdot == 0)
+				break;
+			pdot++;
+		}
+	}
+	if(dot2){
+		pdot = dot2;
+		while(1){
+			//fprintf(stderr, "%c::%c\n", *pdot, *(pdot+1));
+			strncpy(&pdot[0], &pdot[1], 1);
+			if(*pdot == 0)
+				break;
+			pdot++;
+		}
+	}
 	for(n1 = n1,
 		ii = strlen(n1);
 		ii > 0; ii--,
@@ -886,6 +911,10 @@ void *multiplication(void *num1, void *num2){
 			}
 		}
 	}
+	free(n1_);
+	free(n2_);
+	//printf("%s\n", total);
+	//exit(0);
 	if(total && dot_len > 0){
 		if(strlen(total) < dot_len){
 			pbuf = allocation((void **)&buffer, dot_len +1, sizeof(char));
@@ -902,6 +931,7 @@ void *multiplication(void *num1, void *num2){
 				VALEUR_NEGATIVE(result, pbuf, ii);
 			}
 			//printf("%s\n", result);
+			//exit(0);
 			return result;
 		}
 		pbuf = allocation((void **)&buffer, strlen(total)+1, sizeof(char));
@@ -933,6 +963,8 @@ void *multiplication(void *num1, void *num2){
 		VALEUR_NEGATIVE(total, pbuf, ii);
 	}
 	free(resultat);
+	//printf("%s\n", total);
+	//exit(0);
 	return total;
 }
 void *division(void *num1, void *num2, unsigned long int virgule, int approximation){
@@ -1421,7 +1453,9 @@ void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	pbuf = division(num1_, buf,virgule, 0);
 	result = addition(buf, pbuf);
 	free(buf);
-	presult = multiplication(result,"0.5");
+	presult = multiplication(result,"0.5");;
+	//printf("%s\n", result);
+	//exit(0);
 	do{
 		free(pbuf);
 		free(result);
