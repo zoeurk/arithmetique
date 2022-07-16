@@ -9,3 +9,6 @@ autoreconf --install
 ./configure --exec-prefix=/usr --prefix=/usr  
 make  
 make install  
+  
+  
+La fonction puissance est bugger
