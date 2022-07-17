@@ -11,4 +11,4 @@ make
 make install  
   
   
-il y a un bug mais je ne sais pas ou :/
+il y a un bug dans la fonction puissance
