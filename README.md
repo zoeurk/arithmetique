@@ -11,4 +11,4 @@ make
 make install  
   
   
-La fonction puissance est bugger
+il y a un bug mais je ne sais pas ou :/
