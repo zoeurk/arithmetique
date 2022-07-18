@@ -98,7 +98,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		buffer[internal_buflen], *v, 
 		*n1_ = n1,
 		*i = multiplication("1","0"), *mod = NULL;
-	char *i_, *v_ = NULL, *pseudo = NULL, *pseudo__, *pseudo___ = NULL, *p, *dot_, *pdot_;
+	char *i_, *v_ = NULL, *pseudo = NULL, *pseudo__, *p, *dot_, *pdot_;
 	long double pseudo_;
 	int eq, set = 0, neg = 0;
 	memset(buffer, 0, internal_buflen);
@@ -186,13 +186,18 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			i = NULL;
 		}
 	}
-	if(pseudo)
-		pseudo___ = addition(pseudo,"0");
 	if(i)
 		free(i);
 	i = multiplication(n2, "1");
+	if(equal(n2,"0") == 0){
+		pseudo = multiplication("1", buffer);
+		free(i);
+		free(n1);
+		free(n2);
+		return pseudo;
+	}
 	pseudo = addition("0", "1");
-	while(equal(i,"1") > 0){
+	while(equal(i,"1") != 0){
 		mod = modulo(n2, "2", 0);
 		if(equal(mod, "1") == 0){
 			i_ = soustraction(i, "1");
@@ -215,10 +220,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	free(pseudo);
 	free(n1);
 	n1 = n1_;
-	if(pseudo___){
-		n1_ = multiplication(n1, pseudo___);
+	if(strlen(buffer) > 0){
+		n1_ = multiplication(buffer, n1);
 		free(n1);
-		free(pseudo___);
 		n1 = n1_;
 	}
 	if(neg == 1){
