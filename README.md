@@ -9,4 +9,5 @@ make
 make install  
   
   
-Longue vie a bc :/
+Longue vie a bc :/:
+bc puisance.bc
