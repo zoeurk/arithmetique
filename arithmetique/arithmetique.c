@@ -191,6 +191,14 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	i = multiplication(n2, "1");
 	if(equal(n2,"0") == 0){
 		pseudo = multiplication("1", buffer);
+		if(neg){
+			free(n1);
+			n1 = division("1", pseudo, virgule, approximation);
+			free(pseudo);
+			free(n2);
+			free(i);
+			return n1;
+		}
 		free(i);
 		free(n1);
 		free(n2);
