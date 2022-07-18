@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../arithmetique/arithmetique.h"
 #include "../operation/operation.h"
+#include "../arithmetique/arithmetique.h"
 /*BUFFER > 1*/
 //const unsigned long int BUFFER = 56;
 
-const unsigned long int BUFFER = 56;
+const unsigned long int BUFFER = 2;
 
 int main(int argc, char **argv){
 	int ret, i, v;
@@ -75,7 +75,7 @@ int main(int argc, char **argv){
 	}
 	r = division(argv[1], argv[2], atoi(argv[3]),1);
 	if(r){
-		printf("division:%s\n", (char *)r);
+		printf("division:%s/%s == %s\n", argv[1], argv[2], (char *)r);
 		free(r);
 	}
 	r = modulo(argv[1], argv[2], 0);
@@ -90,9 +90,9 @@ int main(int argc, char **argv){
 	}
 	r = racine_carree(argv[1], atoi(argv[3]),1);
 	if(r){
-		check = multiplication(r, r);
 		printf("racine carree aproximatif de '%s': %s\n", argv[1], r);
-		printf("Verification:%s\n", check);
+		check = multiplication(r, r);
+		printf("Verification:%s: %s\n", r, check);
 		free(r);
 		free(check);
 	}
@@ -120,13 +120,11 @@ int main(int argc, char **argv){
 		free(r);
 		free(check);
 	}
-
 	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]), 1);
 	if(r){
 		printf("%s^%s  = %s\n", argv[1], argv[2], r);
 		free(r);
 	}
-	#ifdef _MATH_H
 	printf("\t\tTrigonometrie:\n");
 	r = cosinus(argv[1], format, sz,0, 0, atoi(argv[3]), 0);
 	if(r){
@@ -189,7 +187,6 @@ int main(int argc, char **argv){
 		printf("Exponentiel '%s': %s\n", argv[2], r);
 		free(r);
 	}
-	#endif
 	free(format);
 	return 0;
 }

@@ -11,4 +11,4 @@ make
 make install  
   
   
-il y a un bug dans la fonction puissance
+Longue vie a bc :/
