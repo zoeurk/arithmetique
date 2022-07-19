@@ -8,6 +8,7 @@ autoreconf --install
 make  
 make install  
   
-  
+  erreur de calcule dans la fonction puisance  
+
 Longue vie a bc :/:
 bc puisance.bc
