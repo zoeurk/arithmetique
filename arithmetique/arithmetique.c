@@ -235,7 +235,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	n1_ = multiplication(n1, pseudo);
 	free(n1);
 	n1 = n1_;
-	if(pseudo && strlen(pseudo) > 0){
+	if(pseudo && strlen(pseudo) > 0 && strlen(buffer) > 0){
 		n1_ = multiplication(buffer, n1);
 		free(n1);
 		n1 = n1_;
