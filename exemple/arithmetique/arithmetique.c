@@ -179,7 +179,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	if(j){
 		for(j_ = addition("0","1"); equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
 			n_ = multiplication(n1, n1);
-			printf("%s::%s::%s\n", j_, j, n_);
 			free(n1);
 			n1 = n_;
 		}
