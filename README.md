@@ -9,6 +9,7 @@ make
 make install  
   
   (rien est sure, surtout sur les puissances a virgule)  
+BUG boucle infinie dans exponentiel  
 
 Longue vie a bc :/:
 bc puisance.bc
