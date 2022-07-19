@@ -96,11 +96,11 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	char *n1 = multiplication(num1,"1"),
 		*n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
-		*n1_ = n1,
-		*i = multiplication("1","0"), *mod = NULL;
+		*n1_ = n1, *n_,
+		*i = multiplication("1","0"),*j = NULL, *j_, *j__, *mod = NULL;
 	char *i_, *v_ = NULL, *pseudo = NULL, *pseudo__, *p, *dot_, *pdot_;
 	long double pseudo_;
-	int eq, set = 0, neg = 0;
+	int eq, neg = 0;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
 		free(n1);
@@ -145,6 +145,13 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				i_ = addition(i, "1");
 				free(i);
 				i = i_;
+				if(j == NULL){
+					j = addition("0", "1");
+				}else{
+					j_ = addition(j,"1");
+					free(j);
+					j = j_;
+				}
 			}
 		}while(eq > 0);
 		pdot_ = strchr(format,'.');
@@ -165,32 +172,29 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		snprintf(buffer, internal_buflen,format, pseudo_);
 		free(v_);
 		if(buffer[internal_buflen-1] != 0){
-			fprintf(stderr, "buffer interne trop court (internal_buflen\n");
+			fprintf(stderr, "buffer interne trop court (internal_buflen)\n");
 			exit(EXIT_FAILURE);
 		}
-		if(equal(i,"0") != 0){
-			while(equal(i,"0") != 0){
-				if(set == 0){ 
-					pseudo = multiplication(buffer, buffer);
-					set = 1;
-				}else{
-					p = pseudo;
-					pseudo = multiplication(p, buffer);
-					free(p);
-				}
-				i_ = soustraction(i, "1");
-				free(i);
-				i = i_;
-			}
-			free(i);
-			i = NULL;
+	}
+	if(j){
+		for(j_ = addition("0","1"); equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
+			n_ = multiplication(n1, n1);
+			printf("%s::%s::%s\n", j_, j, n_);
+			free(n1);
+			n1 = n_;
 		}
+		free(j_);
 	}
 	if(i)
 		free(i);
 	i = multiplication(n2, "1");
 	if(equal(n2,"0") == 0){
-		pseudo = multiplication("1", buffer);
+		if(j == NULL)
+			pseudo = multiplication("1", buffer);
+		else{
+			pseudo = multiplication(n1, "1");
+			free(j);
+		}
 		if(neg){
 			free(n1);
 			n1 = division("1", pseudo, virgule, approximation);
@@ -199,11 +203,14 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(i);
 			return n1;
 		}
+		//if(j)
+			//free(j);
 		free(i);
 		free(n1);
 		free(n2);
 		return pseudo;
 	}
+	free(j);
 	pseudo = addition("0", "1");
 	while(equal(i,"1") != 0){
 		mod = modulo(n2, "2", 0);
@@ -225,10 +232,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(mod);
 	}
 	n1_ = multiplication(n1, pseudo);
-	free(pseudo);
 	free(n1);
 	n1 = n1_;
-	if(strlen(buffer) > 0){
+	if(pseudo && strlen(pseudo) > 0){
 		n1_ = multiplication(buffer, n1);
 		free(n1);
 		n1 = n1_;
@@ -240,6 +246,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}
 	if(i)
 		free(i);
+	if(pseudo)
+		free(pseudo);
 	free(n2);
 	return n1;
 }
