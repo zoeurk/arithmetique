@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <errno.h>
 #include <string.h>
 #include "../operation/operation.h"
 #include "arithmetique.h"
@@ -99,7 +100,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*n1_ = n1, *n_,
 		*i = multiplication("1","0"),*j = NULL, *j_, *j__, *mod = NULL;
 	char *i_, *v_ = NULL, *pseudo = NULL, *pseudo__, *p, *dot_, *pdot_;
-	long double pseudo_;
+	long double pseudo_, pseudo_tst;
 	int eq, neg = 0;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
@@ -136,8 +137,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*v = 0;
 		pseudo = buffer;
 		do{
+			pseudo_tst = strtold(n1, NULL) * strtold(n1, NULL);
 			pseudo_ = strtold(n1, NULL);
-			sprintf(buffer, format, pseudo_);
+			sprintf(buffer, format, pseudo_tst);
 			if((eq = equal(n1, pseudo)) > 0){
 				n1_ = racine_carree(n1, virgule,approximation);
 				free(n1);
