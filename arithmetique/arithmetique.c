@@ -214,6 +214,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	free(j);
 	pseudo = addition("0", "1");
 	while(equal(i,"1") != 0){
+		//printf("%s\n", n1);
 		mod = modulo(n2, "2", 0);
 		if(equal(mod, "1") == 0){
 			i_ = soustraction(i, "1");

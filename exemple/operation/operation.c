@@ -234,6 +234,8 @@ void *addition(void *num1, void *num2){
 				val1_len = 0, val2_len = 0,
 				buflen = 0, z = 1;
 	unsigned long int ii = 0, ij = 0;
+	if(equal(num1, num2) == 0)
+		return multiplication(num1,"2");
 	NEG;
 	if(neg1 || neg2){
 		if(neg1 && neg2)
