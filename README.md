@@ -1,5 +1,5 @@
 # arithmetique  
-  (ATTENTION: Aucune garanti)  
+  (ATTENTION: Aucune garanti, erreur de calcule dans les puissance)  
 Librairie de fonction mathematique.  
 les librairies sont libre d'usage, de modification et (re/)distribution  
 libtoolize  
