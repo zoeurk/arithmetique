@@ -695,12 +695,12 @@ void *soustraction(void *num1, void *num2){
 		memcpy(pbuf, temp, 1);
 		pbuf--;
 	}*/
-	if(*(pbuf + 1) == '0'){
+	//if(*(pbuf + 1) == '0'){
 		while(*(pbuf+1) == '0' && *(pbuf +2) != '.')
 			pbuf++;
 		if(*pbuf == '0' && *(pbuf + 1) != '.')
 			*pbuf = 0;
-	}
+	//}
 	if(neg){
 		*pbuf = '-';
 		pbuf--;
