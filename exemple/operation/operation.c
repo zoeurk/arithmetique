@@ -632,7 +632,7 @@ void *soustraction(void *num1, void *num2){
 		ptr2 = val2,
 		ii_ = val1_len - (neg1 == 1),
 		ij_ = val2_len - (dot2_len > 0);
-		ii_ > 0 || ij_ > 0  || retenue == 1;
+		ii_ > 0 && ij_ > 0;
 		ii_ -= (ii_ > 1) ? 1 : ii_, ij_ -= (ij_ > 1) ? 1 : ij_, ptr1 -= (ii_ > 1) ? 1 : ii_, ptr2 -= (ij_ > 1) ? 1 : ij_
 	){
 		memset(v1, 0, 21);
@@ -659,7 +659,7 @@ void *soustraction(void *num1, void *num2){
 		memcpy(pbuf, temp, 1);
 		pbuf--;
 	}
-	/*for(ii_ = ii_; ii_ > 0; ii_--, ptr1--){
+	for(ii_ = ii_; ii_ > 0; ii_--, ptr1--){
 		if((ptr1 +1) == n1)break;
 		memset(v1, 0, 21);
 		memset(temp, 0, 21);
@@ -693,7 +693,7 @@ void *soustraction(void *num1, void *num2){
 		sprintf(temp, "%li", result);
 		memcpy(pbuf, temp, 1);
 		pbuf--;
-	}*/
+	}
 	if(*(pbuf + 1) == '0'){
 		while(*(pbuf+1) == '0' && *(pbuf +2) != '.')
 			pbuf++;
