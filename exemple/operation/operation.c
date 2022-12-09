@@ -534,19 +534,19 @@ void *soustraction(void *num1, void *num2){
 		//printf("%lu: %lu\n", dot1_len, dot2_len);
 		ii_ = dot1_len;
 		ij_ = dot2_len;
-		/*for(ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii_--){
+		for(ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii_--){
 			sprintf(temp, "%c", dot1[ii_-1]);
 			memcpy(pbuf, temp, 1);
 			pbuf--;
-		}*/
-		if(ii_ != ij_){
+		}
+		/*if(ii_ != ij_){
 			pbuf -= (ii_-ij_);
 			dot1 -= (ii_-ij_);
 			//printf("%s\n", ptr1);
 			ii_ = ij_;
 			memcpy(pbuf, dot1+1, strlen(dot1+1));
 			pbuf--;
-		}
+		}*/
 		//printf("%s::%lu\n", pbuf+1, ii_);
 		for(ii_ = ii_; ii_ > 0; ii_--){
 			memset(v1, 0, 21);
