@@ -477,7 +477,7 @@ void *soustraction(void *num1, void *num2){
 		retenue = 0, neg = 0, neg1 = 0, neg2 = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
 				val1_len = 0, val2_len = 0;
-	unsigned long int ii_ = 0, ij_ =0;
+	unsigned long int ii_ = 0, ij_ = 0;
 	long int i1, i2, result;
 	NEG;
 	if(neg1 || neg2){
@@ -649,6 +649,9 @@ void *soustraction(void *num1, void *num2){
 			strcpy(v2, "0");
 		i1 = atol(v1);
 		i2 = atol(v2);
+		//if(ii_ < 3 && ij_ < 3 && retenue == 0)
+			//break;
+			//printf("%i\n",retenue);
 		if(i1 - retenue >= i2){
 			result = i1 - i2 - retenue;
 			retenue = 0;
@@ -695,12 +698,16 @@ void *soustraction(void *num1, void *num2){
 		memcpy(pbuf, temp, 1);
 		pbuf--;
 	}*/
-	//if(*(pbuf + 1) == '0'){
-		while(*(pbuf+1) == '0' && *(pbuf +2) != '.')
-			pbuf++;
-		if(*pbuf == '0' && *(pbuf + 1) != '.')
+	
+	while(*(pbuf+1) == '0' && *(pbuf +2) != '.')
+		pbuf++;
+	/*if(*(pbuf) == '0'){
+		while(*pbuf == '0' && *(pbuf + 1) != '.'){
 			*pbuf = 0;
-	//}
+			pbuf++;
+		}
+		pbuf--;
+	}*/
 	if(neg){
 		*pbuf = '-';
 		pbuf--;
