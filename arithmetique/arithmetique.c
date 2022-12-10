@@ -239,6 +239,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				free(n__);
 				n__ = n1_;
 			}*/
+			//printf("%s:%s\n",n1_, v_);
 			pseudo_ = powl(strtold(n1_, NULL), strtold(v_, NULL));
 			sprintf(buffer,format, pseudo_);
 			if(buffer[internal_buflen-1] != 0){
@@ -462,6 +463,7 @@ void *racine_carree(void *num1, unsigned long int virgule){
 	unsigned long int s, count = 0;
 	error_set(SET, 0);
 	if(equal(num1, "0") < 0){
+		free(n);
 		error_set(SET, 4);
 		return NULL;
 	}
