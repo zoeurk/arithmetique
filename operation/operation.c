@@ -485,10 +485,16 @@ void *addition(void *num1, void *num2){
 			i1 = (unsigned long int)atol(v1);
 			i2 = (unsigned long int)atol(v2);
 			result = i1 + i2 + retenue;
-			if(result >= 100){
+			if(result >= 100 && r == 2){
 				retenue = 1;
 				result -= 100;
-			}else	retenue = 0;
+			}else{
+				if(result >= 10 && r == 1){
+						result -= 10;
+						retenue = 1;
+				}else
+					retenue = 0;
+			}
 			pbuf -= r;
 			if(ii > 1 && result < 10)
 				sprintf(temp, "0%lu", result);
@@ -550,10 +556,16 @@ void *addition(void *num1, void *num2){
 		i1 = (unsigned long int)atol(v1);
 		i2 = (unsigned long int)atol(v2);
 		result = i1 + i2 + retenue;
-		if(result >= 100){
+		if(result >= 100 && r == 2){
 			retenue = 1;
 			result -= 100;
-		}else	retenue = 0;
+		}else{
+			if(result >= 10 && r == 1){
+				retenue = 1;
+				result -= 10;
+			}else
+				retenue = 0;
+		}
 		if(result < 10 && r == 2)
 			sprintf(temp,"0%lu", result);
 		else
@@ -868,7 +880,7 @@ void *soustraction(void *num1, void *num2){
 		*val1, *val2,
 		v1[21], v2[21],temp[21],
 		*buffer, *pbuf, *ret,
-		*ptr1 = NULL, *ptr2= NULL,
+		*ptr1 = NULL, *ptr2= NULL, stop = 0,
 		retenue = 0, neg = 0, neg1 = 0, neg2 = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
 				val1_len = 0, val2_len = 0;
@@ -923,20 +935,23 @@ void *soustraction(void *num1, void *num2){
 		val1_len--;
 	if(dot2 != NULL && dot2_len == 0)
 		val2_len--;
+	if(dot1 != NULL)
+		dot1--;
+	if(dot2 != NULL)
+		dot2--;
 	pbuf = allocation((void **)&buffer,((val1_len > val2_len) ? val1_len : val2_len) + ((dot1_len > dot2_len) ? dot1_len : dot2_len) +2, sizeof(char));
 	pbuf += ((val1_len > val2_len) ? val1_len : val2_len) + ((dot1_len > dot2_len) ? dot1_len : dot2_len) +2;
 	if(dot1_len > dot2_len){
-		for(ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii_--){
-			sprintf(temp, "%c", dot1[ii_-1]);
-			memcpy(pbuf, temp, 1);
-			pbuf--;
-		}
-		for(ii_ = ii_, ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii_--,ij_--){
+		ii_ = dot1_len;
+		pbuf -= (dot1_len - dot2_len);
+		ii_ = dot2_len;
+		strcpy(pbuf, &dot1[dot2_len]);
+		for(ii_ = ii_; ii_ > 0; ii_--){
 			memset(v1, 0, 21);
 			memset(v2, 0, 21);
 			memset(temp, 0, 21);
-			v1[0] = dot1[ii_-1];
-			v2[0] = dot2[ij_-1];
+			v1[0] = dot1[ii_];
+			v2[0] = dot2[ii_];
 			v1[0] = atol(v1);
 			v2[0] = atol(v2);
 			if(v1[0] - retenue >= v2[0]){
@@ -950,13 +965,17 @@ void *soustraction(void *num1, void *num2){
 			memcpy(pbuf, temp, 1);
 			pbuf--;
 		}
-		/*ii_ = dot1_len;
-		ij_ = dot2_len;
-		if(ii_ != ij_){
-			pbuf -= (ii_ - ij_);
-			dot1 += strlen(dot1) - (ii_ - ij_);
-			ii_ = ij_;
-			memcpy(pbuf, dot1, strlen(dot1));
+	}
+	if(dot2_len > dot1_len){
+		for(ii_ = dot2_len; ii_ > 0 && ii_ != dot1_len; ii_--){
+			memset(v1, 0, 21);
+			memset(temp, 0, 21);
+			memcpy(v1, &dot2[ii_], 1);
+			i1 = atol(v1);
+			result = 10 - i1 - retenue;
+			retenue = 1;
+			sprintf(temp, "%li", result);
+			memcpy(pbuf, temp, 1);
 			pbuf--;
 		}
 		for(ii_ = ii_; ii_ > 0; ii_--){
@@ -977,43 +996,6 @@ void *soustraction(void *num1, void *num2){
 			sprintf(temp, "%li", result);
 			memcpy(pbuf, temp, 1);
 			pbuf--;
-		}*/
-	}
-	if(dot2_len > dot1_len){
-		for(ii_ = dot2_len; ii_ > 0 && ii_ != dot1_len; ii_--){
-			memset(v1, 0, 21);
-			memset(temp, 0, 21);
-			memcpy(v1, &dot2[ii_-1], 1);
-			i1 = atol(v1);
-			if(i1 - retenue > 0){
-				result = 10 - i1 - retenue;
-				retenue = 1;
-			}else{
-				result = 10 - i1 - retenue;
-				retenue = 1;
-			}
-			sprintf(temp, "%li", result);
-			memcpy(pbuf, temp, 1);
-			pbuf--;
-		}
-		for(ii_ = ii_; ii_ > 0; ii_--){
-			memset(v1, 0, 21);
-			memset(v2, 0, 21);
-			memset(temp, 0, 21);
-			memcpy(v1, &dot1[ii_-1], 1);
-			memcpy(v2, &dot2[ii_-1], 1);
-			i1 = atol(v1);
-			i2 = atol(v2);
-			if(i1 - retenue >= i2){
-				result = i1 - i2 - retenue;
-				retenue = 0;
-			}else{
-				result = 10 + i1 - i2 - retenue;
-				retenue = 1;
-			}
-			sprintf(temp, "%li", result);
-			memcpy(pbuf, temp, 1);
-			pbuf--;
 		}
 	}else{
 		if(dot1_len == dot2_len){
@@ -1021,8 +1003,8 @@ void *soustraction(void *num1, void *num2){
 				memset(v1, 0, 21);
 				memset(v2, 0, 21);
 				memset(temp, 0, 21);
-				memcpy(v1, &dot1[ii_-1], 1);
-				memcpy(v2, &dot2[ii_-1], 1);
+				memcpy(v1, &dot1[ii_], 1);
+				memcpy(v2, &dot2[ii_], 1);
 				i1 = atol(v1);
 				i2 = atol(v2);
 				if(i1 - retenue >= i2){
