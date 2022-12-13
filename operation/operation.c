@@ -486,11 +486,11 @@ void *soustraction(void *num1, void *num2){
 		*val1, *val2,
 		v1[21], v2[21],temp[21],
 		*buffer, *pbuf, *ret,
-		*ptr1 = NULL, *ptr2= NULL, stop = 0,
+		*ptr1 = NULL, *ptr2= NULL,
 		retenue = 0, neg = 0, neg1 = 0, neg2 = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
 				val1_len = 0, val2_len = 0;
-	unsigned long int ii_ = 0, ij_ = 0;
+	unsigned long int ii_ = 0, ij_ = 0, r;
 	long int i1, i2, result;
 	NEG;
 	if(neg1 || neg2){
@@ -628,7 +628,7 @@ void *soustraction(void *num1, void *num2){
 	}
 	if(dot1_len || dot2_len){
 		*pbuf = '.';
-		pbuf--;
+		//pbuf--;
 	}
 	for(ii_ = val1_len - (neg1 == 1) - (dot1_len > 0),
 		ij_ = val2_len - (dot2_len > 0),
@@ -651,28 +651,41 @@ void *soustraction(void *num1, void *num2){
 			memcpy(v2, ptr2, 1);
 		else
 			strcpy(v2, "0");
+		r = (strlen(v1) > strlen(v2)) ? strlen(v1) : strlen(v2);
 		i1 = atol(v1);
 		i2 = atol(v2);
 		if(i1 - retenue >= i2){
 			result = i1 - i2 - retenue;
 			retenue = 0;
 		}else{
-			result = 10 + i1 - i2 - retenue;
+			if(r == 1)
+				result = 10 + i1 - i2 - retenue;
+			else
+				result = 100 + i1 - i2 -retenue;
 			retenue = 1;
 		}
-		sprintf(temp, "%li", result);
-		memcpy(pbuf, temp, 1);
-		pbuf--;
+		if(result < 10 && r == 2)
+			sprintf(temp,"0%li", result);
+		else
+			sprintf(temp, "%li", result);
+		//sprintf(temp, "%li", result);
+		pbuf-=r;
+		memcpy(pbuf, temp, r);
+		//pbuf--;
 	}
-	while(*(pbuf+1) == '0' && *(pbuf +2) != '.')
+	//printf("%s\n", pbuf)
+	//pbuf--;
+	while(*(pbuf) == '0' && *(pbuf +1) != '.')
 		pbuf++;
 	if(neg){
-		*pbuf = '-';
 		pbuf--;
+		*pbuf = '-';
+		//pbuf--;
 	}
-	ij_ = strlen(pbuf+1);
+	ij_ = strlen(pbuf);
+	//fprintf(stderr, "%lu\n", ij_);
 	ret = allocation((void **)&ret, ij_, sizeof(char));
-	strcpy(ret, pbuf+1);
+	strcpy(ret, pbuf);
 	free(buffer);
 	if(equal("0",ret) == 0){
 		strcpy(ret,"0");
