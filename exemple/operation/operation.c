@@ -236,6 +236,253 @@ void *addition(void *num1, void *num2){
 	char *n1 = num1, *n2 = num2,
 		*dot1, *dot2,
 		*val1, *val2,
+		v1[21], v2[21], temp[21],
+		*buffer, *pbuf, *ret, *pret,
+		*ptr1 = NULL, *ptr2= NULL,
+		retenue = 0, neg = 0, neg1 = 0, neg2 = 0, set = 0;
+	unsigned long int dot1_len = 0, dot2_len = 0,
+				val1_len = 0, val2_len = 0;
+	unsigned long int ii = 0, ij = 0, r = 0;
+	unsigned long int i1, i2, result;
+	//printf("%s + %s = ", (char *)num1, (char *)num2);
+	NEG;
+	if(neg1 || neg2){
+		if(neg1 && neg2)
+			neg = 1;
+		else
+			if(neg1 && !neg2)
+				return soustraction(n2,n1);
+			else
+				if(!neg1 && neg2)
+					return soustraction(n1, n2);
+	}
+	ZERO;
+	if(strlen(n1) == 0 && strlen(n2) == 0){
+		ret = allocation((void **)&ret, 2, sizeof(char));
+		*ret = '0';
+		return ret;
+	}
+	DOT_SEARCH(dot1, dot2, dot1_len, dot2_len, val1, val2);
+	val1_len = strlen(n1);
+	val2_len = strlen(n2);
+	val1_len = (dot1_len) ? val1_len - dot1_len -1: val1_len; 
+	val2_len = (dot2_len) ? val2_len - dot2_len -1: val2_len;
+	if(dot1 != NULL && dot1_len == 0)
+		val1_len--;
+	if(dot2 != NULL && dot2_len == 0)
+		val2_len--;
+	pbuf = allocation((void **)&buffer, ((val1_len > val2_len) ? val1_len : val2_len) +((dot1_len > dot2_len) ? dot1_len : dot2_len) + 2, sizeof(char));
+	pbuf += ((val1_len > val2_len) ? val1_len : val2_len) +((dot1_len > dot2_len) ? dot1_len : dot2_len) + 2;
+	if(dot1 && dot2){
+		if(dot1_len > dot2_len){
+			ii = dot1_len;
+			ij = dot2_len;
+			ptr1 = &dot1[dot1_len-1];
+			ptr2 = &dot2[dot2_len-1];
+		}else{
+			ii = dot2_len;
+			ij = dot1_len;
+			ptr1 = &dot2[dot2_len-1];
+			ptr2 = &dot1[dot1_len-1];
+		}
+		/*for(ii = ii, ptr1 = ptr1; ii != ij && ii > 0; ii--, ptr1--){
+			v1[0] = *ptr1;
+			sprintf(temp,"%c", v1[0]);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
+		}*/
+		if(ii != ij){
+			pbuf -= (ii-ij);
+			ptr1 -= (ii-ij);
+			ii = ij;
+			memcpy(pbuf, ptr1+1, strlen(ptr1+1));
+			//pbuf-=(ii > 1) ? 1 : 1;
+			//printf("%s\n" , pbuf);
+		}
+		//printf("%s\n", pbuf);
+		for(ii = ii,
+			ptr1 = (ii > 1) ? ptr1-1: ptr1,
+			ptr2 = (ii > 1) ? ptr2-1: ptr2;
+			ii > 0;
+			ii -= (ii > 1) ? 2 : ii,
+			ptr1 -= (ii > 1) ? 2 : ii,
+			ptr2 -= (ii > 1) ? 2 : ii
+		){
+			memset(v1, 0, 21);
+			memset(v2, 0, 21);
+			memset(temp, 0, 21);
+			memcpy(v1, ptr1, (ii > 1)? 2 : ii);
+			memcpy(v2, ptr2, (ii > 1)? 2 : ii);
+			r = (strlen(v1) > strlen(v2)) ? strlen(v1) : strlen(v2);
+			i1 = (unsigned long int)atol(v1);
+			i2 = (unsigned long int)atol(v2);
+			result = i1 + i2 + retenue;
+			if(result >= 100 && r == 2){
+				retenue = 1;
+				result -= 100;
+			}else{
+				if(result >= 10 && r == 1){
+						result -= 10;
+						retenue = 1;
+				}else
+					retenue = 0;
+			}
+			pbuf -= r;
+			if(ii > 1 && result < 10)
+				sprintf(temp, "0%lu", result);
+			else
+				sprintf(temp, "%lu", result);
+			memcpy(pbuf, temp, strlen(temp));
+			//pbuf -= strlen(temp);
+		}
+		pbuf--;
+		//printf("%s:%lu\n", pbuf, r);
+		//exit(0);
+		//if((*pbuf+1) == 0)
+			//pbuf++;
+	}else{
+		if(dot1 && !dot2){
+			ii = dot1_len;
+			ptr1 = &dot1[dot1_len-1];
+		}else{
+			if(!dot1 && dot2){
+				ii = dot2_len;
+				ptr1 = &dot2[dot2_len-1];
+			}
+		}
+		if(ii > 0){
+			ptr1 -= ii;
+			pbuf -= ii;
+			strcpy(pbuf, ptr1+1);
+			pbuf--;
+		}
+	}
+	if(dot1_len || dot2_len){
+		*pbuf = '.';
+	/*if(val1_len > 1 || val2_len > 1)
+			pbuf-=2;
+		else
+			pbuf-=1;*/
+	}
+	for(ii = val1_len, ij = val2_len,
+		ptr1 = (ii > 1) ? val1 -1: val1,
+		ptr2 = (ij > 1) ? val2 -1: val2;
+		ii > 0 || ij > 0 || retenue;
+		ii-=(ii > 1) ? 2: ii,
+		ij-=(ij > 1) ? 2 : ij,
+		ptr1-=(ii > 1)? 2 : ii,
+		ptr2-=(ij > 1) ? 2 : ij
+	){
+		memset(v1, 0, 21);
+		memset(v2, 0, 21);
+		if(ii != 0)
+			memcpy(v1, ptr1, (ii > 1) ? 2 : 1);
+		else
+			strcpy(v1, "0");
+		if(ij != 0)
+			memcpy(v2, ptr2, (ij > 1) ? 2 : 1);
+		else
+			strcpy(v2, "0");
+		r = (strlen(v1) > strlen(v2)) ? strlen(v1) : strlen(v2);
+		//printf("%s :: %s :: %lu\n", v1, v2, r);
+		i1 = (unsigned long int)atol(v1);
+		i2 = (unsigned long int)atol(v2);
+		result = i1 + i2 + retenue;
+		if(result >= 100 && r == 2){
+			retenue = 1;
+			result -= 100;
+		}else{
+			if(result >= 10 && r == 1){
+				retenue = 1;
+				result -= 10;
+			}else
+				retenue = 0;
+		}
+		if(result < 10 && r == 2)
+			sprintf(temp,"0%lu", result);
+		else
+			sprintf(temp, "%lu", result);
+		if(r < 2 && (ii < 3 && ij < 3) && strlen(temp) == 1){
+			pbuf-=1;
+			/*if(retenue && r == 2){
+				pbuf--;
+				printf("***%i::%lu\n", retenue, r);
+			}*/
+		}else{
+			//printf("TEMP=%s::%s\n", temp, pbuf+2);
+			pbuf-=strlen(temp);
+		}
+		memcpy(pbuf, temp, strlen(temp));
+		//printf("==>%s::%lu\n", pbuf, r);
+	}
+	//printf("%s::%lu\n", pbuf, strlen(temp));
+	//if(*(pbuf+2) == 0)
+		//pbuf++;
+	/*if(ii || ij){
+		if(ij){
+			ii = ij;
+			ptr1 = ptr2;
+		}
+		for(ii = ii, ptr1 = ptr1; ii > 0; ii--,ptr1--){
+			memset(v1, 0, 21);
+			memset(temp, 0, 21);
+			memcpy(v1, ptr1, 1);
+			i1 = (unsigned long int)atol(v1);
+			result = i1 + retenue;
+			if(result >= 10){
+				retenue = 1;
+				result -= 10;
+			}else	retenue = 0;
+			sprintf(temp,"%lu", result);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
+		}
+	}
+	if(retenue){
+		sprintf(temp,"%i", retenue);
+		memcpy(pbuf, temp, 1);
+		pbuf--;
+	}*/
+	ij = strlen(pbuf);
+	pret = allocation((void **)&ret, ij, sizeof(char));
+	strcpy(pret, pbuf);
+	free(buffer);
+	buffer = ret;
+	set = 0;
+	if(dot1 || dot2){
+		while(*buffer == '0'&& *(buffer+1) == '0'){
+			*buffer = 0;
+			buffer++;
+			set = 1;
+		}
+		if(set){
+			pbuf = allocation((void **)&pbuf, strlen(buffer), sizeof(char));
+			strcpy(pbuf, buffer);
+			memset(ret, 0, strlen(ret));
+			strcpy(ret, pbuf);
+			free(pbuf);
+		}
+	}
+	pret = &ret[strlen(ret)-1];
+	if(neg){
+		if((ret = realloc(ret,strlen(ret)+2)) == NULL){
+			perror("realloc()");
+			exit(EXIT_FAILURE);
+		}
+		memcpy(ret+1, ret, strlen(ret));
+		*ret = '-';
+	}
+	if((n1 = strchr(ret,'.')) != NULL){
+		for(n2 = &ret[strlen(ret) - 1];(n2+1) != n1 && *n2 == '0'; n2--)
+			*n2 = 0;
+		if(*n2 == '.')*n2 = 0;
+	}
+	return ret;
+}
+void *addition_(void *num1, void *num2){
+	char *n1 = num1, *n2 = num2,
+		*dot1, *dot2,
+		*val1, *val2,
 		v1[2] = { 0, 0 }, v2[2] = { 0, 0 }, temp[2] = { 0, 0 },
 		*buffer, *pbuf, *ret, *pret,
 		*ptr1 = NULL, *ptr2= NULL,
