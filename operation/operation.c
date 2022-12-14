@@ -510,7 +510,7 @@ void *soustraction(void *num1, void *num2){
 	if(dot2_len > 0)
 		dot2--;
 	if(dot1_len > dot2_len){
-		printf("**************\n");
+		//printf("**************\n");
 		/*for(ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii_--){
 			sprintf(temp, "%c", dot1[ii_]);
 			memcpy(pbuf, temp, 1);
