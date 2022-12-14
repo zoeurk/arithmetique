@@ -236,13 +236,12 @@ void *addition(void *num1, void *num2){
 	char *n1 = num1, *n2 = num2,
 		*dot1, *dot2,
 		*val1, *val2,
-		v1[2] = { 0, 0 }, v2[2] = { 0, 0 },
+		v1[2] = { 0, 0 }, v2[2] = { 0, 0 }, temp[2] = { 0, 0 },
 		*buffer, *pbuf, *ret, *pret,
 		*ptr1 = NULL, *ptr2= NULL,
 		result = 0, retenue = 0, neg = 0, neg1 = 0, neg2 = 0, set = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
-				val1_len = 0, val2_len = 0,
-				buflen = 0, z = 1;
+				val1_len = 0, val2_len = 0;
 	unsigned long int ii = 0, ij = 0;
 	NEG;
 	if(neg1 || neg2){
@@ -266,11 +265,12 @@ void *addition(void *num1, void *num2){
 	val2_len = strlen(n2);
 	val1_len = (dot1_len) ? val1_len - dot1_len -1: val1_len; 
 	val2_len = (dot2_len) ? val2_len - dot2_len -1: val2_len;
-	pbuf = allocation((void **)&buffer,BUFFER, sizeof(char));
 	if(dot1 != NULL && dot1_len == 0)
 		val1_len--;
 	if(dot2 != NULL && dot2_len == 0)
 		val2_len--;
+	pbuf = allocation((void **)&buffer, ((val1_len > val2_len) ? val1_len : val2_len) +((dot1_len > dot2_len) ? dot1_len : dot2_len) + 2, sizeof(char));
+	pbuf += ((val1_len > val2_len) ? val1_len : val2_len) +((dot1_len > dot2_len) ? dot1_len : dot2_len) + 2;
 	if(dot1 && dot2){
 		if(dot1_len > dot2_len){
 			ii = dot1_len;
@@ -285,14 +285,9 @@ void *addition(void *num1, void *num2){
 		}
 		for(ii = ii, ptr1 = ptr1; ii != ij && ii > 0; ii--, ptr1--){
 			v1[0] = *ptr1;
-			if(buflen + 1 >= BUFFER){
-				z++;
-				buflen = 0;
-				pbuf = reallocation((void **)&buffer, BUFFER*z);
-			}
-			sprintf(pbuf,"%c", v1[0]);
-			pbuf++;
-			buflen++;
+			sprintf(temp,"%c", v1[0]);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
 		}
 		for(ii = ii, ptr1 = ptr1, ptr2 = ptr2; ii > 0; ii--, ptr1--, ptr2--){
 			v1[0] = *ptr1;
@@ -304,14 +299,9 @@ void *addition(void *num1, void *num2){
 				retenue = 1;
 				result -= 10;
 			}else	retenue = 0;
-			if(buflen + 1 >= BUFFER){
-				z++;
-				buflen = 0;
-				pbuf = reallocation((void **)&buffer, BUFFER*z);
-			}
-			sprintf(pbuf, "%i", result);
-			pbuf++;
-			buflen++;
+			sprintf(temp, "%i", result);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
 		}
 	}else{
 		if(dot1 && !dot2){
@@ -324,25 +314,14 @@ void *addition(void *num1, void *num2){
 			}
 		}
 		for(ii = ii, ptr1 = ptr1; ii > 0;ii--, ptr1--){
-			if(buflen + 1 >= BUFFER){
-				z++;
-				buflen = 0;
-				pbuf = reallocation((void **)&buffer, BUFFER*z);
-			}
-			sprintf(pbuf,"%c", *ptr1);
-			pbuf++;
-			buflen++;
+			sprintf(temp,"%c", *ptr1);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
 		}
 	}
 	if(dot1_len || dot2_len){
-		if(buflen + 1 >= BUFFER){
-			z++;
-			buflen = 0;
-			pbuf = reallocation((void **)&buffer, BUFFER*z);
-		}
-		sprintf(pbuf,".");
-		pbuf++;
-		buflen++;
+		*pbuf = '.';
+		pbuf--;
 	}
 	for(ptr1 = val1, ptr2 = val2, ii = val1_len, ij = val2_len;
 		ii > 0 && ij > 0; ii--, ij--, ptr1--, ptr2--){
@@ -351,18 +330,14 @@ void *addition(void *num1, void *num2){
 		v1[0] = atoi(v1);
 		v2[0] = atoi(v2);
 		result = v1[0] + v2[0] + retenue;
+		
 		if(result >= 10){
 			retenue = 1;
 			result -= 10;
 		}else	retenue = 0;
-		if(buflen + 1 >= BUFFER){
-			z++;
-			buflen = 0;
-			pbuf = reallocation((void **)&buffer, BUFFER*z);
-		}
-		sprintf(pbuf,"%i", result);
-		pbuf++;
-		buflen++;
+		sprintf(temp,"%i", result);
+		memcpy(pbuf, temp, 1);
+		pbuf--;
 	}
 	if(ii || ij){
 		if(ij){
@@ -377,38 +352,19 @@ void *addition(void *num1, void *num2){
 				retenue = 1;
 				result -= 10;
 			}else	retenue = 0;
-			if(buflen + 1 >= BUFFER){
-				z++;
-				buflen++;
-				pbuf = reallocation((void **)&buffer, BUFFER*z);
-			}
-			sprintf(pbuf,"%i", result);
-			pbuf++;
-			buflen++;
+			sprintf(temp,"%i", result);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
 		}
 	}
 	if(retenue){
-		if(buflen + 1 >= BUFFER){
-			z++;
-			buflen = 0;
-			pbuf = reallocation((void **)&buffer, BUFFER*z);
-		}
-		sprintf(pbuf,"%i", retenue);
-		pbuf++;
-		buflen++;
+		sprintf(temp,"%i", retenue);
+		memcpy(pbuf, temp, 1);
+		pbuf--;
 	}
-	pbuf = buffer;
-	ii = 0;
-	while(*pbuf == '0'){
-		if(*(pbuf+1) == 0)
-			break;
-		set = 1;
-		pbuf++;
-	}
-	ij = strlen(buffer);
+	ij = strlen(pbuf+1);
 	pret = allocation((void **)&ret, ij, sizeof(char));
-	for(ii = ij-1, pret = pret; ii != ~(unsigned long int)0; ii--, pret++)
-		*pret = buffer[ii];
+	strcpy(pret, pbuf+1);
 	free(buffer);
 	buffer = ret;
 	set = 0;
@@ -437,22 +393,23 @@ void *addition(void *num1, void *num2){
 		}
 		*ret = '-';
 	}
-	if((n1 = strchr(ret,'.')) != NULL)
-		for(n2 = &ret[strlen(ret) - 1];(n2+1) != n1 && (*n2 == '0' || *n2 == '.'); n2--)
+	if((n1 = strchr(ret,'.')) != NULL){
+		for(n2 = &ret[strlen(ret) - 1];(n2+1) != n1 && *n2 == '0'; n2--)
 			*n2 = 0;
+		if(*n2 == '.')*n2 = 0;
+	}
 	return ret;
 }
 void *soustraction(void *num1, void *num2){
 	char *n1 = num1, *n2 = num2,
 		*dot1, *dot2,
 		*val1, *val2,
-		v1[2] = { 0, 0 }, v2[2] = { 0, 0 },
-		*buffer, *pbuf, *ret, *pret,
+		v1[2] = { 0, 0 }, v2[2] = { 0, 0 },temp[2] = { 0, 0 },
+		*buffer, *pbuf, *ret,
 		*ptr1 = NULL, *ptr2= NULL,
 		result = 0, retenue = 0, neg = 0, neg1 = 0, neg2 = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
-				val1_len = 0, val2_len = 0,
-				buflen = 0, z = 1;
+				val1_len = 0, val2_len = 0;
 	unsigned long int ii_ = 0, ij_ =0;
 	NEG;
 	if(neg1 || neg2){
@@ -499,21 +456,17 @@ void *soustraction(void *num1, void *num2){
 		default: printf("ERROR\n");
 			exit(0);
 	}
-	pbuf = allocation((void **)&buffer,BUFFER, sizeof(char));
 	if(dot1 != NULL && dot1_len == 0)
 		val1_len--;
 	if(dot2 != NULL && dot2_len == 0)
 		val2_len--;
+	pbuf = allocation((void **)&buffer,((val1_len > val2_len) ? val1_len : val2_len) + ((dot1_len > dot2_len) ? dot1_len : dot2_len) +2, sizeof(char));
+	pbuf += ((val1_len > val2_len) ? val1_len : val2_len) + ((dot1_len > dot2_len) ? dot1_len : dot2_len) +2;
 	if(dot1_len > dot2_len){
 		for(ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii_--){
-			if(buflen + 1 >= BUFFER){
-				z++;
-				buflen = 0;
-				pbuf = reallocation((void **)&buffer,z*BUFFER);
-			}
-			sprintf(pbuf, "%c", dot1[ii_-1]);
-			pbuf++;
-			buflen++;
+			sprintf(temp, "%c", dot1[ii_-1]);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
 		}
 		for(ii_ = ii_, ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii_--, ij_--){
 			v1[0] = dot1[ii_-1];
@@ -527,14 +480,9 @@ void *soustraction(void *num1, void *num2){
 				result = 10+v1[0] - v2[0] - retenue;
 				retenue = 1;
 			}
-			if(buflen + 1 >= BUFFER){
-				z++;
-				buflen = 0;
-				pbuf = reallocation((void **)&buffer,z*BUFFER);
-			}
-			sprintf(pbuf, "%i", result);
-			pbuf++;
-			buflen++;
+			sprintf(temp, "%i", result);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
 		}
 	}
 	if(dot2_len > dot1_len){
@@ -548,14 +496,9 @@ void *soustraction(void *num1, void *num2){
 				result = 10- (v1[0] + retenue);
 				retenue = 1;
 			}
-			if(buflen + 1 >= BUFFER){
-				z++;
-				buflen = 0;
-				pbuf = reallocation((void **)&buffer,z*BUFFER);
-			}
-			sprintf(pbuf, "%i", result);
-			pbuf++;
-			buflen++;
+			sprintf(temp, "%i", result);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
 		}
 		for(ii_ = ii_, ij_ = dot1_len; ii_ > 0 && ij_ > 0; ii_--, ij_--){
 			v1[0] = dot1[ii_-1];
@@ -569,14 +512,9 @@ void *soustraction(void *num1, void *num2){
 				result = 10+v1[0] - v2[0] - retenue;
 				retenue = 1;
 			}
-			if(buflen + 1 >= BUFFER){
-				z++;
-				buflen = 0;
-				pbuf = reallocation((void **)&buffer,z*BUFFER);
-			}
-			sprintf(pbuf, "%i", result);
-			pbuf++;
-			buflen++;
+			sprintf(temp, "%i", result);
+			memcpy(pbuf, temp, 1);
+			pbuf--;
 		}
 	}else{
 		if(dot1_len == dot2_len){
@@ -588,14 +526,9 @@ void *soustraction(void *num1, void *num2){
 				}else{
 					retenue = 0;
 				}
-				if(buflen + 1 >= BUFFER){
-					z++;
-					buflen = 0;
-					pbuf = reallocation((void **)&buffer,z*BUFFER);
-				}
-				sprintf(pbuf, "%i", result);
-				pbuf++;
-				buflen++;
+				sprintf(temp, "%i", result);
+				memcpy(pbuf, temp, 1);
+				pbuf--;
 			}
 			for(ii_ = ii_ , ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii_--, ij_--){
 				v1[0] = dot1[ii_-1];
@@ -609,26 +542,15 @@ void *soustraction(void *num1, void *num2){
 					result = 10+v1[0] - v2[0] - retenue;
 					retenue = 1;
 				}
-				if(buflen + 1 >= BUFFER){
-					z++;
-					buflen = 0;
-					pbuf = reallocation((void **)&buffer,z*BUFFER);
-				}
-				sprintf(pbuf, "%i", result);
-				pbuf++;
-				buflen++;
+				sprintf(temp, "%i", result);
+				memcpy(pbuf, temp, 1);
+				pbuf--;
 			}
 		}
 	}
 	if(dot1_len || dot2_len){
-		if(buflen + 1 >= BUFFER){
-			z++;
-			buflen = 0;
-			pbuf = reallocation((void **)&buffer,z*BUFFER);
-		}
-		sprintf(pbuf, ".");
-		pbuf++;
-		buflen++;
+		*pbuf = '.';
+		pbuf--;
 	}
 	for(ptr1 = val1, ptr2 = val2, ii_ = val1_len - (neg1 == 1), ij_ = val2_len - (dot2_len > 0);
 		ii_ > 0 && ij_ > 0;
@@ -645,14 +567,9 @@ void *soustraction(void *num1, void *num2){
 			result = 10+v1[0] - v2[0] - retenue;
 			retenue = 1;
 		}
-		if(buflen + 1 >= BUFFER){
-			z++;
-			buflen = 0;
-			pbuf = reallocation((void **)&buffer,z*BUFFER);
-		}
-		sprintf(pbuf, "%i", result);
-		pbuf++;
-		buflen++;
+		sprintf(temp, "%i", result);
+		memcpy(pbuf, temp, 1);
+		pbuf--;
 	}
 	for(ii_ = ii_; ii_ > 0; ii_--, ptr1--){
 		if((ptr1 +1) == n1)break;
@@ -667,14 +584,9 @@ void *soustraction(void *num1, void *num2){
 				result = 0;
 			retenue = 1;
 		}
-		if(buflen + 1 >= BUFFER){
-			z++;
-			buflen = 0;
-			pbuf = reallocation((void **)&buffer,z*BUFFER);
-		}
-		sprintf(pbuf, "%i", result);
-		pbuf++;
-		buflen++;
+		sprintf(temp, "%i", result);
+		memcpy(pbuf, temp, 1);
+		pbuf--;
 	}
 	for(ptr2 = ptr2, ij_ = ij_-1; ij_ > 0 && ij_ != ~(unsigned long int)0; ij_--, ptr2++){
 		v2[0] = *ptr2;
@@ -686,45 +598,33 @@ void *soustraction(void *num1, void *num2){
 			result = 10 - v2[0] - retenue;
 			retenue = 1;
 		}
-		if(buflen + 1 >= BUFFER){
-			z++;
-			buflen = 0;
-			pbuf = reallocation((void **)&buffer,z*BUFFER);
-		}
-		sprintf(pbuf, "%i", result);
-		pbuf++;
-		buflen++;
+		sprintf(temp, "%i", result);
+		memcpy(pbuf, temp, 1);
+		pbuf--;
 	}
-	pbuf = (*(pbuf) == '.') ? pbuf +1: pbuf;
-	while(strlen(buffer) > 1 && (buffer[strlen(buffer)-1] == '0'&& buffer[strlen(buffer)-2] != '.')){
-		buffer[strlen(buffer)-1] = 0;
-		pbuf = &buffer[strlen(buffer)-2];
+	if(*(pbuf + 1) == '0'){
+		while(*(pbuf+1) == '0' && *(pbuf +2) == '0')
+			pbuf++;
+		if(*pbuf == '0' && *(pbuf + 1) != '.')
+			*pbuf = 0;
 	}
 	if(neg){
-		if(buflen + 1 >= BUFFER){
-			z++;
-			pbuf = reallocation((void **)&buffer,z*BUFFER);
-		}else
-			pbuf = buffer+strlen(buffer);
-		sprintf(pbuf,"-");
-		pbuf++;
-		buflen++;
+		*pbuf = '-';
+		pbuf--;
 	}
-	pbuf = buffer;
-	ij_ = strlen(pbuf);
-	pret = allocation((void **)&ret, ij_, sizeof(char));
-	int stop = 0;
-	for(ii_ = ij_-1, pret = ret; stop == 0; ii_--, pret++){
-		*pret = pbuf[ii_];
-		stop = (ii_ == 0) ? 1 :0;
-	}
+	ij_ = strlen(pbuf+1);
+	ret = allocation((void **)&ret, ij_, sizeof(char));
+	strcpy(ret, pbuf+1);
+	free(buffer);
 	if(equal("0",ret) == 0){
 		strcpy(ret,"0");
 	}
-	if((n1 = strchr(ret,'.')) != NULL)
-		for(n2 = &ret[strlen(ret) - 1];(n2+1) != n1 && (*n2 == '0' || *n2 == '.'); n2--)
+	if((n1 = strchr(ret,'.')) != NULL){
+		for(n2 = &ret[strlen(ret) - 1];(n2+1) != n1 && *n2 == '0'; n2--)
 			*n2 = 0;
-	free(pbuf);
+		if(*n2 == '.')
+			*n2 = 0;
+	}
 	return ret;
 }
 void *multiplication(void *num1, void *num2){
