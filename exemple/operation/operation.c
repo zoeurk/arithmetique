@@ -510,7 +510,7 @@ void *soustraction(void *num1, void *num2){
 	if(dot2_len > 0)
 		dot2--;
 	if(dot1_len > dot2_len){
-		//printf("**************\n");
+		printf("**************\n");
 		/*for(ii_ = dot1_len; ii_ > 0 && ii_ != ~(unsigned long int)0 && ii_ != dot2_len; ii_--){
 			sprintf(temp, "%c", dot1[ii_]);
 			memcpy(pbuf, temp, 1);
@@ -522,7 +522,7 @@ void *soustraction(void *num1, void *num2){
 		strcpy(pbuf, &dot1[dot2_len+1]);
 		//printf("%s :: %s :: %s\n", pbuf, &dot1[ii_], &dot2[ii_]);
 		//exit(0);
-		pbuf = &pbuf[strlen(pbuf-1)];
+		pbuf = &pbuf[strlen(pbuf)-1];
 		for(ii_ = ii_,
 			dot1 = (ii_ > 1) ? &dot1[ii_ -1] : &dot1[ii_],
 			dot2 = (ii_ > 1) ? &dot2[ii_ -1] : &dot2[ii_];
