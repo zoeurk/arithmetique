@@ -1143,9 +1143,9 @@ void *modulo(void *num1, void *num2, unsigned long int scale){
 	dividende = soustraction(num1, reste);
 	free(result);
 	if(equal(num1, "0") < 0){
-		result = multiplication(dividende, "-1");
-		free(dividende);
-		dividende = result;
+		//result = multiplication(dividende, "-1");
+		//free(dividende);
+		//dividende = result;
 		if(*dividende == '-' && equal(dividende, "-0") == 0){
 			result = dividende + 1;
 			temp = allocation((void **)&temp, strlen(result), sizeof(char));
