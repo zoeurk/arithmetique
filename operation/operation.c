@@ -573,7 +573,7 @@ void *soustraction(void *num1, void *num2){
 		}
 	}else{
 		if(dot1_len == dot2_len){
-			for(ii_ = ii_ , ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii_--, ij_--){
+			/*for(ii_ = ii_ , ij_ = dot2_len; ii_ > 0 && ij_ > 0; ii_--, ij_--){
 				memset(v1, 0, 21);
 				memset(v2, 0, 21);
 				memset(temp, 0, 21);
@@ -591,7 +591,41 @@ void *soustraction(void *num1, void *num2){
 				sprintf(temp, "%lu", result);
 				memcpy(pbuf, temp, 1);
 				pbuf--;
+			}*/
+			for(ii_ = dot1_len,
+				dot1 = (ii_ > 1) ? &dot1[ii_ -1] : &dot1[ii_],
+				dot2 = (ii_ > 1) ? &dot2[ii_ -1] : &dot2[ii_];
+				ii_ > 0;
+				ii_-= (ii_ > 1) ? 2 : ii_,
+				dot1 -= (ii_ > 1) ? 2 : ii_,
+				dot2 -= (ii_ > 1) ? 2 : ii_
+			){
+				memset(v1, 0, 21);
+				memset(v2, 0, 21);
+				memset(temp, 0, 21);
+				memcpy(v1, dot1, (ii_ > 1) ? 2 : ii_);
+				memcpy(v2, dot2, (ii_ > 1) ? 2 : ii_);
+				i1 = atol(v1);
+				i2 = atol(v2);
+				if(i1 >= i2 + retenue){
+					result = i1 - i2 - retenue;
+					retenue = 0;
+				}else{
+					if(ii_ > 1)
+						result = 100 + i1 - i2 - retenue;
+					else
+						result = 10 + i1 - i2 - retenue;
+					retenue = 1;
+				}
+				if(ii_ > 1 && result < 10)
+					sprintf(temp, "0%lu", result);
+				else
+					sprintf(temp, "%lu", result);
+				pbuf -= strlen(temp);
+				memcpy(pbuf, temp, strlen(temp));
+				//pbuf--;
 			}
+			pbuf--;
 		}
 	}
 	if(dot1_len || dot2_len){
