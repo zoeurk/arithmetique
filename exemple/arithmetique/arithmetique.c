@@ -157,7 +157,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			//fprintf(stderr, "===>%s\n", n1);
 			//exit(0);
 			if((eq = equal(n1, pseudo)) > 0){
-				n1_ = racine_carree(n1, virgule);
+				n1_ = racine_carree(n1, virgule, approximation);
 				//if(n1_ == NULL)
 					//exit(0);
 				free(n1);
@@ -419,7 +419,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}\
 	memset(buffer, 0, internal_buflen);\
 	if(equal(n,comp) > 0){\
-		for(n = n, i = i;n && equal(n, comp) > 0;n_ = racine_carree(n, virgule+1), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
+		for(n = n, i = i;n && equal(n, comp) > 0;n_ = racine_carree(n, virgule+1, 0), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
 		if(n != NULL)\
 			snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
 	}else{\
@@ -458,7 +458,7 @@ void *exponentiel(void *num,unsigned long int internal_buflen, char *format, uns
 	return puissance(exp, num, internal_buflen, format, virgule, approximation);
 }
 
-void *racine_carree(void *num1, unsigned long int virgule){
+void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	char *n = multiplication(num1, "1"), *n_, trad[21], *trad_, *r, *r_, *r__ ,*tst, *rep = NULL;
 	unsigned long int s, count = 0;
 	error_set(SET, 0);
@@ -495,7 +495,7 @@ void *racine_carree(void *num1, unsigned long int virgule){
 		free(tst);
 		free(r);
 		r = r_;
-		r_ = division(r, "1", virgule, 0);
+		r_ = division(r, "1", virgule +1, 0);
 		free(r);
 		r = r_;
 		tst = multiplication(r,r);
@@ -519,7 +519,9 @@ void *racine_carree(void *num1, unsigned long int virgule){
 	free(tst);
 	if(rep)
 		free(rep);
-	return r;
+	rep = division(r, "1", virgule, approximation);
+	free(r);
+	return rep;
 }
 int error_set(int op, int val){
 	static int err = 0;
