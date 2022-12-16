@@ -59,11 +59,13 @@ int main(int argc, char **argv){
 		printf("addition:%s\n", (char *)r);
 		free(r);
 	}
+	//exit(0);
 	r = soustraction(argv[1], argv[2]);
 	if(r){
 		printf("soustraction:%s\n", (char *)r);
 		free(r);
 	}
+	//exit(0);
 	r = multiplication(argv[1], argv[2]);
 	if(r){
 		printf("multiplication:%s\n", (char *)r);
@@ -84,7 +86,8 @@ int main(int argc, char **argv){
 		printf("modulo etendu:%s\n",  (char *)r);
 		free(r);
 	}
-	r = racine_carree(argv[1], atoi(argv[3]));
+	//exit(0);
+	r = racine_carree(argv[1], atoi(argv[3]),1);
 	if(r){
 		check = multiplication(r, r);
 		printf("racine carree de '%s': %s\n", argv[1], r);
@@ -94,7 +97,7 @@ int main(int argc, char **argv){
 	}else{
 		printf("%s\n", error_msg[m_errno]);
 	}
-	r = racine_carree(argv[2], atoi(argv[3]));
+	r = racine_carree(argv[2], atoi(argv[3]), 1);
 	if(r){
 		check = multiplication(r, r);
 		printf("racine carree de '%s': %s\n", argv[2], r);
@@ -104,8 +107,9 @@ int main(int argc, char **argv){
 	}else{
 		printf("%s\n", error_msg[m_errno]);
 	}
+	//exit(0);
 	//free(format);
-	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]), 1);
+	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("%s^%s  = %s\n", argv[1], argv[2], r);
 		free(r);
