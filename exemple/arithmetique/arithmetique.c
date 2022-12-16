@@ -97,7 +97,7 @@ void *tangente(char *arg, char *format,unsigned long internal_buflen,int i_deg, 
 	return pbuf;
 }
 
-void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
+void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule){
 	char *n1 = multiplication(num1,"1"),
 		*n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
@@ -157,7 +157,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			//fprintf(stderr, "===>%s\n", n1);
 			//exit(0);
 			if((eq = equal(n1, pseudo)) > 0){
-				n1_ = racine_carree(n1, virgule, approximation);
+				n1_ = racine_carree(n1, virgule);
 				//if(n1_ == NULL)
 					//exit(0);
 				free(n1);
@@ -286,7 +286,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}
 		if(neg){
 			free(n1);
-			n1 = division("1", pseudo, virgule, approximation);
+			n1 = division("1", pseudo, virgule, 0);
 			free(pseudo);
 			free(n2);
 			free(i);
@@ -327,7 +327,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		n1 = n1_;
 	}
 	if(neg == 1){
-		n1_ = division("1", n1, virgule, approximation);
+		n1_ = division("1", n1, virgule, 0);
 		free(n1);
 		n1 = n1_;
 	}
@@ -419,7 +419,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}\
 	memset(buffer, 0, internal_buflen);\
 	if(equal(n,comp) > 0){\
-		for(n = n, i = i;n && equal(n, comp) > 0;n_ = racine_carree(n, virgule, approximation), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
+		for(n = n, i = i;n && equal(n, comp) > 0;n_ = racine_carree(n, virgule+1), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
 		if(n != NULL)\
 			snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
 	}else{\
@@ -440,26 +440,26 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	free(n);\
 	if(dot_)\
 		free(dot_);\
-	n = division(result, "1", virgule, approximation);\
+	n = division(result, "1", virgule+1, 0);\
 	free(result);\
 	return n;
 
-void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
+void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule){
 	LOG(logl, "le logarithme neperien");
 	return result;
 }
-void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
+void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule){
 	LOG(log10l, "le logarithme en base 10");
 }
-void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
+void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule){
 	char exp[66];
 	memset(exp, 0, 66);
 	sprintf(exp, "%.62Lf\n", expl(1));
-	return puissance(exp, num, internal_buflen, format, virgule, approximation);
+	return puissance(exp, num, internal_buflen, format, virgule);
 }
 
-void *racine_carree(void *num1, unsigned long int virgule, int approximation){
-	char *n = multiplication(num1, "1"), *n_, trad[21], *trad_, *r, *r_, *r__ ,*tst, *rep = NULL, *approx = NULL;
+void *racine_carree(void *num1, unsigned long int virgule){
+	char *n = multiplication(num1, "1"), *n_, trad[21], *trad_, *r, *r_, *r__ ,*tst, *rep = NULL;
 	unsigned long int s, count = 0;
 	error_set(SET, 0);
 	if(equal(num1, "0") < 0){
@@ -495,7 +495,7 @@ void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 		free(tst);
 		free(r);
 		r = r_;
-		r_ = division(r, "1", virgule +1, 0);
+		r_ = division(r, "1", virgule, 0);
 		free(r);
 		r = r_;
 		tst = multiplication(r,r);
@@ -504,7 +504,7 @@ void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 		}else{
 			if(equal(rep, r) == 0){
 				for(count = count; count > 0; count--){
-					r_ = division(r, "10", virgule +1, 0);
+					r_ = division(r, "10", virgule, 0);
 					free(r);
 					r = r_;
 				}
@@ -519,35 +519,6 @@ void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	free(tst);
 	if(rep)
 		free(rep);
-	//printf("%s\n", r);
-	if(approximation && (rep = strchr(r, '.')) && strlen(rep+1) > virgule && r[strlen(r)-1] >= 5){
-		for(approx = approx, s = 0;s < virgule+1; s++){
-			if(approx == NULL){
-				if((approx = calloc(3, sizeof(char))) == NULL){
-					perror("calloc()");
-					exit(EXIT_FAILURE);
-				}
-				strcpy(approx,"0.");
-			}else{
-				if((approx = realloc(approx, strlen(approx)+2)) == NULL){
-					perror("realloc()");
-					exit(EXIT_FAILURE);
-				}
-				if(s+1 == virgule+1)
-					strcat(approx, "1");
-				else
-					strcat(approx, "0");
-			}
-		}
-		rep = addition(r, approx);
-		rep[strlen(rep)-1] = 0;
-		free(r);
-		r = rep;
-		//printf("==>%s\n", approx);
-	}else
-		r[strlen(r)-1] = 0;
-	//rep = division(r, "1", virgule, approximation);
-	//free(r);
 	return r;
 }
 int error_set(int op, int val){
