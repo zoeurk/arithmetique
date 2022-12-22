@@ -87,7 +87,7 @@ int main(int argc, char **argv){
 		free(r);
 	}
 	//exit(0);
-	r = racine_carree(argv[1], atoi(argv[3]));
+	r = racine_carree(argv[1], atoi(argv[3]), 0);
 	if(r){
 		check = multiplication(r, r);
 		printf("racine carree de '%s': %s\n", argv[1], r);
@@ -97,7 +97,7 @@ int main(int argc, char **argv){
 	}else{
 		printf("%s\n", error_msg[m_errno]);
 	}
-	r = racine_carree(argv[2], atoi(argv[3]));
+	r = racine_carree(argv[2], atoi(argv[3]), 0);
 	if(r){
 		check = multiplication(r, r);
 		printf("racine carree de '%s': %s\n", argv[2], r);
@@ -109,7 +109,7 @@ int main(int argc, char **argv){
 	}
 	//exit(0);
 	//free(format);
-	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]));
+	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]),1);
 	if(r){
 		printf("%s^%s  = %s\n", argv[1], argv[2], r);
 		free(r);
@@ -158,40 +158,40 @@ int main(int argc, char **argv){
 		printf("%s\n", error_msg[m_errno]);
 	}
 	printf("\t\t\t===\n");
-	r = log_n(argv[1], sz, format,atoi(argv[3]));
+	r = log_n(argv[1], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("Logarithme Neperien de '%s': %s\n", argv[1], r);
 		free(r);
 	}else{
 		printf("%s\n", error_msg[m_errno]);
 	}
-	r = log_n(argv[2], sz, format,atoi(argv[3]));
+	r = log_n(argv[2], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("Logarithme Neperien de '%s': %s\n", argv[2], r);
 		free(r);
 	}else{
 		printf("%s\n", error_msg[m_errno]);
 	}
-	r = log_10(argv[1], sz, format,atoi(argv[3]));
+	r = log_10(argv[1], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("Logarithme 10 de '%s': %s\n", argv[1], r);
 		free(r);
 	}else{
 		printf("%s\n", error_msg[m_errno]);
 	}
-	r = log_10(argv[2], sz, format,atoi(argv[3]));
+	r = log_10(argv[2], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("Logarithme 10 de '%s': %s\n", argv[2], r);
 		free(r);
 	}else{
 		printf("%s\n", error_msg[m_errno]);
 	}
-	/*r = exponentiel(argv[1], sz, format, atoi(argv[3]));
+	/*r = exponentiel(argv[1], sz, format, atoi(argv[3]), 0);
 	if(r){
 		printf("Exponentiel '%s': %s\n", argv[1], r);
 		free(r);
 	}
-	r = exponentiel(argv[2], sz, format, atoi(argv[3]));
+	r = exponentiel(argv[2], sz, format, atoi(argv[3]), 0);
 	if(r){
 		printf("Exponentiel '%s': %s\n", argv[2], r);
 		free(r);
