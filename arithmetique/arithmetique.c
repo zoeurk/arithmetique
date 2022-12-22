@@ -26,8 +26,10 @@
 	}\
 	arg_ = multiplication(arg,"1");\
 	memset(buffer, 0, internal_buflen);\
-	sprintf(pi,"%.54Lf", 2*atanl(1));\
-	sprintf(npi,"-%.54Lf", 2*atanl(1));\
+	sprintf(pi,"%.54Lf", 8*atanl(1));\
+	sprintf(npi,"-%.54Lf", 8*atanl(1));\
+	/*printf("%s :: %s\n", pi, npi);\
+	exit(0);*/\
 	t = multiplication(arg_,"1");\
 	if(i_deg){\
 		t_arg = multiplication(t, pi);\
@@ -35,7 +37,7 @@
 		t = division(t_arg, "180", virgule, approximation);\
 		free(t_arg);\
 	}\
-	if(equal(arg_,"0") > 0){\
+	if(equal(arg_,pi) > 0){\
 		mul = division(arg_, pi, 0,0);\
 		pi_ = multiplication(pi, mul);\
 		temp = soustraction(t, pi_);\
@@ -43,15 +45,18 @@
 		free(pi_);\
 		free(t);\
 		t = temp;\
+		/*printf("%s::%Lf\n", t, cosl(strtold(t, NULL)));*/\
 	}else{\
-		if(equal(arg_, "0") < 0){\
-			mul = division(arg_, pi, 0, 0);\
+		if(equal(arg_, npi) < 0 && equal(arg_, "0") < 0){\
+			mul = division(arg_, npi, 0, 0);\
 			pi_ = multiplication(npi, mul);\
 			temp = addition(t, pi_);\
 			free(mul);\
 			free(pi_);\
 			free(t);\
 			t = temp;\
+		}else{ \
+			t = multiplication(arg_, "1"); \
 		}\
 	}\
 	free(arg_);\
@@ -85,6 +90,8 @@
 	}
 void *cosinus(char *arg, char *format,unsigned long internal_buflen, int i_deg, int o_deg, unsigned long int virgule, int approximation){
 	TRIGO(cosl);
+	//temp = multiplication("-1", pbuf);
+	//free(pbuf);
 	return pbuf;
 }
 
@@ -97,7 +104,7 @@ void *tangente(char *arg, char *format,unsigned long internal_buflen,int i_deg, 
 	return pbuf;
 }
 
-void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule){
+void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	char *n1 = multiplication(num1,"1"),
 		*n2 = multiplication(num2,"1"),
 		buffer[internal_buflen], *v, 
@@ -105,7 +112,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*i = multiplication("1",num2),*j = NULL, *j_, *j__, *mod = NULL;
 	char *i_, *v_ = NULL, *pseudo = NULL, *pseudo__, *p, *dot_, *pdot_, *tst_, tst__[68], *_format_, f[20];
 	unsigned long int l;
-	long double pseudo_, pseudo_tst, tst;
+	long double pseudo_, /*pseudo_tst,*/ tst;
 	int eq, neg = 0;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
@@ -146,18 +153,18 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		//printf("%s\n", n1);
 		//exit(0);
 		do{
-			pseudo_tst = strtold(n1, NULL) * strtold(n1, NULL);
+			//pseudo_tst = strtold(n1, NULL) * strtold(n1, NULL);
 			pseudo_ = strtold(n1, NULL);
-			memset(buffer, 0, internal_buflen);
+			/*memset(buffer, 0, internal_buflen);
 			snprintf(buffer, internal_buflen, format, pseudo_tst);
 			if(buffer[internal_buflen-1] != 0){
 				error_set(1, 1);
 				return NULL;
-			}
+			}*/
 			//fprintf(stderr, "===>%s\n", n1);
 			//exit(0);
 			if((eq = equal(n1, pseudo)) > 0){
-				n1_ = racine_carree(n1, virgule);
+				n1_ = racine_carree(n1, virgule, approximation);
 				//if(n1_ == NULL)
 					//exit(0);
 				free(n1);
@@ -419,7 +426,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}\
 	memset(buffer, 0, internal_buflen);\
 	if(equal(n,comp) > 0){\
-		for(n = n, i = i;n && equal(n, comp) > 0;n_ = racine_carree(n, virgule+1), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
+		for(n = n, i = i;n && equal(n, comp) > 0;n_ = racine_carree(n, virgule+1, approximation), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
 		if(n != NULL)\
 			snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
 	}else{\
@@ -444,21 +451,21 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	free(result);\
 	return n;
 
-void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule){
+void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	LOG(logl, "le logarithme neperien");
 	return result;
 }
-void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule){
+void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	LOG(log10l, "le logarithme en base 10");
 }
-void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule){
+void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
 	char exp[66];
 	memset(exp, 0, 66);
 	sprintf(exp, "%.62Lf\n", expl(1));
-	return puissance(exp, num, internal_buflen, format, virgule);
+	return puissance(exp, num, internal_buflen, format, virgule, approximation);
 }
 
-void *racine_carree(void *num1, unsigned long int virgule){
+void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	char *n = multiplication(num1, "1"), *n_, trad[21], *trad_, *r, *r_, *r__ ,*tst, *rep = NULL;
 	unsigned long int s, count = 0;
 	error_set(SET, 0);
@@ -476,7 +483,7 @@ void *racine_carree(void *num1, unsigned long int virgule){
 	s = strlen(n);
 	sprintf(trad, "%lu", s);
 	trad_ = multiplication(trad, "100");
-	r = division(n, trad_, virgule+1, 1);
+	r = division(n, trad_, virgule+1, approximation);
 	r_ = addition(r, trad_);
 	free(r);
 	r = r_;
@@ -486,7 +493,7 @@ void *racine_carree(void *num1, unsigned long int virgule){
 	r = r_;
 	tst = multiplication(r, r);
 	while(equal(tst, num1) > 0){
-		r_ = division(n, r, virgule+1, 0);
+		r_ = division(n, r, virgule+1, approximation);
 		r__ = addition(r, r_);
 		free(r);
 		r = r__;
@@ -495,7 +502,7 @@ void *racine_carree(void *num1, unsigned long int virgule){
 		free(tst);
 		free(r);
 		r = r_;
-		r_ = division(r, "1", virgule, 0);
+		r_ = division(r, "1", virgule, approximation);
 		free(r);
 		r = r_;
 		tst = multiplication(r,r);
