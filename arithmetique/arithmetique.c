@@ -26,8 +26,8 @@
 	}\
 	arg_ = multiplication(arg,"1");\
 	memset(buffer, 0, internal_buflen);\
-	sprintf(pi,"%.54Lf", 8*atanl(1));\
-	sprintf(npi,"-%.54Lf", 8*atanl(1));\
+	sprintf(pi,"%.54Lf", 2*atanl(1));\
+	sprintf(npi,"-%.54Lf", 2*atanl(1));\
 	t = multiplication(arg_,"1");\
 	if(i_deg){\
 		t_arg = multiplication(t, pi);\
