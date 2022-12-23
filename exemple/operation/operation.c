@@ -495,7 +495,7 @@ void *soustraction(void *num1, void *num2){
 		pbuf -= (dot1_len - dot2_len);
 		ii_ = dot2_len;
 		strcpy(pbuf, &dot1[dot2_len+1]);
-		pbuf = &pbuf[strlen(pbuf)--(dot1_len-dot2_len)];
+		pbuf = &pbuf[strlen(pbuf)-(dot1_len-dot2_len)];
 		for(ii_ = ii_,
 			dot1 = (ii_ > 1) ? &dot1[ii_ -1] : &dot1[ii_],
 			dot2 = (ii_ > 1) ? &dot2[ii_ -1] : &dot2[ii_];
