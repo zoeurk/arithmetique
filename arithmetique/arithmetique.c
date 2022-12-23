@@ -56,6 +56,7 @@
 			free(t);\
 			t = temp;\
 		}else{ \
+			free(t); \
 			t = multiplication(arg_, "1"); \
 		}\
 	}\
