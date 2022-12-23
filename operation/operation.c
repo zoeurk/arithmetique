@@ -535,11 +535,11 @@ void *soustraction(void *num1, void *num2){
 			dot2 = (ij_ > 1) ? &dot2[ii_ - 1] : &dot2[ii_];
 			ij_ > 0;
 			ij_ -= (ij_ > 1) ? 2 : ij_,
-			dot2 -= (ij_ > 1) ? 2 : ij_+(ij_ == 0)
+			dot2 -= (ij_ > 1) ? 2 : ij_ + (ij_ == 0)
 		){
 			memset(v1, 0, 21);
 			memset(temp, 0, 21);
-			memcpy(v1, dot2, (ij_ > 1) ? 2 : ij_ + (ij == 0));
+			memcpy(v1, dot2, (ij_ > 1) ? 2 : ij_ +(ij_ == 0));
 			i1 = (unsigned long int)atol(v1);
 			if(ij_ > 1)
 				result = 100 -(i1 +retenue);
