@@ -55,8 +55,14 @@ int strtype(void *str){
 		return 1;
 	if(_str_[0] == '.')
 		dot = 2;
-	if(*_str_ == '-' || *_str_ == '+')
+	if((*_str_ == '-' || *_str_ == '+') && (*(_str_+1) > 47 && *(_str_+1) < 58))
 		_str_++;
+	else{
+		if(*_str_ < 48 || *_str_ > 57){
+			_str_++;
+			goto data;
+		}
+	}
 	for(_str_ = _str_;((*_str_ > 47 && *_str_ < 58) || (*_str_ == '.' && dot < 2)) && *_str_ != 0; _str_++){
 		if(*_str_ == '.' && dot == 0)
 			dot = 1;
@@ -66,6 +72,7 @@ int strtype(void *str){
 	}
 	if(*_str_ == 0 && dot < 2)
 		return 0;
+	data:
 	for(_str_ = _str_;i = (unsigned short int) *_str_, ((i > 31 && i< 127) || (i > 128 && i < 256))  && *_str_ != 0; _str_++);;
 	if(*_str_ == 0)
 		return 1;
