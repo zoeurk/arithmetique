@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([zoeurk@gmail.com], [1.0], [zoeurk@gmail.com])
+AC_INIT([zoeurk@gmail.com], [1.2], [zoeurk@gmail.com])
 AC_CONFIG_SRCDIR([arithmetique/arithmetique.h])
 AC_CONFIG_HEADERS([config.h])
 
