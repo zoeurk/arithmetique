@@ -109,13 +109,13 @@ int main(int argc, char **argv){
 	}
 	//exit(0);
 	//free(format);
-	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]),1);
+	/*r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]),1);
 	if(r){
 		printf("%s^%s  = %s\n", argv[1], argv[2], r);
 		free(r);
 	}else{
 		printf("%s\n", error_msg[m_errno]);
-	}
+	}*/
 	printf("\t\tTrigonometrie:\n");
 	r = cosinus(argv[1], format, sz,0, 0, atoi(argv[3]), 0);
 	if(r){
