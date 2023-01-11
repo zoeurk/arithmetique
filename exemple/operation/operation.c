@@ -55,14 +55,8 @@ int strtype(void *str){
 		return 1;
 	if(_str_[0] == '.')
 		dot = 2;
-	if((*_str_ == '-' || *_str_ == '+') && (*(_str_+1) > 47 && *(_str_+1) < 58))
+	if(*_str_ == '-' || *_str_ == '+')
 		_str_++;
-	else{
-		if(*_str_ < 48 || *_str_ > 57){
-			_str_++;
-			goto data;
-		}
-	}
 	for(_str_ = _str_;((*_str_ > 47 && *_str_ < 58) || (*_str_ == '.' && dot < 2)) && *_str_ != 0; _str_++){
 		if(*_str_ == '.' && dot == 0)
 			dot = 1;
@@ -72,7 +66,6 @@ int strtype(void *str){
 	}
 	if(*_str_ == 0 && dot < 2)
 		return 0;
-	data:
 	for(_str_ = _str_;i = (unsigned short int) *_str_, ((i > 31 && i< 127) || (i > 128 && i < 256))  && *_str_ != 0; _str_++);;
 	if(*_str_ == 0)
 		return 1;
@@ -239,42 +232,103 @@ int equal(void *num1, void *num2){
 	}
 	return 0;
 }
-#define A_BLK 3
-//#define A_BLK_ 3
-#define D_ADDITION\
-	switch(r){ \
-		case 3: \
-			if(result >= 1000){\
-				retenue = 1;\
-				result -= 1000;\
-			}else retenue = 0; \
-			break; \
-		case 2: \
-			if(result >= 100){\
-				retenue = 1;\
-				result -= 100;\
-			}else retenue = 0; \
-			break; \
-		case 1: \
-			if(result >= 10){ \
-				retenue = 1; \
-				result -= 10; \
-			}else retenue = 0; \
-			break;\
-	}
-	/*if(result >= 100 && r == 2){\
-		retenue = 1; \
-		result -= 100;\
-	}else{\
-		if(result >= 10 && r == 1){\
-			result -= 10;\
-			retenue = 1;\
-		}else \
-			retenue = 0;\
-	}*/
+#define A_BLK 18
+#define A_BLK_ A_BLK-1
 
 #define ADDITION\
 	switch(r){ \
+		case 18: \
+			if(result >= 1000000000000000000){\
+				retenue = 1;\
+				result -= 1000000000000000000;\
+			}else retenue = 0; \
+			break; \
+		case 17: \
+			if(result >= 100000000000000000){\
+				retenue = 1;\
+				result -= 100000000000000000;\
+			}else retenue = 0; \
+			break; \
+		case 16: \
+			if(result >= 10000000000000000){\
+				retenue = 1;\
+				result -= 10000000000000000;\
+			}else retenue = 0; \
+			break; \
+		case 15: \
+			if(result >= 1000000000000000){\
+				retenue = 1;\
+				result -= 1000000000000000;\
+			}else retenue = 0; \
+			break; \
+		case 14: \
+			if(result >= 100000000000000){\
+				retenue = 1;\
+				result -= 100000000000000;\
+			}else retenue = 0; \
+			break; \
+		case 13: \
+			if(result >= 10000000000000){\
+				retenue = 1;\
+				result -= 10000000000000;\
+			}else retenue = 0; \
+			break; \
+		case 12: \
+			if(result >= 1000000000000){\
+				retenue = 1;\
+				result -= 1000000000000;\
+			}else retenue = 0; \
+			break; \
+		case 11: \
+			if(result >= 100000000000){\
+				retenue = 1;\
+				result -= 100000000000;\
+			}else retenue = 0; \
+			break; \
+		case 10: \
+			if(result >= 10000000000){\
+				retenue = 1;\
+				result -= 10000000000;\
+			}else retenue = 0; \
+			break; \
+		case 9: \
+			if(result >= 1000000000){\
+				retenue = 1;\
+				result -= 1000000000;\
+			}else retenue = 0; \
+			break; \
+		case 8: \
+			if(result >= 100000000){\
+				retenue = 1;\
+				result -= 100000000;\
+			}else retenue = 0; \
+			break; \
+		case 7: \
+			if(result >= 10000000){\
+				retenue = 1;\
+				result -= 10000000;\
+			}else retenue = 0; \
+			break; \
+		case 6: \
+			if(result >= 1000000){\
+				retenue = 1;\
+				result -= 1000000;\
+			}else retenue = 0; \
+			break; \
+		case 5: \
+			if(result >= 100000){ \
+				retenue = 1; \
+				result -= 100000; \
+			}else \
+				retenue = 0; \
+			break; \
+		case 4: \
+			if(result >= 10000){ \
+				retenue = 1; \
+				result -= 10000; \
+			}else \
+				retenue = 0; \
+			break; \
 		case 3: \
 			if(result >= 1000){ \
 				retenue = 1; \
@@ -299,40 +353,1021 @@ int equal(void *num1, void *num2){
 		default: \
 			retenue = 0; \
 	}
-	/*if(result >= 100 && r == 2){\
-		retenue = 1; \
-		result -= 100;\
-	}else{\
-		if(result >= 10 && r == 1){\
-			result -= 10;\
-			retenue = 1;\
-		}else \
-			retenue = 0;\
-	}*/
-
 
 #define A_DOT_0(i)\
-	if(i > 2){ \
+	if(i > 18){ \
 		if(result < 10) \
-			sprintf(temp, "00%lu", result); \
+			sprintf(temp, "00000000000000000%lu", result); \
 		else \
 			if(result < 100) \
-				sprintf(temp, "0%lu", result); \
+				sprintf(temp, "0000000000000000%lu", result); \
 			else \
-				sprintf(temp, "%lu", result); \
-	}else{\
-		if(i > 1){ \
+				if(result < 1000) \
+					sprintf(temp, "000000000000000%lu", result); \
+				else \
+					if(result < 10000) \
+						sprintf(temp, "00000000000000%lu", result); \
+					else \
+						if(result < 100000) \
+							sprintf(temp, "0000000000000%lu", result); \
+						else \
+							if(result < 1000000) \
+								sprintf(temp, "000000000000%lu", result); \
+							else \
+								if(result < 10000000) \
+									sprintf(temp, "00000000000%lu", result); \
+								else \
+									if(result < 100000000) \
+										sprintf(temp, "0000000000%lu", result); \
+									else \
+										if(result < 1000000000) \
+											sprintf(temp, "000000000%lu", result); \
+										else \
+											if(result < 10000000000) \
+												sprintf(temp, "00000000%lu", result); \
+											else \
+												if(result < 100000000000) \
+													sprintf(temp, "0000000%lu", result); \
+												else \
+													if(result < 1000000000000) \
+														sprintf(temp, "000000%lu", result); \
+													else \
+														if(result < 10000000000000) \
+															sprintf(temp, "00000%lu", result); \
+														else \
+															if(result < 100000000000000) \
+																sprintf(temp, "0000%lu", result); \
+															else \
+																if(result < 1000000000000000) \
+																	sprintf(temp, "000%lu", result); \
+																else \
+																	if(result < 10000000000000000) \
+																		sprintf(temp, "00%lu", result); \
+																	else \
+																		if(result < 100000000000000000) \
+																			sprintf(temp, "0%lu", result); \
+																		else \
+																			sprintf(temp, "%lu", result); \
+	}else{ \
+		switch(i){ \
+			case 17: \
+				if(result < 10) \
+					sprintf(temp, "0000000000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "000000000000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "00000000000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "0000000000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "000000000000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "00000000000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "0000000000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "000000000%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "00000000%lu", result); \
+												else \
+													if(result < 10000000000) \
+														sprintf(temp, "0000000%lu", result); \
+													else \
+														if(result < 100000000000) \
+															sprintf(temp, "000000%lu", result); \
+														else \
+															if(result < 1000000000000) \
+																sprintf(temp, "00000%lu", result); \
+															else \
+																if(result < 10000000000000) \
+																	sprintf(temp, "0000%lu", result); \
+																else \
+																	if(result < 100000000000000) \
+																		sprintf(temp, "000%lu", result); \
+																	else \
+																		if(result < 1000000000000000) \
+																			sprintf(temp, "00%lu", result); \
+																		else \
+																			if(result < 10000000000000000) \
+																				sprintf(temp, "0%lu", result); \
+																			else \
+																				sprintf(temp, "%lu", result); \
+				break; \
+			case 16: \
 			if(result < 10) \
-				sprintf(temp, "0%lu", result);\
-			else \
+				sprintf(temp, "000000000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "00000000000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "0000000000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "000000000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "00000000000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "0000000000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "000000000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "0000000O%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "0000000%lu", result); \
+												else \
+													if(result < 10000000000) \
+														sprintf(temp, "000000%lu", result); \
+													else \
+														if(result < 100000000000) \
+															sprintf(temp, "00000%lu", result); \
+														else \
+															if(result < 1000000000000) \
+																sprintf(temp, "0000%lu", result); \
+															else \
+																if(result < 10000000000000) \
+																	sprintf(temp, "000%lu", result); \
+																else \
+																	if(result < 100000000000000) \
+																		sprintf(temp, "00%lu", result); \
+																	else \
+																		if(result < 1000000000000000) \
+																			sprintf(temp, "0%lu", result); \
+																		else \
+																			sprintf(temp, "%lu", result); \
+				break; \
+			case 15: \
+				if(result < 10) \
+					sprintf(temp, "00000000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "0000000000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "000000000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "00000000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "0000000000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "000000000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "00000000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "000000O%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "000000%lu", result); \
+												else \
+													if(result < 10000000000) \
+														sprintf(temp, "00000%lu", result); \
+													else \
+														if(result < 100000000000) \
+															sprintf(temp, "0000%lu", result); \
+														else \
+															if(result < 1000000000000) \
+																sprintf(temp, "000%lu", result); \
+															else \
+																if(result < 10000000000000) \
+																	sprintf(temp, "00%lu", result); \
+																else \
+																	if(result < 100000000000000) \
+																		sprintf(temp, "0%lu", result); \
+																	else \
+																		sprintf(temp, "%lu", result); \
+				break; \
+			case 14: \
+				if(result < 10) \
+					sprintf(temp, "0000000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "000000000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "00000000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "0000000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "000000000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "00000000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "0000000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "00000O%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "00000%lu", result); \
+												else \
+													if(result < 10000000000) \
+														sprintf(temp, "0000%lu", result); \
+													else \
+														if(result < 100000000000) \
+															sprintf(temp, "000%lu", result); \
+														else \
+															if(result < 1000000000000) \
+																sprintf(temp, "00%lu", result); \
+															else \
+																if(result < 10000000000000) \
+																	sprintf(temp, "0%lu", result); \
+																else \
+																	sprintf(temp, "%lu", result); \
+				break; \
+			case 13: \
+				if(result < 10) \
+					sprintf(temp, "000000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "00000000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "0000000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "000000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "00000000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "0000000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "000000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "0000O%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "0000%lu", result); \
+												else \
+													if(result < 10000000000) \
+														sprintf(temp, "000%lu", result); \
+													else \
+														if(result < 100000000000) \
+															sprintf(temp, "00%lu", result); \
+														else \
+															if(result < 1000000000000) \
+																sprintf(temp, "0%lu", result); \
+															else \
+																sprintf(temp, "%lu", result); \
+				break; \
+			case 12: \
+				if(result < 10) \
+					sprintf(temp, "00000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "0000000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "000000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "00000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "0000000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "000000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "00000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "0000%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "000%lu", result); \
+												else \
+													if(result < 10000000000) \
+														sprintf(temp, "00%lu", result); \
+													else \
+														if(result < 100000000000) \
+															sprintf(temp, "0%lu", result); \
+														else \
+															sprintf(temp, "%lu", result); \
+				break; \
+			case 11: \
+				if(result < 10) \
+					sprintf(temp, "0000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "000000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "00000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "0000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "000000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "00000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "0000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "000%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "00%lu", result); \
+												else \
+													if(result < 10000000000) \
+														sprintf(temp, "0%lu", result); \
+													else \
+														sprintf(temp, "%lu", result); \
+				break; \
+			case 10: \
+				if(result < 10) \
+					sprintf(temp, "000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "00000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "0000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "00000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "0000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "00%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "0%lu", result); \
+												else \
+													sprintf(temp, "%lu", result); \
+				break; \
+			case 9: \
+				if(result < 10) \
+					sprintf(temp, "00000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "0000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "00000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "0000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "00%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "0%lu", result); \
+											else \
+												sprintf(temp, "%lu", result); \
+				break; \
+			case 8: \
+				if(result < 10) \
+					sprintf(temp, "0000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "00000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "0000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "00%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "0%lu", result); \
+										else \
+											sprintf(temp, "%lu", result); \
+				break; \
+			case 7: \
+				if(result < 10) \
+					sprintf(temp, "000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "00000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "0000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "00%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "0%lu", result); \
+									else \
+										sprintf(temp, "%lu", result); \
+				break; \
+			case 6: \
+				if(result < 10) \
+					sprintf(temp, "00000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "0000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "00%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "0%lu", result); \
+								else \
+									sprintf(temp, "%lu", result); \
+				break; \
+			case 5: \
+				if(result < 10) \
+					sprintf(temp, "0000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "00%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "0%lu", result); \
+							else \
+								sprintf(temp, "%lu", result); \
+				break; \
+			case 4: \
+				if(result < 10) \
+					sprintf(temp, "000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "00%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "0%lu", result); \
+						else \
+							sprintf(temp, "%lu", result); \
+				break; \
+			case 3: \
+				if(result < 10) \
+					sprintf(temp, "00%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "0%lu", result); \
+					else \
+						sprintf(temp, "%lu", result); \
+				break; \
+			case 2:\
+					if(result < 10) \
+						sprintf(temp, "0%lu", result);\
+					else \
+						sprintf(temp, "%lu", result); \
+				break; \
+			case 1: \
 				sprintf(temp, "%lu", result); \
-		}else{ \
-			sprintf(temp, "%lu", result); \
 		} \
 	}
 
 #define A_ZERO_SET\
 	switch(r){ \
+		case 18: \
+			if(result < 10) \
+				sprintf(temp, "00000000000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "0000000000000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "000000000000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "00000000000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "0000000000000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "000000000000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "00000000000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"0000000000%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "000000000%lu", result); \
+											else \
+												if(result < 10000000000) \
+													sprintf(temp, "00000000%lu", result); \
+												else \
+													if(result < 100000000000) \
+														sprintf(temp, "0000000%lu", result); \
+													else \
+														if(result < 1000000000000) \
+															sprintf(temp, "000000%lu", result); \
+														else \
+															if(result < 10000000000000) \
+																sprintf(temp, "00000%lu", result); \
+															else \
+																if(result < 100000000000000) \
+																	sprintf(temp, "0000%lu", result); \
+																else \
+																	if(result < 1000000000000000) \
+																		sprintf(temp, "000%lu", result); \
+																	else \
+																		if(result < 10000000000000000) \
+																			sprintf(temp, "00%lu", result); \
+																		else \
+																			if(result < 100000000000000000) \
+																				sprintf(temp, "0%lu", result); \
+																			else \
+																				sprintf(temp, "%lu", result); \
+			break; \
+		case 17: \
+			if(result < 10) \
+				sprintf(temp, "0000000000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "000000000000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "00000000000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "0000000000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "000000000000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "00000000000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "0000000000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"000000000%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "00000000%lu", result); \
+											else \
+												if(result < 10000000000) \
+													sprintf(temp, "0000000%lu", result); \
+												else \
+													if(result < 100000000000) \
+														sprintf(temp, "000000%lu", result); \
+													else \
+														if(result < 1000000000000) \
+															sprintf(temp, "00000%lu", result); \
+														else \
+															if(result < 10000000000000) \
+																sprintf(temp, "0000%lu", result); \
+															else \
+																if(result < 100000000000000) \
+																	sprintf(temp, "000%lu", result); \
+																else \
+																	if(result < 1000000000000000) \
+																		sprintf(temp, "00%lu", result); \
+																	else \
+																		if(result < 10000000000000000) \
+																			sprintf(temp, "0%lu", result); \
+																		else \
+																			sprintf(temp, "%lu", result); \
+			break; \
+		case 16: \
+			if(result < 10) \
+				sprintf(temp, "000000000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "00000000000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "0000000000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "000000000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "00000000000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "0000000000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "000000000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"00000000%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "0000000%lu", result); \
+											else \
+												if(result < 10000000000) \
+													sprintf(temp, "000000%lu", result); \
+												else \
+													if(result < 100000000000) \
+														sprintf(temp, "00000%lu", result); \
+													else \
+														if(result < 1000000000000) \
+															sprintf(temp, "0000%lu", result); \
+														else \
+															if(result < 10000000000000) \
+																sprintf(temp, "000%lu", result); \
+															else \
+																if(result < 100000000000000) \
+																	sprintf(temp, "00%lu", result); \
+																else \
+																	if(result < 1000000000000000) \
+																		sprintf(temp, "0%lu", result); \
+																	else \
+																		sprintf(temp, "%lu", result); \
+			break; \
+		case 15: \
+			if(result < 10) \
+				sprintf(temp, "00000000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "0000000000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "000000000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "00000000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "0000000000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "000000000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "00000000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"0000000%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "000000%lu", result); \
+											else \
+												if(result < 10000000000) \
+													sprintf(temp, "00000%lu", result); \
+												else \
+													if(result < 100000000000) \
+														sprintf(temp, "0000%lu", result); \
+													else \
+														if(result < 1000000000000) \
+															sprintf(temp, "000%lu", result); \
+														else \
+															if(result < 10000000000000) \
+																sprintf(temp, "00%lu", result); \
+															else \
+																if(result < 100000000000000) \
+																	sprintf(temp, "0%lu", result); \
+																else \
+																	sprintf(temp, "%lu", result); \
+			break; \
+		case 14: \
+			if(result < 10) \
+				sprintf(temp, "0000000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "000000000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "00000000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "0000000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "000000000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "00000000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "0000000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"000000%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "00000%lu", result); \
+											else \
+												if(result < 10000000000) \
+													sprintf(temp, "0000%lu", result); \
+												else \
+													if(result < 100000000000) \
+														sprintf(temp, "000%lu", result); \
+													else \
+														if(result < 1000000000000) \
+															sprintf(temp, "00%lu", result); \
+														else \
+															if(result < 10000000000000) \
+																sprintf(temp, "0%lu", result); \
+															else \
+																sprintf(temp, "%lu", result); \
+			break; \
+		case 13: \
+			if(result < 10) \
+				sprintf(temp, "000000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "00000000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "0000000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "000000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "00000000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "0000000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "000000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"00000%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "0000%lu", result); \
+											else \
+												if(result < 10000000000) \
+													sprintf(temp, "000%lu", result); \
+												else \
+													if(result < 100000000000) \
+														sprintf(temp, "00%lu", result); \
+													else \
+														if(result < 1000000000000) \
+															sprintf(temp, "0%lu", result); \
+														else \
+															sprintf(temp, "%lu", result); \
+			break; \
+		case 12: \
+			if(result < 10) \
+				sprintf(temp, "00000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "0000000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "000000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "00000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "0000000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "000000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "00000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"0000%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "000%lu", result); \
+											else \
+												if(result < 10000000000) \
+													sprintf(temp, "00%lu", result); \
+												else \
+													if(result < 100000000000) \
+														sprintf(temp, "0%lu", result); \
+													else \
+														sprintf(temp, "%lu", result); \
+			break; \
+		case 11: \
+			if(result < 10) \
+				sprintf(temp, "0000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "000000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "00000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "0000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "000000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "00000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "0000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"000%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "00%lu", result); \
+											else \
+												if(result < 10000000000) \
+													sprintf(temp, "0%lu", result); \
+												else \
+													sprintf(temp, "%lu", result); \
+			break; \
+		case 10: \
+			if(result < 10) \
+				sprintf(temp, "000000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "00000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "0000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "000000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "00000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "0000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "000%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"00%lu", result); \
+										else \
+											if(result < 1000000000) \
+												sprintf(temp, "0%lu", result); \
+											else \
+												sprintf(temp, "%lu", result); \
+			break; \
+		case 9: \
+			if(result < 10) \
+				sprintf(temp, "00000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "0000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "000000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "00000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "0000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "000%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "00%lu", result); \
+									else \
+										if(result < 100000000) \
+											sprintf(temp,"0%lu", result); \
+										else \
+											sprintf(temp, "%lu", result); \
+			break; \
+		case 8: \
+			if(result < 10) \
+				sprintf(temp, "0000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "000000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "00000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "0000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "000%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "00%lu", result); \
+								else \
+									if(result < 10000000) \
+										sprintf(temp, "0%lu", result); \
+									else \
+										sprintf(temp,"%lu", result); \
+			break; \
+		case 7: \
+			if(result < 10) \
+				sprintf(temp, "000000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "00000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "0000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "000%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "00%lu", result); \
+							else \
+								if(result < 1000000) \
+									sprintf(temp, "0%lu", result); \
+								else \
+									sprintf(temp, "%lu", result); \
+			break; \
+		case 6: \
+			if(result < 10) \
+				sprintf(temp, "00000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "0000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "000%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "00%lu", result); \
+						else \
+							if(result < 100000) \
+								sprintf(temp, "0%lu", result); \
+							else \
+								sprintf(temp, "%lu", result); \
+			break; \
+		case 5: \
+			if(result < 10) \
+				sprintf(temp, "0000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "000%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "00%lu", result); \
+					else \
+						if(result < 10000) \
+							sprintf(temp, "0%lu", result); \
+						else \
+							sprintf(temp, "%lu", result); \
+			break; \
+		case 4: \
+			if(result < 10) \
+				sprintf(temp, "000%lu", result); \
+			else \
+				if(result < 100) \
+					sprintf(temp, "00%lu", result); \
+				else \
+					if(result < 1000) \
+						sprintf(temp, "0%lu", result); \
+					else \
+						sprintf(temp, "%lu", result); \
+			break; \
 		case 3: \
 			if(result < 10) \
 				sprintf(temp, "00%lu", result); \
@@ -357,9 +1392,9 @@ void *addition(void *num1, void *num2){
 		*dot1, *dot2,
 		*val1, *val2,
 		v1[21], v2[21], temp[21],
-		*buffer, *pbuf, *ret, *pret,
+		*buffer, *pbuf, *ret,
 		*ptr1 = NULL, *ptr2= NULL,
-		retenue = 0, neg = 0, neg1 = 0, neg2 = 0, set = 0;
+		retenue = 0, neg = 0, neg1 = 0, neg2 = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
 				val1_len = 0, val2_len = 0;
 	unsigned long int ii = 0, ij = 0, r = 0;
@@ -415,24 +1450,24 @@ void *addition(void *num1, void *num2){
 			//printf("(%s)\n", pbuf);
 		}
 		for(ii = ii,
-			ptr1 = (ii > A_BLK-1) ? ptr1-(A_BLK-1): ptr1 -ii+1,
-			ptr2 = (ii > A_BLK-1) ? ptr2-(A_BLK-1): ptr2 -ii+1;
+			ptr1 = (ii > A_BLK_) ? ptr1-(A_BLK_): ptr1 -ii+1,
+			ptr2 = (ii > A_BLK_) ? ptr2-(A_BLK_): ptr2 -ii+1;
 			ii > 0;
-			ii -= (ii > A_BLK-1) ? A_BLK : ii,
-			ptr1 -= (ii > A_BLK-1) ? A_BLK : ii,
-			ptr2 -= (ii > A_BLK-1) ? A_BLK : ii
+			ii -= (ii > A_BLK_) ? A_BLK : ii,
+			ptr1 -= (ii > A_BLK_) ? A_BLK : ii,
+			ptr2 -= (ii > A_BLK_) ? A_BLK : ii
 		){
 			memset(v1, 0, 21);
 			memset(v2, 0, 21);
 			memset(temp, 0, 21);
-			memcpy(v1, ptr1, (ii > A_BLK-1)? A_BLK : ii);
-			memcpy(v2, ptr2, (ii > A_BLK-1)? A_BLK : ii);
+			memcpy(v1, ptr1, (ii > A_BLK_)? A_BLK : ii);
+			memcpy(v2, ptr2, (ii > A_BLK_)? A_BLK : ii);
 			r = (strlen(v1) > strlen(v2)) ? strlen(v1) : strlen(v2);
 			i1 = (unsigned long int)atol(v1);
 			i2 = (unsigned long int)atol(v2);
 			result = i1 + i2 + retenue;
 			//printf("[%s, %s, %lu]", result);
-			D_ADDITION;
+			ADDITION;
 			//printf("(%s:::%s :: %s ::%lu, %lu)\n", pbuf, v1, v2, result, r);
 			pbuf -= r;
 			A_DOT_0(ii);
@@ -462,22 +1497,22 @@ void *addition(void *num1, void *num2){
 		*pbuf = '.';
 	}
 	for(ii = val1_len, ij = val2_len,
-		ptr1 = (ii > A_BLK-1) ? val1 -(A_BLK-1): val1 -ii+1,
-		ptr2 = (ij > A_BLK-1) ? val2 -(A_BLK-1): val2 -ij+1;
+		ptr1 = (ii > A_BLK_) ? val1 -(A_BLK_): val1 -ii+1,
+		ptr2 = (ij > A_BLK_) ? val2 -(A_BLK_): val2 -ij+1;
 		ii > 0 || ij > 0 || retenue;
-		ii-=(ii > A_BLK-1) ? A_BLK: ii,
-		ij-=(ij > A_BLK-1) ? A_BLK : ij,
-		ptr1-=(ii > A_BLK-1)? A_BLK : ii,
-		ptr2-=(ij > A_BLK-1) ? A_BLK : ij
+		ii-=(ii > A_BLK_) ? A_BLK: ii,
+		ij-=(ij > A_BLK_) ? A_BLK : ij,
+		ptr1-=(ii > A_BLK_)? A_BLK : ii,
+		ptr2-=(ij > A_BLK_) ? A_BLK : ij
 	){
 		memset(v1, 0, 21);
 		memset(v2, 0, 21);
 		if(ii != 0)
-			memcpy(v1, ptr1, (ii > A_BLK-1) ? A_BLK : ii);
+			memcpy(v1, ptr1, (ii > A_BLK_) ? A_BLK : ii);
 		else
 			strcpy(v1, "0");
 		if(ij != 0)
-			memcpy(v2, ptr2, (ij > A_BLK-1) ? A_BLK : ij);
+			memcpy(v2, ptr2, (ij > A_BLK_) ? A_BLK : ij);
 		else
 			strcpy(v2, "0");
 		r = (strlen(v1) > strlen(v2)) ? strlen(v1) : strlen(v2);
@@ -491,136 +1526,495 @@ void *addition(void *num1, void *num2){
 	}
 	//printf("%s\n", pbuf);
 	//exit(0);
-	ij = strlen(pbuf);
-	pret = allocation((void **)&ret, ij, sizeof(char));
-	strcpy(pret, pbuf);
-	free(buffer);
-	buffer = ret;
-	set = 0;
+	//ij = strlen(pbuf);
+	//pret = allocation((void **)&ret, ij, sizeof(char));
+	//strcpy(pret, pbuf);
+	//free(buffer);
+	//buffer = ret;
+	//set = 0;
 	if(dot1 || dot2){
-		while(*buffer == '0'&& *(buffer+1) == '0'){
-			*buffer = 0;
-			buffer++;
-			set = 1;
+		while(*pbuf == '0'&& *(pbuf+1) == '0'){
+			*pbuf = 0;
+			pbuf++;
+			//set = 1;
 		}
-		if(set){
+		/*if(set){
 			pbuf = allocation((void **)&pbuf, strlen(buffer), sizeof(char));
 			strcpy(pbuf, buffer);
 			memset(ret, 0, strlen(ret));
 			strcpy(ret, pbuf);
 			free(pbuf);
-		}
+		}*/
 	}
-	pret = &ret[strlen(ret)-1];
+	//pret = &ret[strlen(ret)-1];
 	if(neg){
-		if((ret = realloc(ret,strlen(ret)+2)) == NULL){
+		pbuf--;
+		*pbuf = '-';
+		/*if((ret = realloc(ret,strlen(ret)+2)) == NULL){
 			perror("realloc()");
 			exit(EXIT_FAILURE);
 		}
 		memcpy(ret+1, ret, strlen(ret));
-		*ret = '-';
+		*ret = '-';*/
 	}
-	if((n1 = strchr(ret,'.')) != NULL){
-		for(n2 = &ret[strlen(ret) - 1];(n2+1) != n1 && *n2 == '0'; n2--)
+	if((n1 = strchr(pbuf,'.')) != NULL){
+		for(n2 = &pbuf[strlen(pbuf) - 1];(n2+1) != n1 && *n2 == '0'; n2--)
 			*n2 = 0;
 		if(*n2 == '.')*n2 = 0;
 	}
+	ret = allocation((void **)&ret, strlen(pbuf), sizeof(char));
+	strcpy(ret, pbuf);
+	free(buffer);
 	return ret;
 }
 
-#define S_BLK 3
+#define S_BLK 10
 
-#define S_DOT_0(i)\
-	if(i > 2){ \
-		if(result < 10) \
-			sprintf(temp, "00%lu", result); \
-		else \
-			if(result < 100) \
-				sprintf(temp, "0%lu", result); \
-			else \
-				sprintf(temp, "%lu", result); \
-	}else{ \
-		if(i > 1){ \
-			if(result < 10) \
-				sprintf(temp, "0%lu", result); \
-			else \
-				sprintf(temp, "%lu", result); \
-		}else \
-			sprintf(temp, "%lu", result); \
-	}
+#define S_BLK_ S_BLK-1
 
-#define S_ZERO_SET\
-	switch(r){ \
-		case 3: \
-			if(result < 10)\
-				sprintf(temp,"00%lu", result); \
-			else \
-				if(result < 100) \
-					sprintf(temp, "0%lu", result); \
-				 else \
-					sprintf(temp, "%lu", result); \
-			break;\
-		case 2: \
-			if(result < 10)\
-				sprintf(temp,"0%lu", result);\
-			else \
-				sprintf(temp, "%lu", result);\
-			break;\
-		case 1: \
-			sprintf(temp, "%lu", result); \
-	}
-
-#define SOUSTRACTION(i)\
-	if(i1 >= i2 + retenue){\
-		result = i1 - i2 - retenue;\
-		retenue = 0;\
-	}else{\
-		if(i > 2) \
-			result = 1000 + i1 - i2 -retenue; \
-		else \
-			switch(i){ \
-				case 2: \
-					result = 100 + i1 - i2 - retenue;\
-					break; \
-				case 1: \
-					result = 10 + i1 - i2 - retenue;\
-					break; \
-			} \
-		retenue = 1;\
-	}
-
-#define SOUSTRACTION_(i)\
-	if(i1 >= i2 + retenue){\
-		result = i1 - i2 - retenue;\
-		retenue = 0;\
-	}else{\
-		if(i > 2) \
-			result = 1000 + i1 -i2 - retenue; \
-		else \
-			switch(i){ \
-				case 2: \
-					result = 100 + i1 - i2 - retenue;\
-					break; \
-				case 1: \
-					result = 10 + i1 - i2 -retenue;\
-					break; \
-			} \
-		retenue = 1;\
-	}
-
-#define SOUSTRACTION__(i)\
-	if(i > 2) \
-		result = 1000 - (i1 +retenue);\
-	else \
+#define D_SOUSTRACTION(i)\
+	if(i > 9) \
+		result = 10000000000 - i1 - retenue; \
+	else{ \
 		switch(i){ \
+			case 9: \
+				result = 1000000000 + i1 - i2 - retenue; \
+				break; \
+			case 8: \
+				result = 100000000 + i1 - i2 - retenue; \
+				break; \
+			case 7: \
+				result = 10000000 + i1 - i2 - retenue; \
+				break; \
+			case 6: \
+				result = 1000000 + i1 - i2 - retenue; \
+				break; \
+			case 5: \
+				result = 100000 + i1 - i2 - retenue; \
+				break; \
+			case 4: \
+				result = 10000 + i1 - i2 - retenue; \
+				break; \
+			case 3: \
+				result = 1000 + i1 - i2 - retenue; \
+				break;\
 			case 2: \
-				result = 100 -(i1 +retenue);\
-				break;\
-			case 1:\
-				result = 10 - (i1 + retenue); \
-				break;\
-		}\
+				result = 100 + i1 - i2 - retenue; \
+				break; \
+			case 1: \
+				result = 10 + i1 - i2 - retenue; \
+				break; \
+		} \
+	} \
 	retenue = 1;
+
+#define D_SOUSTRACTION_(i) \
+	if(i > 9) \
+		result = 10000000000 - i1 - retenue; \
+	else{ \
+		switch(i){ \
+			case 9: \
+				result = 1000000000 - i1 - retenue; \
+				break; \
+			case 8: \
+				result = 100000000 - i1 - retenue; \
+				break; \
+			case 7: \
+				result = 10000000 - i1 - retenue; \
+				break; \
+			case 6: \
+				result = 1000000 - i1 - retenue; \
+				break; \
+			case 5: \
+				result = 100000 - i1 - retenue; \
+				break; \
+			case 4: \
+				result = 10000 - i1 - retenue; \
+				break; \
+			case 3: \
+				result = 1000 - i1 - retenue; \
+				break; \
+			case 2: \
+				result = 100 - i1 - retenue; \
+				break; \
+			case 1: \
+				result = 10 - i1 - retenue; \
+				break;\
+		} \
+	} \
+	retenue = 1;
+#define SOUSTRACTION(r) \
+	switch(r){ \
+		case 10: \
+			result = 10000000000 +i1 - i2 - retenue; \
+			break; \
+		case 9: \
+			result = 1000000000 +i1 - i2 - retenue; \
+			break; \
+		case 8: \
+			result = 100000000 +i1 - i2 - retenue; \
+			break; \
+		case 7: \
+			result = 10000000 +i1 - i2 - retenue; \
+			break; \
+		case 6: \
+			result = 1000000 +i1 - i2 - retenue; \
+			break; \
+		case 5: \
+			result = 100000 +i1 - i2 - retenue; \
+			break; \
+		case 4: \
+			result = 10000 + i1 - i2 - retenue; \
+			break; \
+		case 3: \
+			result = 1000 + i1 -i2 - retenue; \
+			break; \
+		case 2: \
+			result = 100 + i1 - i2 - retenue; \
+			break; \
+		case 1: \
+			result = 10 + i1 - i2 - retenue; \
+			break; \
+	} \
+	retenue = 1;
+
+#define S_DOT_0(i) \
+			if(i > 9){ \
+					if(result < 10) \
+						sprintf(temp, "000000000%lu", result); \
+					else \
+						if(result < 100) \
+							sprintf(temp, "00000000%lu", result); \
+						else \
+							if(result < 1000) \
+								sprintf(temp, "0000000%lu", result); \
+							else \
+								if(result < 10000) \
+									sprintf(temp, "000000%lu", result); \
+								else \
+									if(result < 100000) \
+										sprintf(temp, "00000°%lu", result); \
+									else \
+										if(result < 1000000) \
+											sprintf(temp, "0000%lu", result); \
+										else \
+											if(result < 10000000)\
+												sprintf(temp, "000%lu", result); \
+											else \
+												if(result < 100000000) \
+													sprintf(temp, "00%lu", result); \
+												else \
+													if(result < 1000000000) \
+														sprintf(temp, "0%lu", result); \
+													else \
+														sprintf(temp, "%lu", result); \
+			}else{ \
+				switch(i){ \
+					case 9: \
+						if(result < 10) \
+							sprintf(temp, "00000000%lu", result); \
+						else \
+							if(result < 100) \
+								sprintf(temp, "0000000%lu", result); \
+							else \
+								if(result < 1000) \
+									sprintf(temp, "000000%lu", result); \
+								else \
+									if(result < 10000) \
+										sprintf(temp, "00000%lu", result); \
+									else \
+										if(result < 100000) \
+											sprintf(temp, "0000°%lu", result); \
+										else \
+											if(result < 1000000) \
+												sprintf(temp, "000%lu", result); \
+											else \
+												if(result < 10000000) \
+													sprintf(temp, "00%lu", result); \
+												else \
+													if(result < 100000000) \
+														sprintf(temp, "0%lu", result); \
+													else \
+														sprintf(temp, "%lu", result); \
+						break; \
+					case 8: \
+						if(result < 10) \
+							sprintf(temp, "0000000%lu", result); \
+						else \
+							if(result < 100) \
+								sprintf(temp, "000000%lu", result); \
+							else \
+								if(result < 1000) \
+									sprintf(temp, "00000%lu", result); \
+								else \
+									if(result < 10000) \
+										sprintf(temp, "0000%lu", result); \
+									else \
+										if(result < 100000) \
+											sprintf(temp, "000°%lu", result); \
+										else \
+											if(result < 1000000) \
+												sprintf(temp, "00%lu", result); \
+											else \
+												if(result < 10000000) \
+													sprintf(temp, "0%lu", result); \
+												else \
+													sprintf(temp, "%lu", result); \
+						break; \
+					case 7: \
+						if(result < 10) \
+							sprintf(temp, "000000%lu", result); \
+						else \
+							if(result < 100) \
+								sprintf(temp, "00000%lu", result); \
+							else \
+								if(result < 1000) \
+									sprintf(temp, "0000%lu", result); \
+								else \
+									if(result < 10000) \
+										sprintf(temp, "000%lu", result); \
+									else \
+										if(result < 100000) \
+											sprintf(temp, "00°%lu", result); \
+										else \
+											if(result < 1000000) \
+												sprintf(temp, "0%lu", result); \
+											else \
+												sprintf(temp, "%lu", result); \
+						break; \
+					case 6: \
+						if(result < 10) \
+							sprintf(temp, "00000%lu", result); \
+						else \
+							if(result < 100) \
+								sprintf(temp, "0000%lu", result); \
+							else \
+								if(result < 1000) \
+									sprintf(temp, "000%lu", result); \
+								else \
+									if(result < 10000) \
+										sprintf(temp, "00%lu", result); \
+									else \
+										if(result < 100000) \
+											sprintf(temp, "0°%lu", result); \
+										else \
+											sprintf(temp, "%lu", result); \
+						break; \
+					case 5: \
+						if(result < 10) \
+							sprintf(temp, "0000%lu", result); \
+						else \
+							if(result < 100) \
+								sprintf(temp, "000%lu", result); \
+							else \
+								if(result < 1000) \
+									sprintf(temp, "00%lu", result); \
+								else \
+									if(result < 10000) \
+										sprintf(temp, "0%lu", result); \
+									else \
+										sprintf(temp, "%lu", result); \
+						break; \
+					case 4: \
+						if(result < 10) \
+							sprintf(temp, "000%lu", result); \
+						else \
+							if(result < 100) \
+								sprintf(temp, "00%lu", result); \
+							else \
+								if(result < 1000) \
+									sprintf(temp, "0%lu", result); \
+								else \
+									sprintf(temp, "%lu", result); \
+						break; \
+					case 3: \
+						if(result < 10) \
+							sprintf(temp, "00%lu" , result); \
+						else \
+							if(result < 100) \
+								sprintf(temp, "0%lu", result); \
+							else \
+								sprintf(temp, "%lu", result); \
+						break; \
+					case 2: \
+						if(result < 10) \
+							sprintf(temp, "0%lu", result); \
+						else \
+							sprintf(temp, "%lu", result); \
+						break; \
+					case 1: \
+						sprintf(temp, "%lu", result); \
+						break; \
+				} \
+			}
+#define S_ZERO_SET \
+		switch(r){\
+			case 10:\
+				if(result < 10) \
+					sprintf(temp, "000000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "00000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "0000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "000000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "00000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "0000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "000%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "00%lu", result); \
+											else \
+												if(result < 1000000000) \
+													sprintf(temp, "0%lu", result); \
+												else \
+													sprintf(temp, "%lu", result); \
+				break; \
+			case 9:\
+				if(result < 10) \
+					sprintf(temp, "00000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "0000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "000000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "00000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "0000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "000%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "00%lu", result); \
+										else \
+											if(result < 100000000) \
+												sprintf(temp, "0%lu", result); \
+											else \
+												sprintf(temp, "%lu", result); \
+				break; \
+			case 8:\
+				if(result < 10) \
+					sprintf(temp, "0000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "000000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "00000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "0000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "000%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "00%lu", result); \
+									else \
+										if(result < 10000000) \
+											sprintf(temp, "0%lu", result); \
+										else \
+											sprintf(temp, "%lu", result); \
+				break; \
+			case 7:\
+				if(result < 10) \
+					sprintf(temp, "000000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "00000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "0000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "000%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "00%lu", result); \
+								else \
+									if(result < 1000000) \
+										sprintf(temp, "0%lu", result); \
+									else \
+										sprintf(temp, "%lu", result); \
+				break; \
+			case 6:\
+				if(result < 10) \
+					sprintf(temp, "00000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "0000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "000%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "00%lu", result); \
+							else \
+								if(result < 100000) \
+									sprintf(temp, "0%lu", result); \
+								else \
+									sprintf(temp, "%lu", result); \
+				break; \
+			case 5:\
+				if(result < 10) \
+					sprintf(temp, "0000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "000%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "00%lu", result); \
+						else \
+							if(result < 10000) \
+								sprintf(temp, "0%lu", result); \
+							else \
+								sprintf(temp, "%lu", result);\
+				break; \
+			case 4: \
+				if(result < 10) \
+					sprintf(temp, "000%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "00%lu", result); \
+					else \
+						if(result < 1000) \
+							sprintf(temp, "0%lu", result); \
+						else \
+							sprintf(temp, "%lu", result); \
+				break; \
+			case 3: \
+				if(result < 10) \
+					sprintf(temp, "00%lu", result); \
+				else \
+					if(result < 100) \
+						sprintf(temp, "0%lu", result); \
+					else \
+						sprintf(temp, "%lu", result); \
+				break; \
+			case 2: \
+				if(result < 10) \
+					sprintf(temp, "0%lu", result); \
+				else \
+					sprintf(temp, "%lu", result); \
+				break; \
+			case 1: \
+				sprintf(temp, "%lu", result); \
+				break; \
+		}
 
 void *soustraction(void *num1, void *num2){
 	char *n1 = num1, *n2 = num2,
@@ -632,7 +2026,8 @@ void *soustraction(void *num1, void *num2){
 		neg = 0, neg1 = 0, neg2 = 0;
 	unsigned long int dot1_len = 0, dot2_len = 0,
 				val1_len = 0, val2_len = 0;
-	unsigned long int ii_ = 0, ij_ =0, i1 , i2, result, retenue = 0, r;
+	unsigned long int ii_ = 0, ij_ =0;
+	unsigned long int i1, i2, result = 0, retenue = 0, r;
 	NEG;
 	if(neg1 || neg2){
 		if(neg1 && neg2){
@@ -682,38 +2077,41 @@ void *soustraction(void *num1, void *num2){
 		val1_len--;
 	if(dot2 != NULL && dot2_len == 0)
 		val2_len--;
+	//printf("==>%s::%s::%lu:%lu\n", dot1, dot2, dot2_len, S_BLK_ - dot2_len -1);
 	pbuf = allocation((void **)&buffer,((val1_len > val2_len) ? val1_len : val2_len) + ((dot1_len > dot2_len) ? dot1_len : dot2_len) +2, sizeof(char));
-	pbuf += ((val1_len > val2_len) ? val1_len : val2_len) + ((dot1_len > dot2_len) ? dot1_len : dot2_len) + 2 + 1;
-	if(dot1_len > 0)
-		dot1--;
-	if(dot2_len > 0)
-		dot2--;
+	pbuf += ((val1_len > val2_len) ? val1_len : val2_len) + ((dot1_len > dot2_len) ? dot1_len : dot2_len) +2;
 	if(dot1_len > dot2_len){
-		ii_ = dot1_len;
-		pbuf -= (dot1_len - dot2_len);
-		ii_ = dot2_len;
-		strcpy(pbuf, &dot1[dot2_len+1]);
-		pbuf = &pbuf[strlen(pbuf)-(dot1_len-dot2_len)];
-		//printf("%lu\n", dot1_len-dot2_len);
-		for(ii_ = ii_,
-			dot1 += (ii_ > S_BLK-1) ? (ii_ - (S_BLK-1)) : ii_,
-			dot2 += (ii_ > S_BLK-1) ? (ii_ - (S_BLK-1)) : ii_;
-			ii_ > 0;
-			ii_ -= (ii_ > S_BLK-1) ? S_BLK : ii_,
-			dot1 -= (ii_ > S_BLK-1) ? S_BLK : ii_,
-			dot2 -= (ii_ > S_BLK-1) ? S_BLK : ii_
+		pbuf -= (dot1_len-dot2_len);
+		memcpy(pbuf, dot1+dot2_len, dot1_len - dot2_len);
+		//printf("%s\n", pbuf);
+		for(ii_ = ij_ = dot2_len,
+			dot1 += (ii_ > S_BLK_) ? ii_ - S_BLK_ : 0,
+			dot2 += (ij_ > S_BLK_) ? ij_ - S_BLK_ : 0;
+			ii_ > 0 && ij_ > 0;
+			ii_ -= (ii_ > S_BLK_) ? S_BLK : ii_,
+			ij_ -= (ij_ > S_BLK_) ? S_BLK : ij_,
+			dot1 -= (ii_ > S_BLK_) ? S_BLK : ii_,
+			dot2 -= (ij_ > S_BLK_) ? S_BLK : ij_
 		){
+			//printf("**********\n");
+			//printf("%s::%s\n", dot1, dot2);
 			memset(v1, 0, 21);
 			memset(v2, 0, 21);
 			memset(temp, 0, 21);
-			memcpy(v1, dot1, (ii_ > S_BLK-1) ? S_BLK : ii_);
-			memcpy(v2, dot2, (ii_ > S_BLK-1) ? S_BLK : ii_);
+			memcpy(v1, dot1, (ii_ > S_BLK_) ? S_BLK : ii_);
+			memcpy(v2, dot2, (ij_ > S_BLK_) ? S_BLK : ij_);
 			i1 = atol(v1);
 			i2 = atol(v2);
-			SOUSTRACTION(ii_);
+			if(i1 >= i2 + retenue){
+				result = i1 - i2 - retenue;
+				retenue = 0;
+			}else{
+					D_SOUSTRACTION(ii_);
+			}
 			S_DOT_0(ii_);
-			pbuf-=strlen(temp);
+			pbuf -= strlen(temp);
 			memcpy(pbuf, temp, strlen(temp));
+			//pbuf--;
 		}
 		//printf("%s\n", pbuf);
 		//exit(0);
@@ -721,103 +2119,149 @@ void *soustraction(void *num1, void *num2){
 	if(dot2_len > dot1_len){
 		for(ii_ = dot2_len,
 			ij_ = dot2_len - dot1_len,
-			dot2 += (ij_ > S_BLK-1) ? ii_ - (S_BLK-1) : ii_-ij_+1;
+			dot2 += (ij_ > S_BLK_) ? ii_-S_BLK : ii_-ij_;
 			ij_ > 0;
-			ij_ -= (ij_ > S_BLK-1) ? S_BLK : ij_,
-			dot2 -= (ij_ > S_BLK-1) ? S_BLK : ij_+(ij_ == 0)
+			ij_-= (ij_ > S_BLK_) ? S_BLK : ij_,
+			ii_-= (ij_ > S_BLK_) ? S_BLK : ij_,
+			dot2 -= (ij_ > S_BLK_) ? S_BLK : ij_
 		){
 			memset(v1, 0, 21);
 			memset(temp, 0, 21);
-			memcpy(v1, dot2, (ij_ > S_BLK-1) ? S_BLK : ij_ +(ij_ == 0));
-			i1 = (unsigned long int)atol(v1);
-			SOUSTRACTION__(ij_);
+			memcpy(v1, dot2, (ij_ > S_BLK_) ? S_BLK : ij_);
+			i1 = atol(v1);
+			D_SOUSTRACTION_(ij_);
 			S_DOT_0(ij_);
-			pbuf -= strlen(temp);
+			pbuf-=strlen(temp);
 			memcpy(pbuf, temp, strlen(temp));
+			//pbuf--;
 		}
-		for(ii_ = dot1_len,
-			dot1 += (ii_ > S_BLK-1) ? ii_- (S_BLK-1) : ii_,
-			dot2 -= (ii_ > S_BLK-1) ? S_BLK-1 : ii_;
+		for(ii_ = dot1_len, ij_ = 0,
+			dot2-=(ii_ > S_BLK_) ? S_BLK : ii_,
+			dot1 += (ii_ > S_BLK_) ? ii_ - S_BLK : 0;
 			ii_ > 0;
-			ii_ -= (ii_ > S_BLK-1) ? S_BLK : ii_,
-			dot1 -= (ii_ > S_BLK-1) ? S_BLK : ii_,
-			dot2 -= (ii_ > S_BLK-1) ? S_BLK : ii_
+			ii_-=(ii_ > S_BLK_) ? S_BLK : ii_,
+			dot1-=(ii_ > S_BLK_) ? S_BLK : ii_,
+			dot2-=(ii_ > S_BLK_) ? S_BLK : ii_
 		){
+			//printf("******%lu\n", ij_);
+			if(*dot2 == '.')
+				dot2++;
+			if(*dot1 == '.')
+				dot1++;
 			memset(v1, 0, 21);
 			memset(v2, 0, 21);
 			memset(temp, 0, 21);
-			memcpy(v1, dot1, (ii_ > S_BLK-1) ? S_BLK : ii_);
-			memcpy(v2, dot2, (ii_ > S_BLK-1) ? S_BLK : ii_);
-			i1 = (unsigned long int)atol(v1);
-			i2 = (unsigned long int)atol(v2);
+			memcpy(v1, dot1,(ii_ > S_BLK_) ? S_BLK : ii_);
+			memcpy(v2, dot2, (ii_ > S_BLK_) ? S_BLK : ii_);
+			//fprintf(stderr, "=>%s :: %s\n", v1, v2);
+			i1 = atol(v1);
+			i2 = atol(v2);
 			//printf("%s::%s\n", v1, v2);
-			SOUSTRACTION(ii_);
+			if(i1 >= i2 + retenue){
+				result = i1 - i2 - retenue;
+				retenue = 0;
+			}else{
+				D_SOUSTRACTION(ii_);
+			}
 			S_DOT_0(ii_);
-			pbuf -= strlen(temp);
+			pbuf-=strlen(temp);
 			memcpy(pbuf, temp, strlen(temp));
+			//pbuf--;
 		}
 	}else{
-		//printf("+++++++++\n");
 		if(dot1_len == dot2_len){
-			//printf("+++++++++++++\n");
-			for(ii_ = dot1_len,
-				dot1 += (ii_ > S_BLK-1) ? S_BLK-1 : ii_,
-				dot2 += (ii_ > S_BLK-1) ? S_BLK-1 : ii_;
-				ii_ > 0;
-				ii_-= (ii_ > S_BLK-1) ? S_BLK : ii_,
-				dot1 -= (ii_ > S_BLK-1) ? S_BLK : ii_,
-				dot2 -= (ii_ > S_BLK-1) ? S_BLK : ii_
+			for(ii_ = dot1_len ,
+				ij_ = dot2_len,
+				dot1 += (ii_ > S_BLK_) ? ii_ -S_BLK : 0,
+				dot2 += (ij_ > S_BLK_) ? ij_ -S_BLK : 0;
+				ii_ > 0 && ij_ > 0;
+				ii_ -= (ii_ > S_BLK_) ? S_BLK : ii_,
+				ij_ -= (ij_ > S_BLK_) ? S_BLK : ij_,
+				dot1 -= (ii_ > S_BLK_) ? S_BLK : ii_,
+				dot2 -= (ij_ > S_BLK_) ? S_BLK : ij_
 			){
 				memset(v1, 0, 21);
 				memset(v2, 0, 21);
 				memset(temp, 0, 21);
-				memcpy(v1, dot1, (ii_ > S_BLK-1) ? S_BLK : ii_);
-				memcpy(v2, dot2, (ii_ > S_BLK-1) ? S_BLK : ii_);
+				/*if(*dot1 == '.')
+					dot1++;
+				if(*dot2 == '.')
+					dot2++;*/
+				memcpy(v1, dot1, (ii_ > S_BLK_) ? S_BLK : ii_);
+				memcpy(v2, dot2, (ij_ > S_BLK_) ? S_BLK : ij_);
+				//printf("%s::%s\n", v1, v2);
 				i1 = atol(v1);
 				i2 = atol(v2);
-				SOUSTRACTION(ii_);
+				//fprintf(stderr, "%s::%s\n", v1, v2);
+				if(i1 >= i2 + retenue){
+					result = i1 - i2 - retenue;
+					retenue = 0;
+				}else{
+					D_SOUSTRACTION(ii_);
+				}
 				S_DOT_0(ii_);
-				pbuf -= strlen(temp);
+				pbuf-=strlen(temp);
 				memcpy(pbuf, temp, strlen(temp));
+				//pbuf--;
 			}
 		}
 	}
 	if(dot1_len || dot2_len){
 		pbuf--;
 		*pbuf = '.';
+		//pbuf--;
 	}
-	for(ii_ = val1_len - (neg1 == 1) - (dot1_len > 0),
+	//printf("%s::%lu !! %s::%lu\n", val1, val1_len, val2, val2_len);
+	for(ptr1 = val1,
+		ptr2 = val2,
+		ii_ = val1_len - (dot1_len > 0),
 		ij_ = val2_len - (dot2_len > 0),
-		ptr1 = val1, ptr2 = val2,
-		ptr1 -= (ii_ > S_BLK-1) ? S_BLK-1: ii_-1,
-		ptr2 -= (ij_ > S_BLK-1) ? S_BLK-1: ij_-1;
+		ptr1 -= (ii_ > S_BLK_) ? S_BLK_ : ii_-1,
+		ptr2 -= (ij_ > S_BLK_) ? S_BLK_ : ij_-1;
 		ii_ > 0 || ij_ > 0 || retenue;
-		ii_-= (ii_ > S_BLK-1) ? S_BLK : ii_,
-		ij_-= (ij_ > S_BLK-1) ? S_BLK : ij_,
-		ptr1 -= (ii_ > S_BLK-1) ? S_BLK : ii_,
-		ptr2 -= (ij_ > S_BLK-1) ? S_BLK : ij_
+		ii_-= (ii_ > S_BLK_) ? S_BLK : ii_,
+		ij_ -= (ij_ > S_BLK_) ? S_BLK : ij_,
+		ptr1 -= (ii_ > S_BLK_) ? S_BLK : ii_,
+		ptr2 -= (ij_ > S_BLK_) ? S_BLK : ij_
 	){
+		//fprintf(stderr, "%s::%s\n", ptr1, ptr2);
+		//exit(0);
 		memset(v1, 0, 21);
 		memset(v2, 0, 21);
 		memset(temp, 0, 21);
 		if(ii_ > 0)
-			memcpy(v1, ptr1, (ii_ > S_BLK-1) ? S_BLK : ii_);
+			memcpy(v1, ptr1, (ii_ > S_BLK_) ? S_BLK : ii_);
 		else
 			v1[0] = '0';
 		if(ij_ > 0)
-			memcpy(v2, ptr2, (ij_ > S_BLK-1) ? S_BLK : ij_);
+			memcpy(v2, ptr2, (ij_ > S_BLK_) ? S_BLK : ij_);
 		else
 			v2[0] = '0';
+		//fprintf(stderr, "%s - %s\n", v1, v2);
 		r = (strlen(v1) > strlen(v2)) ? strlen(v1) : strlen(v2);
-		i1 = (unsigned long int)atol(v1);
-		i2 = (unsigned long int)atol(v2);
-		SOUSTRACTION_(r);
+		i1 = atol(v1);
+		i2 = atol(v2);
+		if(i1 >= i2 + retenue){
+			result = i1 - i2 - retenue;
+			retenue = 0;
+		}else{
+			SOUSTRACTION(r);
+		}
 		S_ZERO_SET;
-		pbuf-=r;
-		memcpy(pbuf, temp, r);
+		pbuf-=strlen(temp);
+		//fprintf(stderr, "TEMP=%s::%s::%lu:%lu:%lu\n", temp, pbuf+strlen(temp), ii_, ij_, retenue);
+		memcpy(pbuf, temp, strlen(temp));
+		//pbuf--;
 	}
-	while(*(pbuf) == '0' && *(pbuf +1) != '.')
-		pbuf++;
+	//printf("%s\n", pbuf);
+	//exit(0);
+	if(*pbuf == '0' && *(pbuf +1) != 0){
+		while(*pbuf == '0')
+			pbuf++;
+		if(*pbuf == '.'){
+			pbuf--;
+		}
+	}
 	if(neg){
 		pbuf--;
 		*pbuf = '-';
@@ -847,7 +2291,7 @@ void *multiplication(void *num1, void *num2){
 		neg = 0, neg1 = 0, neg2 = 0,
 		___zero___[20];
 	unsigned long int dot1_len = 0, dot2_len = 1, dot_len = 1,
-				zero = 0, zero_ = 0, z_;
+				zero = 0, zero_ = 0;
 	unsigned long int ii = 0, ij = 0,ii_ = 0, x = 0;
 	unsigned long int rn1 = 0, rn2 = 0;
 	if(equal(num1, "0") == 0 || equal(num2, "0") == 0){
@@ -920,11 +2364,18 @@ void *multiplication(void *num1, void *num2){
 				result = allocation((void **)&result, strlen(r)+zero_*18+zero, sizeof(char));
 				strcpy(result, r);
 			}
-			for(z_ = 0; z_ != zero_; z_++)
-				strcat(result, ___zero___);
-			if(zero)
-				for(x = 0; (unsigned long int)x < zero; x++)
-					strcat(result,"0");
+			//for(z_ = 0; z_ != zero_; z_++){
+			if(zero_){
+				x = strlen(result);
+				memset(&result[x], '0', zero_*18);
+				result[x+zero_*18] = 0;
+			}
+			if(zero){
+				//for(x = 0; (unsigned long int)x < zero; x++)
+					x = strlen(result);
+					memset(&result[x],'0', zero);
+					result[x + zero] = 0;
+			}
 			if(result){
 				presult = addition(resultat, result);
 				free(resultat);
@@ -1070,6 +2521,7 @@ void *division(void *num1, void *num2, unsigned long int virgule, int approximat
 	for(x = 9; x >= 0;x--){
 		sprintf(t,"%i", x);
 		temp = multiplication(t, diviseur);
+		//fprintf(stderr,"%s::%s\n", temp, reste);
 		temp_ = soustraction(reste, temp);
 		if(equal(temp_,"0") >= 0){
 			free(reste);
@@ -1228,9 +2680,9 @@ void *modulo(void *num1, void *num2, unsigned long int scale){
 	dividende = soustraction(num1, reste);
 	free(result);
 	if(equal(num1, "0") < 0){
-		//result = multiplication(dividende, "-1");
-		//free(dividende);
-		//dividende = result;
+		result = multiplication(dividende, "-1");
+		free(dividende);
+		dividende = result;
 		if(*dividende == '-' && equal(dividende, "-0") == 0){
 			result = dividende + 1;
 			temp = allocation((void **)&temp, strlen(result), sizeof(char));
