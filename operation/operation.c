@@ -2338,6 +2338,8 @@ void *multiplication(void *num1, void *num2){
 		n2 = n1;
 		n1 = n_;
 	}
+	resultat = allocation((void **)&resultat, strlen(n2), sizeof(char));
+	result = allocation((void **)&result, strlen(n2)+strlen(n1), sizeof(char));
 	for(n1 = n1,
 		ii = strlen(n1);
 		ii > 0; ii--,
@@ -2358,10 +2360,10 @@ void *multiplication(void *num1, void *num2){
 			rn2 = (unsigned long int)atol(nombre);
 			snprintf(r,20,"%lu", rn2*rn1);
 			if(resultat == NULL){
-				resultat = allocation((void **)&resultat, strlen(r),sizeof(char));
+				//resultat = allocation((void **)&resultat, strlen(r),sizeof(char));
 				strcpy(resultat, r);
 			}else{
-				result = allocation((void **)&result, strlen(r)+zero_*18+zero, sizeof(char));
+				//result = allocation((void **)&result, strlen(r)+zero_*18+zero, sizeof(char));
 				strcpy(result, r);
 			}
 			//for(z_ = 0; z_ != zero_; z_++){
@@ -2379,11 +2381,15 @@ void *multiplication(void *num1, void *num2){
 			if(result){
 				presult = addition(resultat, result);
 				free(resultat);
-				free(result);
+				//free(result);
 				resultat = presult;
-				result = NULL;
+				//result = NULL;
 			}
 		}
+	}
+	if(result){
+		free(result);
+		result = NULL;
 	}
 	total = resultat;
 	free(n1_);
