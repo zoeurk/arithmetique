@@ -528,21 +528,21 @@ void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	return r;
 }
 void *carree(void *num){
-	char *result1 = NULL, *result2 = NULL, r_[4], *n, *n1, *n2, *r;
+	char *result1 = NULL, *result2 = NULL, r_[4], *n, *n1, *n2, *r, *cp = multiplication(num, "1");
 	char r1[2] = { 0, 0 }, r2[2] = { 0, 0 }, c, c_;
 	unsigned char temp[2] = { 0, 0 };
 	unsigned long int len1 = strlen(num)-(strchr((char *)num, '.') != NULL), len2 = len1, zero = 0, z = 0, dot = 0;
 	n = n1 = n2 = allocation((void **)&n1, len1+1, sizeof(char));
-	if((r = strchr(num, '.'))){
+	if((r = strchr(cp, '.'))){
 		dot = strlen(r+1);
 		for(; *r != 0; r++)
 			*r = *(r+1); 
-		memcpy(n1, &((char *)num)[(*((char *)num) == '-' || *((char *)num) == '+')], len1);
+		memcpy(n1, &((char *)cp)[(*((char *)cp) == '-' || *((char *)cp) == '+')], len1);
 		dot *= 2;
 		//printf("%s\n", (char *)num);
 		//exit(0);
 	}else
-		memcpy(n1, &((char *)num)[(*((char *)num) == '-' || *((char *)num) == '+')], len1);
+		memcpy(n1, &((char *)cp)[(*((char *)cp) == '-' || *((char *)cp) == '+')], len1);
 	for(z = 0, n1 += len1-1;len1 > 0;n1--, z++, len1--)
 		for(zero = 0, len2 = len1, n2 = n1;len2 > 0;n2--, zero++, len2--){
 			r1[0] = *n1;
@@ -591,6 +591,7 @@ void *carree(void *num){
 		}
 		*result2 = c;
 	}
+	free(cp);
 	//printf("%c\n", c);
 	return result1;
 }

@@ -1399,6 +1399,16 @@ void *addition(void *num1, void *num2){
 				val1_len = 0, val2_len = 0;
 	unsigned long int ii = 0, ij = 0, r = 0;
 	unsigned long int i1, i2, result;
+	if(equal(num1, "0") == 0 || equal(num2, "0") == 0){
+		if(equal(num1, "0") == 0){
+			n1 = allocation((void **)&n1, strlen(num2), sizeof(char));
+			strcpy(n1, num2);
+		}else{
+			n1 = allocation((void **)&n1, strlen(num1), sizeof(char));
+			strcpy(n1, num1);
+		}
+		return n1;
+	}
 	NEG;
 	if(neg1 || neg2){
 		if(neg1 && neg2)
@@ -2367,16 +2377,16 @@ void *multiplication(void *num1, void *num2){
 				strcpy(result, r);
 			}
 			//for(z_ = 0; z_ != zero_; z_++){
-			if(zero_){
+			/*if(zero_){
 				x = strlen(result);
 				memset(&result[x], '0', zero_*18);
 				result[x+zero_*18] = 0;
-			}
-			if(zero){
+			}*/
+			if(zero || zero_){
 				//for(x = 0; (unsigned long int)x < zero; x++)
 					x = strlen(result);
-					memset(&result[x],'0', zero);
-					result[x + zero] = 0;
+					memset(&result[x],'0', zero+zero_*18);
+					result[x + zero + zero_ *18] = 0;
 			}
 			if(result){
 				presult = addition(resultat, result);
