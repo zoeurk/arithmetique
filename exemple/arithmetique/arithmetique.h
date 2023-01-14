@@ -20,5 +20,6 @@ void *log_n(void *num, unsigned long int internal_buflen, char *format, unsigned
 void *log_10(void *num, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation);
 void *racine_carree(void *num1, unsigned long int virgule, int approximation);
 void *exponentiel(void *num,unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation);
+void *carree(void *num);
 int error_set(int op, int val);
 #endif

@@ -86,7 +86,16 @@ int main(int argc, char **argv){
 		printf("modulo etendu:%s\n",  (char *)r);
 		free(r);
 	}
-	//exit(0);
+	r = carree(argv[1]);
+	if(r){
+		printf("le carre de '%s': %s\n", argv[1], r);
+		free(r);
+	}
+	r = carree(argv[2]);
+	if(r){
+		printf("le carre de '%s': %s\n", argv[2], r);
+		free(r);
+	}
 	r = racine_carree(argv[1], atoi(argv[3]), 0);
 	if(r){
 		check = multiplication(r, r);
@@ -109,13 +118,13 @@ int main(int argc, char **argv){
 	}
 	//exit(0);
 	//free(format);
-	/*r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]),1);
+	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]),1);
 	if(r){
 		printf("%s^%s  = %s\n", argv[1], argv[2], r);
 		free(r);
 	}else{
 		printf("%s\n", error_msg[m_errno]);
-	}*/
+	}
 	printf("\t\tTrigonometrie:\n");
 	r = cosinus(argv[1], format, sz,0, 0, atoi(argv[3]), 0);
 	if(r){
