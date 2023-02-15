@@ -304,12 +304,12 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	if(j){
 		//printf("===========================================\n");
 		//printf("++>%lu\n", strlen(n1) * atol(j)*2+1);
-		result = allocation((void *)&result, strlen(n1) * atol(j)*2 +1, sizeof(char));
-		strcpy(result, n1);
-		free(n1);
-		n1 = result;
-		result = result + strlen(n1) +1; 
-		for(j_ = addition("0","0"); j_ != NULL && equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
+		//result = allocation((void *)&result, strlen(n1) * atol(j)*2 +1, sizeof(char));
+		//strcpy(result, n1);
+		//free(n1);
+		//n1 = result;
+		//result = result + strlen(n1) +1; 
+		for(j_ = addition("0","1"); j_ != NULL && equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
 			n_ = multiplication(n1, n1);
 			//printf("%s, %s\n", n_, n1);
 			if(n_ == NULL){

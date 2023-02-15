@@ -9,3 +9,6 @@ autoreconf --install
 make  
 make install  
   
+  
+  
+Bon, mouhai,..., de toutes facons c'est buggue
