@@ -1290,8 +1290,8 @@ void *soustraction(void *num1, void *num2){
 	}else{
 		if(dot1_len == dot2_len){
 			for(ii_ = dot1_len, ij_ = dot1_len,
-				dot1 = (ii_ > S_BLK_) ? &dot1[ii_- S_BLK] : &dot1[S_BLK-ii_],
-				dot2 = (ii_ > S_BLK_) ? &dot2[ii_- S_BLK] : &dot2[S_BLK-ii_];
+				dot1 = (ii_ > S_BLK_) ? &dot1[ii_- S_BLK] : dot1,
+				dot2 = (ii_ > S_BLK_) ? &dot2[ii_- S_BLK] : dot2;
 				ii_ > 0;
 				ii_-= (ii_ > S_BLK_) ? S_BLK : ii_,
 				dot1 -= (ii_ > S_BLK_) ? S_BLK : ii_,
