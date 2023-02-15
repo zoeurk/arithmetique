@@ -106,15 +106,34 @@ void *tangente(char *arg, char *format,unsigned long internal_buflen,int i_deg, 
 }
 
 void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
-	char *n1 = multiplication(num1,"1"),
-		*n2 = multiplication(num2,"1"),
+		char *n1, *resultat,
+		*n2, *result,
 		buffer[internal_buflen], *v, 
-		*n1_ = n1, *n_,
-		*i = multiplication("1",num2),*j = NULL, *j_, *j__, *mod = NULL;
-	char *i_, *v_ = NULL, *pseudo = NULL, *pseudo__, *p, *dot_, *pdot_, *tst_, tst__[68], *_format_, f[20];
+		*n1_, *n_ = NULL,
+		*i,*j = NULL, *j_, *j__, *mod = NULL;
+	char *i_, *v_ = NULL, *pseudo = NULL, *pseudo__ = NULL, *p, *dot_, *pdot_, *tst_, tst__[68], *_format_, f[20];
 	unsigned long int l;
 	long double pseudo_, /*pseudo_tst,*/ tst;
 	int eq, neg = 0;
+	if(internal_buflen < 2){
+		error_set(SET, 1);
+		return NULL;
+	}
+	n1 = multiplication(num1,"1");
+	if(n1 == NULL)
+		return NULL;
+	n2 = multiplication(num2,"1");
+	if(n2 == NULL){
+		free(n1);
+		return NULL;
+	}
+	i = multiplication("1",num2);
+	if(i == NULL){
+		free(n1);
+		free(n2);
+		return NULL;
+	}
+	n1_ = n1;
 	memset(buffer, 0, internal_buflen);
 	if(equal(num2, "0") == 0){
 		free(n1);
@@ -127,6 +146,11 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		neg = 1;
 		free(n2);
 		n2 = multiplication(num2, "-1");
+		if(n2 == NULL){
+			free(n1);
+			free(i);
+			return NULL;
+		}
 	}
 	if((v = strchr(n2, '.')) != NULL){
 		n1 = n1_;
@@ -134,11 +158,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(n1);
 			free(n2);
 			free(i);
-			/*if((n1 = calloc(5,sizeof(char))) == NULL){
-				perror("calloc()");
-				exit(EXIT_FAILURE);
-			}
-			strcpy(n1, "-nan");*/
 			error_set(SET, 2);
 			return NULL;
 		}
@@ -149,28 +168,38 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		strcpy(v_+1, v);
 		*v_ = '0';
 		*v = 0;
-		pseudo = buffer;
+		//pseudo = buffer;
 		pseudo = n1;
-		//printf("%s\n", n1);
-		//exit(0);
 		do{
-			//pseudo_tst = strtold(n1, NULL) * strtold(n1, NULL);
+			memset(buffer, 0, internal_buflen);
+			snprintf(buffer, internal_buflen,format, strtold(n1, NULL)); 
+			if(buffer[internal_buflen-1] != 0 && equal(n1, buffer) != 0){ 
+				error_set(SET, 5);
+				fprintf(stderr,"Warning `%s`:\n\tNombre trop long.\n\tUtilisation de la valeur: ", n1);
+				fprintf(stderr, "%Lf", strtold(n1, NULL));
+				fprintf(stderr,"\n");
+			}
 			pseudo_ = strtold(n1, NULL);
-			/*memset(buffer, 0, internal_buflen);
-			snprintf(buffer, internal_buflen, format, pseudo_tst);
-			if(buffer[internal_buflen-1] != 0){
-				error_set(1, 1);
-				return NULL;
-			}*/
-			//fprintf(stderr, "===>%s\n", n1);
-			//exit(0);
-			if((eq = equal(n1, pseudo)) > 0){
+			//printf("-->%s::%Lf::%s\n", n1, pseudo_, pseudo);
+			if((eq = equal(n1, buffer)) != 0){
 				n1_ = racine_carree(n1, virgule, approximation);
-				//if(n1_ == NULL)
-					//exit(0);
+				if(n1_ == NULL){
+					free(n1);
+					free(i);
+					if(j)
+						free(j);
+					return NULL;
+				}
 				free(n1);
 				n1 = n1_;
 				i_ = addition(i, "1");
+				if(i_ == NULL){
+					free(i);
+					free(n1);
+					if(j)
+						free(j);
+					return NULL;
+				}
 				free(i);
 				i = i_;
 				if(j == NULL){
@@ -180,10 +209,17 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 					free(j);
 					j = j_;
 				}
+				if(j == NULL){
+					free(i);
+					free(n1);
+					return NULL;
+				}
 			}
 		}while(eq > 0);
 		if(virgule > 0){
 			pdot_ = strchr(format,'.');
+			//printf("%s\n", pdot_);
+			//exit(0);
 			if((dot_ = calloc(strlen(format), sizeof(char))) == NULL){
 				perror("calloc()");
 				exit(EXIT_FAILURE);
@@ -214,60 +250,43 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				snprintf(tst__,68, _format_, tst);
 				if(tst__[67] != 0){
 					tst__[67] = 0;
+					error_set(SET, 5);
 					fprintf(stderr, "Warning %s: Nombre tronque (%s)\n", tst_, tst__);
 				}
 				//sprintf(tst__,_format_, tst);
 				*pdot_ = '.';
 				if(equal(tst__, tst_) != 0){
-					fprintf(stderr,"Warning `%s`:\n\tTrop de chiffre apres la virgule.\n\tUtilisation de la valeur: ", v_);
-					fprintf(stderr, format, strtold(v_, NULL));
+					error_set(SET, 5);
+					fprintf(stderr,"Warning `%s`:\n\tNombre trop long.\n\tUtilisation de la valeur: ", v_);
+					fprintf(stderr, "%Lf", strtold(v_, NULL));
 					fprintf(stderr,"\n");
 				}
 				free(_format_);
 				free(tst_);
 				free(dot_);
 			}
-			/*if(strcmp((n__ = modulo(n2, "0.5", 0)), "0") == 0){
-				free(n__);
-				for(n__ = multiplication(n1, "1"),
-					count = count;
-					strchr(n__, '.');
-					n___ = multiplication(n__, "100"),
-					free(n__),
-					n__ = n___,
-					count++
-				);;
-				if(equal(n1, n__) == 0){
-					free(n__);
-					n__ = n1_;
-				}
-				n__ = n1_;
-				//free(n1_);
-			}else{
-				free(n__);
-				n__ = n1_;
-			}*/
-			//printf("%s:%s\n",n1_, v_);
+			/*snprintf(buffer, internal_buflen, format, strtold(n1_, NULL));
+			if(buffer[internal_buflen-1] != 0 || equal(n1_, buffer) != 0){ 
+					error_set(SET, 5);
+					fprintf(stderr,"Warning `%s`:\n\tNombre trop long.\n\tUtilisation de la valeur: ", n1_);
+					fprintf(stderr, "%Lf", strtold(n1_, NULL));
+					fprintf(stderr,"\n");
+					//exit(0);
+			}
+			memset(buffer, 0, internal_buflen);*/
 			pseudo_ = powl(strtold(n1_, NULL), strtold(v_, NULL));
-			sprintf(buffer,format, pseudo_);
+			/*pseudo_ = 1;
+			printf(format, pseudo_);
+			exit(0);*/
+			snprintf(buffer, internal_buflen, format, pseudo_);
 			if(buffer[internal_buflen-1] != 0){
 				/*fprintf(stderr, "Tampon interne trop petit (internal_buflen)\n");*/
 				error_set(SET, 1);
-				//free(n__);
-				//free(n1);
 				free(n2);
 				free(i);
 				free(v_);
 				return NULL;
-			//exit(EXIT_FAILURE);
 			}
-			/*if(count > 0){
-				free(n__);
-				for(count = count, n__ = multiplication(buffer, "1"); count > 0; n___ = division(n__, "10", virgule+1, approximation), free(n__), n__ = n___, count--);;
-				memcpy(buffer, n__, internal_buflen-1);
-				free(n__);
-			}*/
-			//free(n__);
 			free(v_);
 			v_ = NULL;
 		}
@@ -275,16 +294,42 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(v_);
 	}
 	if(j){
-		for(j_ = addition("0","1"); equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
+		//printf("++>%lu\n", strlen(n1) * atol(j)*2+1);
+		result = allocation((void *)&result, strlen(n1) * atol(j)*2 +1, sizeof(char));
+		strcpy(result, n1);
+		free(n1);
+		n1 = result;
+		result = result + strlen(n1) +1; 
+		for(j_ = addition("0","1"); j_ != NULL && equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
 			n_ = multiplication(n1, n1);
-			free(n1);
-			n1 = n_;
+			if(n_ == NULL){
+				free(n1);
+				free(j_);
+				if(i)
+					free(i);
+				return NULL;
+			}
+			strcpy(n1, result);
+			//free(n1);
+			//n1 = n_;
 		}
+		//printf("-->%lu::%s\n", strlen(n1), n1);
+		//exit(0);
+		result = multiplication(n1, "1");
+		free(n1);
+		n1 = result;
+		if(j_ == NULL)
+			return NULL;
 		free(j_);
 	}
 	if(i)
 		free(i);
 	i = multiplication(n2, "1");
+	if(i == NULL){
+		free(n2);
+		free(n1);
+		return NULL;
+	}
 	if(equal(n2,"0") == 0){
 		if(j == NULL)
 			pseudo = multiplication("1", buffer);
@@ -292,9 +337,21 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			pseudo = multiplication(n1, "1");
 			free(j);
 		}
+		if(pseudo == NULL){
+			free(n1);
+			free(n2);
+			free(i);
+			return NULL;
+		}
 		if(neg){
 			free(n1);
 			n1 = division("1", pseudo, virgule, 0);
+			if(n1 == NULL){
+				free(pseudo);
+				free(n2);
+				free(j);
+				return NULL;
+			}
 			free(pseudo);
 			free(n2);
 			free(i);
@@ -307,35 +364,92 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}
 	free(j);
 	pseudo = addition("0", "1");
+	if(pseudo == NULL){
+		free(n1);
+		free(n2);
+		return NULL;
+	}
+	printf("%lu\n", strlen(n1)*atol(i)+1);
+	/*n1_ = allocation((void **)&n1_, strlen(n1)* atol(i), sizeof(char));
+	resultat = allocation((void **)&resultat, strlen(n1)* atol(i), sizeof(char));
+	strcpy(n1_, n1);*/
 	while(equal(i,"1") != 0){
 		mod = modulo(i, "2", 0);
+		if(mod == NULL){
+			free(i);
+			free(pseudo);
+			free(n1);
+			return NULL;
+		}
 		if(equal(mod, "0") != 0){
 			pseudo__ = multiplication(pseudo, n1);
+			if(pseudo__ == NULL){
+				free(n1);
+				free(n2);
+				free(pseudo);
+				free(mod);
+				free(i);
+				return NULL;
+			}
 			i_ = soustraction(i, "1");
 			free(pseudo);
 			pseudo = pseudo__;
 			free(i);
 			i = i_;
+			if(i == NULL){
+				free(pseudo);
+				free(n1);
+				free(n2);
+				return NULL;
+			}
 		}else{
 			n1_ = multiplication(n1, n1);
+			if(n1_ == NULL){
+				free(n1);
+				free(n2);
+				free(i);
+				return NULL;
+			}
 			free(n1);
 			n1 = n1_;
 			i_ = division(i, "2",0, 0);
+			if(i_ == NULL){
+				free(n1);
+				free(n2);
+				free(i);
+				return NULL;
+			}			
 			free(i);
 			i = i_;
 		}
 		free(mod);
 	}
-	n1_ = multiplication(n1, pseudo);
-	free(n1);
-	n1 = n1_;
+	if(n1){
+		n1_ = multiplication(n1, pseudo);
+		if(n1_ == NULL){
+			free(n1);
+			free(n2);
+			free(pseudo);
+		}
+		free(n1);
+		n1 = n1_;
+	}else
+		n1 = n2;
 	if(pseudo && strlen(pseudo) > 0 && strlen(buffer) > 0){
 		n1_ = multiplication(buffer, n1);
 		free(n1);
 		n1 = n1_;
+		if(n1 == NULL){
+			free(pseudo);
+			return NULL;
+		}
 	}
 	if(neg == 1){
 		n1_ = division("1", n1, virgule, 0);
+		if(n1_ == NULL){
+			free(n1);
+			return NULL;
+		}
 		free(n1);
 		n1 = n1_;
 	}
@@ -343,7 +457,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(i);
 	if(pseudo)
 		free(pseudo);
-	free(n2);
+	if(n2 != n1)
+		free(n2);
 	return n1;
 }
 #define LOG(fn, msg)\
