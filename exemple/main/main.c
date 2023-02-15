@@ -86,7 +86,7 @@ int main(int argc, char **argv){
 		printf("modulo etendu:%s\n",  (char *)r);
 		free(r);
 	}
-	r = carree(argv[1]);
+	/*r = carree(argv[1]);
 	if(r){
 		printf("le carre de '%s': %s\n", argv[1], r);
 		free(r);
@@ -95,7 +95,7 @@ int main(int argc, char **argv){
 	if(r){
 		printf("le carre de '%s': %s\n", argv[2], r);
 		free(r);
-	}
+	}*/
 	r = racine_carree(argv[1], atoi(argv[3]), 0);
 	if(r){
 		check = multiplication(r, r);
@@ -195,7 +195,7 @@ int main(int argc, char **argv){
 	}else{
 		printf("%s\n", error_msg[m_errno]);
 	}
-	/*r = exponentiel(argv[1], sz, format, atoi(argv[3]), 0);
+	r = exponentiel(argv[1], sz, format, atoi(argv[3]), 0);
 	if(r){
 		printf("Exponentiel '%s': %s\n", argv[1], r);
 		free(r);
@@ -204,7 +204,7 @@ int main(int argc, char **argv){
 	if(r){
 		printf("Exponentiel '%s': %s\n", argv[2], r);
 		free(r);
-	}*/
+	}
 	free(format);
 	return 0;
 }

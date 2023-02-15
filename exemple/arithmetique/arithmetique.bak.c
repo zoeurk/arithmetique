@@ -28,8 +28,6 @@
 	memset(buffer, 0, internal_buflen);\
 	sprintf(pi,"%.54Lf", 8*atanl(1));\
 	sprintf(npi,"-%.54Lf", 8*atanl(1));\
-	/*printf("%s :: %s\n", pi, npi);\
-	exit(0);*/\
 	t = multiplication(arg_,"1");\
 	if(i_deg){\
 		t_arg = multiplication(t, pi);\
@@ -317,7 +315,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(i);
 			i = i_;
 		}else{
-			n1_ = multiplication(n1, n1);
+			n1_ = carree(n1);
 			free(n1);
 			n1 = n1_;
 			i_ = division(i, "2",0, 0);
@@ -528,6 +526,74 @@ void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	if(rep)
 		free(rep);
 	return r;
+}
+void *carree(void *num){
+	char *result1 = NULL, *result2 = NULL, r_[4], *n, *n1, *n2, *r, *cp = multiplication(num, "1");
+	char r1[2] = { 0, 0 }, r2[2] = { 0, 0 }, c, c_;
+	unsigned char temp[2] = { 0, 0 };
+	unsigned long int len1 = strlen(num)-(strchr((char *)num, '.') != NULL), len2 = len1, zero = 0, z = 0, dot = 0;
+	n = n1 = n2 = allocation((void **)&n1, len1+1, sizeof(char));
+	if((r = strchr(cp, '.'))){
+		dot = strlen(r+1);
+		for(; *r != 0; r++)
+			*r = *(r+1); 
+		memcpy(n1, &((char *)cp)[(*((char *)cp) == '-' || *((char *)cp) == '+')], len1);
+		dot *= 2;
+		//printf("%s\n", (char *)num);
+		//exit(0);
+	}else
+		memcpy(n1, &((char *)cp)[(*((char *)cp) == '-' || *((char *)cp) == '+')], len1);
+	for(z = 0, n1 += len1-1;len1 > 0;n1--, z++, len1--)
+		for(zero = 0, len2 = len1, n2 = n1;len2 > 0;n2--, zero++, len2--){
+			r1[0] = *n1;
+			r2[0] = *n2;
+			r1[0] = atoi(r1);
+			r2[0] = atoi(r2);
+			if(n2 == n1){
+				temp[0] = (unsigned char) (r2[0] * r1[0]);
+				//printf("===>%i,%i\n", r2[0], temp[0]);
+			}else{
+				temp[0] = (unsigned char)(2* r2[0] * r1[0]);
+			}
+			//printf("==>%i\n", *temp);
+			memset(r_, 0, 4);
+			//printf("%u\n", temp[0]);
+			sprintf(r_, "%i", temp[0]);
+			if(result1 == NULL){
+				result1 = allocation((void **)&result1, strlen(r_), sizeof(char));
+				strcpy(result1, r_);
+				//printf("%s\n", result1);
+			}else{
+				result2 = allocation((void **)&result2, strlen(r_) + z*2 +zero, sizeof(char));
+				strcpy(result2, r_);
+				memset(&result2[strlen(result2)], '0', zero+z*2);
+				//printf("==>%s::%lu::%lu\n", result2, zero, z*2);
+				r = addition(result2, result1);
+				free(result2);
+				free(result1);
+				result2 = NULL;
+				result1 = r;
+			}
+			//printf("%s\n", result1);
+		}
+	free(n);
+	if(dot){
+		//dot_ = strlen(result1) - dot;
+		for(result2 = &result1[dot+1]; *result2 != 0; result2++){
+			if(result2 == &result1[dot+1]){
+				c = *(result2);
+				*result2 = '.';
+			}else{
+				c_ = *(result2);
+				*result2 = c;
+				c = c_;
+			}
+		}
+		*result2 = c;
+	}
+	free(cp);
+	//printf("%c\n", c);
+	return result1;
 }
 int error_set(int op, int val){
 	static int err = 0;
