@@ -192,6 +192,14 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				}
 				free(n1);
 				n1 = n1_;
+				memset(buffer, 0, internal_buflen);
+				snprintf(buffer, internal_buflen,format, strtold(n1, NULL)); 
+				if(buffer[internal_buflen-1] != 0 && equal(n1, buffer) != 0){ 
+					error_set(SET, 5);
+					fprintf(stderr,"Warning `%s`:\n\tNombre trop long.\n\tUtilisation de la valeur: ", n1);
+					fprintf(stderr, "%Lf", strtold(n1, NULL));
+					fprintf(stderr,"\n");
+				}
 				i_ = addition(i, "1");
 				if(i_ == NULL){
 					free(i);
