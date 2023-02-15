@@ -294,14 +294,16 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(v_);
 	}
 	if(j){
+		//printf("===========================================\n");
 		//printf("++>%lu\n", strlen(n1) * atol(j)*2+1);
 		result = allocation((void *)&result, strlen(n1) * atol(j)*2 +1, sizeof(char));
 		strcpy(result, n1);
 		free(n1);
 		n1 = result;
 		result = result + strlen(n1) +1; 
-		for(j_ = addition("0","1"); j_ != NULL && equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
+		for(j_ = addition("0","0"); j_ != NULL && equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
 			n_ = multiplication(n1, n1);
+			//printf("%s, %s\n", n_, n1);
 			if(n_ == NULL){
 				free(n1);
 				free(j_);
@@ -309,9 +311,9 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 					free(i);
 				return NULL;
 			}
-			strcpy(n1, result);
-			//free(n1);
-			//n1 = n_;
+			//strcpy(n1, result);
+			free(n1);
+			n1 = n_;
 		}
 		//printf("-->%lu::%s\n", strlen(n1), n1);
 		//exit(0);
@@ -369,7 +371,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(n2);
 		return NULL;
 	}
-	printf("%lu\n", strlen(n1)*atol(i)+1);
+	//printf("%lu\n", strlen(n1)*atol(i)+1);
 	/*n1_ = allocation((void **)&n1_, strlen(n1)* atol(i), sizeof(char));
 	resultat = allocation((void **)&resultat, strlen(n1)* atol(i), sizeof(char));
 	strcpy(n1_, n1);*/
