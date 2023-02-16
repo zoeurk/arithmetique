@@ -11,4 +11,4 @@ make install
   
   
   
-Bon, mouhai,..., de toutes facons pour une librairie il y a des fuite de memoire
+Bon, mouhai,..., de toutes facons pour une librairie il y a des fuite de memoire, et puis zut...:/
