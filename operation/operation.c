@@ -1263,7 +1263,7 @@ void *soustraction(void *num1, void *num2){
 		}
 		for(ii_ = ij_ = dot1_len,
 			dot2 -= (ii_ > S_BLK_) ? S_BLK : dot1_len ,
-			dot1 = (ii_ > S_BLK_) ? &dot1[ii_- S_BLK] : &dot1[S_BLK-ii_ -1];
+			dot1 = (ii_ > S_BLK_) ? &dot1[ii_- S_BLK] : dot1;
 			ii_ > 0;
 			ii_-= (ii_ > S_BLK_) ? S_BLK : ii_,
 			dot1 -= (ii_ > S_BLK_) ? S_BLK : ii_,
