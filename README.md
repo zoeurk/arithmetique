@@ -11,4 +11,4 @@ make install
   
   
   
-Bon, mouhai,..., de toutes facons c'est buggue
+Bon, mouhai,..., de toutes facons c'est buggue (possible erreur de calcule dans la fonction puissance)
