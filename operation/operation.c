@@ -1216,8 +1216,8 @@ void *soustraction(void *num1, void *num2){
 		ii_ = dot2_len;
 		strcpy(pbuf, &dot1[dot2_len]);
 		for(ii_ = ii_, ij_ = dot2_len,
-			dot1 = (ii_ > S_BLK_) ? &dot1[ii_-S_BLK] : &dot1[S_BLK-ii_],
-			dot2 = (ii_ > S_BLK_) ? &dot2[ii_-S_BLK] : &dot2[S_BLK-ii_];
+			dot1 = (ii_ > S_BLK_) ? &dot1[ii_-S_BLK] : dot1,
+			dot2 = (ii_ > S_BLK_) ? &dot2[ii_-S_BLK] : dot2;
 			ii_ > 0;
 			ii_-= (ii_ > S_BLK_) ? S_BLK : ii_,
 			dot1 -= (ii_ > S_BLK_) ? S_BLK : ii_,
@@ -1243,6 +1243,7 @@ void *soustraction(void *num1, void *num2){
 		}
 	}
 	if(dot2_len > dot1_len){
+		printf("***\n");
 		for(ij_ = dot2_len - dot1_len, 
 			ii_ = dot2_len,
 			dot2 = (ij_ > S_BLK_) ? &dot2[ii_- S_BLK_+1] : &dot2[ii_ - ij_];
