@@ -106,7 +106,7 @@ void *tangente(char *arg, char *format,unsigned long internal_buflen,int i_deg, 
 }
 
 void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char *format, unsigned long int virgule, int approximation){
-		char *n1, *resultat,
+		char *n1, *resultat = NULL,
 		*n2, *result,
 		buffer[internal_buflen], *v, 
 		*n1_, *n_ = NULL,
@@ -181,7 +181,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			}
 			pseudo_ = strtold(n1, NULL);
 			//printf("-->%s::%Lf::%s\n", n1, pseudo_, pseudo);
-			if((eq = equal(n1, buffer)) != 0){
+			if((eq = equal(n1, buffer)) > 0){
 				n1_ = racine_carree(n1, virgule, approximation);
 				if(n1_ == NULL){
 					free(n1);
@@ -295,6 +295,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				free(v_);
 				return NULL;
 			}
+			resultat = multiplication(buffer, "1");
+			//printf("==>%s\n", buffer);
 			free(v_);
 			v_ = NULL;
 		}
@@ -309,8 +311,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		//free(n1);
 		//n1 = result;
 		//result = result + strlen(n1) +1; 
-		for(j_ = addition("0","1"); j_ != NULL && equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
-			n_ = multiplication(n1, n1);
+		for(j_ = addition("0","0"); j_ != NULL && equal(j, j_) != 0;j__ = addition(j_, "1"), free(j_), j_ = j__){
+			n_ = multiplication(resultat, resultat);
 			//printf("%s, %s\n", n_, n1);
 			if(n_ == NULL){
 				free(n1);
@@ -320,9 +322,11 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 				return NULL;
 			}
 			//strcpy(n1, result);
-			free(n1);
-			n1 = n_;
+			free(resultat);
+			resultat = n_;
 		}
+		//printf("-->%s\n", n1);
+		//exit(0);
 		//printf("-->%lu::%s\n", strlen(n1), n1);
 		//exit(0);
 		result = multiplication(n1, "1");
@@ -332,6 +336,10 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			return NULL;
 		free(j_);
 	}
+	//printf("%s\n", resultat);
+	//exit(0);
+	//printf("%Lf\n",pseudo_*pseudo_);
+	//exit(0);
 	if(i)
 		free(i);
 	i = multiplication(n2, "1");
@@ -370,10 +378,16 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(i);
 		free(n1);
 		free(n2);
+		//printf("%Lf\n", pseudo_ *pseudo_);
 		return pseudo;
 	}
 	free(j);
-	pseudo = addition("0", "1");
+	if(resultat == NULL)
+		pseudo = addition("0", "1");
+	else{
+		pseudo = multiplication(resultat, "1");
+		free(resultat);
+	}
 	if(pseudo == NULL){
 		free(n1);
 		free(n2);
@@ -383,8 +397,14 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	/*n1_ = allocation((void **)&n1_, strlen(n1)* atol(i), sizeof(char));
 	resultat = allocation((void **)&resultat, strlen(n1)* atol(i), sizeof(char));
 	strcpy(n1_, n1);*/
+	free(n1);
+	n1 = multiplication(num1, "1");
+	//printf("%s:%s::%s::%s\n", pseudo, (char *)num1, n1, i);
+	//exit(0);
 	while(equal(i,"1") != 0){
 		mod = modulo(i, "2", 0);
+		//printf("%s::%s\n", i, mod);
+		//exit(0);
 		if(mod == NULL){
 			free(i);
 			free(pseudo);
@@ -434,7 +454,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}
 		free(mod);
 	}
-	if(n1){
+	/*if(n1){
 		n1_ = multiplication(n1, pseudo);
 		if(n1_ == NULL){
 			free(n1);
@@ -443,10 +463,12 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}
 		free(n1);
 		n1 = n1_;
-	}else
-		n1 = n2;
-	if(pseudo && strlen(pseudo) > 0 && strlen(buffer) > 0){
-		n1_ = multiplication(buffer, n1);
+	}else*/
+		//n1 = n2;
+	//printf("<%s::%s>\n", pseudo, n1);
+	//exit(0);
+	if(pseudo && strlen(pseudo)){
+		n1_ = multiplication(pseudo, n1);
 		free(n1);
 		n1 = n1_;
 		if(n1 == NULL){
@@ -454,6 +476,8 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			return NULL;
 		}
 	}
+	//printf("%s\n", n1);
+	//exit(0);
 	if(neg == 1){
 		n1_ = division("1", n1, virgule, 0);
 		if(n1_ == NULL){
