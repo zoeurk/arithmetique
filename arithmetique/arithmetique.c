@@ -14,7 +14,7 @@
 	}
 
 #define TRIGO(fn) \
-	char *arg_ = NULL, *t_arg, pi[58], npi[58], *pi_ = NULL, *temp, *t = NULL, *mul, buffer[internal_buflen], *pbuf, *form;\
+	char *dot, /**f = "%.48Lf",*/ *arg_ = NULL, *t_arg, pi[50], npi[51], *pi_ = NULL, *temp, *t = NULL, *mul, buffer[internal_buflen], *pbuf, *form;\
 	long double val, format_;\
 	error_set(SET, 0);\
 	form = format+2;\
@@ -24,23 +24,66 @@
 		error_set(SET, 1);\
 		return NULL;\
 	}\
+	/*if(virgule > 1) \
+		//sprintf(n, "%lu", 48); \
+	else \
+		strcpy(n, "0"); */\
+	/*if((f = malloc(strlen(n)+7)) == NULL){ \
+		perror("malloc()"); \
+		exit(EXIT_FAILURE); \
+	} \
+	strcpy(f,"%."); \
+	strcat(f,n); \
+	strcat(f,"Lf");*/ \
 	arg_ = multiplication(arg,"1");\
+	if(arg_ == NULL) \
+		return NULL; \
 	memset(buffer, 0, internal_buflen);\
-	sprintf(pi,"%.54Lf", 8*atanl(1));\
-	sprintf(npi,"-%.54Lf", 8*atanl(1));\
-	/*printf("%s :: %s\n", pi, npi);\
-	exit(0);*/\
+	sprintf(pi,"%.47Lf", 8*atanl(1));\
+	sprintf(npi,"-%.47Lf", 8*atanl(1));\
 	t = multiplication(arg_,"1");\
+	if(t == NULL){ \
+		free(arg_); \
+		return NULL; \
+	} \
 	if(i_deg){\
 		t_arg = multiplication(t, pi);\
+		if(t_arg == NULL){ \
+			free(t); \
+			free(arg_);\
+			return NULL; \
+		} \
 		free(t);\
 		t = division(t_arg, "180", virgule, approximation);\
 		free(t_arg);\
+		if(t == NULL){ \
+			free(arg_); \
+			return NULL; \
+		}\
 	}\
 	if(equal(arg_,pi) > 0){\
 		mul = division(arg_, pi, 0,0);\
+		if(mul == NULL){ \
+			free(arg_); \
+			free(t); \
+			return NULL; \
+		} \
 		pi_ = multiplication(pi, mul);\
+		if(pi_ == NULL){ \
+			free(t); \
+			free(mul); \
+			free(arg_); \
+			free(t); \
+			return NULL; \
+		} \
 		temp = soustraction(t, pi_);\
+		if(temp == NULL){ \
+			free(arg_); \
+			free(mul); \
+			free(pi_); \
+			free(t); \
+			return NULL; \
+		} \
 		free(mul);\
 		free(pi_);\
 		free(t);\
@@ -49,8 +92,25 @@
 	}else{\
 		if(equal(arg_, npi) < 0 && equal(arg_, "0") < 0){\
 			mul = division(arg_, npi, 0, 0);\
+			if(mul == NULL){ \
+				free(arg_); \
+				free(t); \
+				return NULL;\
+			}\
 			pi_ = multiplication(npi, mul);\
+			if(pi_ == NULL){ \
+				free(arg_); \
+				free(mul); \
+				free(t); \
+				return NULL; \
+			} \
 			temp = addition(t, pi_);\
+			if(temp == NULL){ \
+				free(arg_); \
+				free(mul); \
+				free(t); \
+				free(pi_); \
+			} \
 			free(mul);\
 			free(pi_);\
 			free(t);\
@@ -58,9 +118,31 @@
 		}else{ \
 			free(t); \
 			t = multiplication(arg_, "1"); \
+			if(t == NULL){ \
+				free(arg_); \
+				return NULL; \
+			} \
 		}\
 	}\
 	free(arg_);\
+	/*dot = strchr(t, '.'); \
+	if(dot){ \
+		printf("=======================\n"); \
+		printf("%s\n", t); \
+		*(dot + virgule +1) = 0; \
+		printf("%s\n", t); \
+		printf(format, strtold(t, NULL)); \
+		printf("\n====================\n"); \
+	} */\
+	memset(buffer, 0, internal_buflen); \
+	/*sprintf(buffer, format, strtold(t, NULL)); \
+	if(buffer[internal_buflen-1] != 0 || equal(t, buffer) != 0){ \
+		error_set(SET, 5); \
+		fprintf(stderr,"Warning `%s`:\n\tNombre trop long.\n\tUtilisation de la valeur: ", buffer); \
+		fprintf(stderr, f, strtold(t, NULL)); \
+		sprintf(t, f, strtold(t, NULL)); \
+		fprintf(stderr,"\n"); \
+	} */\
 	val = fn(strtold(t,NULL));\
 	snprintf(buffer,  internal_buflen,format, val);\
 	if(buffer[internal_buflen-1] != 0){\
@@ -70,13 +152,22 @@
 		return NULL;\
 	}\
 	free(t);\
-	t = multiplication(buffer,"1");\
+	t = multiplication(buffer,"1"); \
+	if(t == NULL) \
+		return NULL; \
 	if(o_deg){\
 		arg_ = multiplication(t, "180");\
+		if(arg_ == NULL){ \
+			free(t);\
+			return NULL; \
+		} \
 		free(t);\
 		t = division(arg_, pi, virgule, approximation);\
 		free(arg_);\
 	}\
+	dot = strchr(t, '.'); \
+	if(dot && strlen(dot+1) > virgule) \
+		*(dot + 1 + virgule) = 0; \
 	pbuf = t;
 
 #define TEST(msg,arg)\
