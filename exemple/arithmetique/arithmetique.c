@@ -587,11 +587,17 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	return n1;
 }
 #define LOG(fn, msg)\
-	char *n = multiplication(num, "1"), *n_, buffer[internal_buflen], *i = multiplication("1", "1"),\
-		*pi = i, *result, *dot_ = NULL, *pdot_, *p, *tst_, tst__[68], *_format_, f[20], comp[21];\
+	char *n, *n_, buffer[internal_buflen], *i,\
+		*pi, *result, *dot_ = NULL, *pdot_, *p, *tst_, tst__[68], *_format_, f[20], comp[21];\
 	unsigned long int l;\
 	long double tst;\
+	if(internal_buflen < 2){\
+		error_set(SET, 1); \
+		return NULL; \
+	} \
 	error_set(SET, 0);\
+	n = multiplication(num, "1"); \
+	pi = i = multiplication("1", "1");\
 	memset(buffer,0, internal_buflen);\
 	sprintf(comp,"%lu", (unsigned long int)~0);\
 	if(equal(n, "0") <= 0){\
@@ -604,11 +610,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		}else{\
 			free(n);\
 			free(i);\
-			/*if((n_ = malloc(5*sizeof(char))) == NULL){\
-				perror("malloc()");\
-				exit(EXIT_FAILURE);\
-			}\
-			strcpy(n_, "-inf");*/\
 			error_set(SET, 3);\
 			return NULL;\
 		}\
@@ -644,18 +645,28 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			memset(tst__, 0, 68);\
 			snprintf(tst__,68, _format_, tst);\
 			if(tst__[67] != 0){\
+				error_set(SET, 5); \
 				tst__[67] = 0;\
 				fprintf(stderr, "Warning %s: Nombre tronque (%s)\n", tst_, tst__);\
 			}\
 			*pdot_ = '.';\
+			/*printf("TST==%s::%s\n",tst__, tst_);*/\
 			if(equal(tst__, tst_) != 0){\
+				error_set(SET, 5); \
 				fprintf(stderr,"Warning `%s`:\n\tTrop de chiffre apres la virgule.\n\tUtilisation de la valeur: ", tst_);\
-				fprintf(stderr, format, strtold(tst_, NULL));\
+				fprintf(stderr, "%Lf", strtold(tst_, NULL));\
 				fprintf(stderr,"\n");\
 				p = strchr(n, '.');\
 				*p = 0;\
 				sprintf(f,format,strtold(tst_, NULL));\
 				p = addition(n, f);\
+				if(p == NULL){ \
+					free(n); \
+					free(i); \
+					if(dot_) \
+						free(dot_); \
+					return NULL; \
+				} \
 				free(n);\
 				n = p;\
 			}\
@@ -667,13 +678,47 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	}\
 	memset(buffer, 0, internal_buflen);\
 	if(equal(n,comp) > 0){\
-		for(n = n, i = i;n && equal(n, comp) > 0;n_ = racine_carree(n, virgule+1, approximation), free(n), n = n_, pi = multiplication(i, "2"),free(i), i = pi);;\
-		if(n != NULL)\
-			snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
+		for(n = n, i = i; \
+			i && n && equal(n, comp) > 0; \
+			n_ = racine_carree(n, virgule+1, approximation), \
+			free(n), \
+			n = n_, \
+			n_ && (pi = multiplication(i, "2"), \
+				free(i), \
+				i = pi \
+			) \
+		);;\
+		if(n == NULL){ \
+			free(i); \
+			if(dot_) \
+				free(dot_); \
+			return NULL; \
+		} \
+		if(pi == NULL){ \
+			free(n); \
+			if(dot_) \
+				free(dot_); \
+			return NULL; \
+		} \
+		snprintf(buffer, internal_buflen, format, strtold(n, NULL)); \
+		if(buffer[internal_buflen-1] != 0 || equal(n, buffer) != 0){ \
+				error_set(SET, 5); \
+				fprintf(stderr,"Warning `%s`:\n\tNombre trop long.\n\tUtilisation de la valeur: ", n); \
+				fprintf(stderr, "%Lf", strtold(n, NULL)); \
+				fprintf(stderr,"\n"); \
+		} \
+		snprintf(buffer, internal_buflen,format, fn(strtold(n, NULL)));\
 	}else{\
+		snprintf(buffer, internal_buflen, format, strtold(n, NULL)); \
+		if(buffer[internal_buflen-1] != 0 || equal(n, buffer) != 0){ \
+				error_set(SET, 5); \
+				fprintf(stderr,"Warning `%s`:\n\tNombre trop long.\n\tUtilisation de la valeur: ", n); \
+				fprintf(stderr, "%Lf", strtold(n, NULL)); \
+				fprintf(stderr,"\n"); \
+		} \
 		snprintf(buffer,internal_buflen,format, fn(strtold(n,NULL)));\
 	}\
-	if(n == NULL || buffer[internal_buflen -1] != 0){\
+	if(buffer[internal_buflen -1] != 0){\
 		/*fprintf(stderr,"Tampon interne trop petit (internal_buflen)\n");*/\
 		error_set(SET, 1);\
 		if(n)\
@@ -684,11 +729,22 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		return NULL;\
 	}\
 	result = multiplication(i, buffer);\
+	if(result == NULL){ \
+		free(i); \
+		free(n); \
+		if(dot_) \
+			free(dot_); \
+		return NULL; \
+	}\
 	free(i);\
 	free(n);\
 	if(dot_)\
 		free(dot_);\
 	n = division(result, "1", virgule+1, 0);\
+	if(n == NULL){ \
+		free(result); \
+		return NULL; \
+	}\
 	free(result);\
 	return n;
 
