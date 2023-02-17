@@ -10,5 +10,4 @@ make
 make install  
   
   
-  
-Bon, mouhai,..., de toutes facons pour une librairie il y a des fuite de memoire, et puis zut...:/
+Fuite de memoire plus que probable dans arithmetique.c dans le cadre des erreurs

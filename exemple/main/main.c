@@ -58,33 +58,51 @@ int main(int argc, char **argv){
 	if(r){
 		printf("addition:%s\n", (char *)r);
 		free(r);
+	}else{
+		if(o_errno)
+			printf("addition: %s\n", o_err_msg[o_errno]);
 	}
 	//exit(0);
 	r = soustraction(argv[1], argv[2]);
 	if(r){
 		printf("soustraction:%s\n", (char *)r);
 		free(r);
+	}else{
+		if(o_errno)
+			printf("soustraction: %s\n", o_err_msg[o_errno]);
 	}
 	//exit(0);
 	r = multiplication(argv[1], argv[2]);
 	if(r){
 		printf("multiplication:%s\n", (char *)r);
 		free(r);
+	}else{
+		if(o_errno)
+			printf("multiplication: %s\n", o_err_msg[o_errno]);
 	}
 	r = division(argv[1], argv[2], atoi(argv[3]),1);
 	if(r){
 		printf("division:%s\n", (char *)r);
 		free(r);
+	}else{
+		if(o_errno)
+			printf("division: %s\n", o_err_msg[o_errno]);
 	}
 	r = modulo(argv[1], argv[2], 0);
 	if(r){
-		printf("modulo:%s\n", (char *)r);
+		printf("modulo: %s\n", (char *)r);
 		free(r);
+	}else{
+		if(o_errno)
+			printf("modulo: %s\n", o_err_msg[o_errno]);
 	}
 	r = modulo(argv[1], argv[2], atoi(argv[3]));
 	if(r){
-		printf("modulo etendu:%s\n",  (char *)r);
+		printf("modulo etendu: %s\n",  (char *)r);
 		free(r);
+	}else{
+		if(o_errno)
+			printf("modulo: %s\n", o_err_msg[o_errno]);
 	}
 	/*r = carree(argv[1]);
 	if(r){
@@ -103,8 +121,13 @@ int main(int argc, char **argv){
 		printf("Verification:%s\n", check);
 		free(r);
 		free(check);
+		if(m_errno)
+			printf("racine carree: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("racine carree: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("racine carree: %s\n", error_msg[m_errno]);
 	}
 	r = racine_carree(argv[2], atoi(argv[3]), 0);
 	if(r){
@@ -113,97 +136,173 @@ int main(int argc, char **argv){
 		printf("Verification:%s\n", check);
 		free(r);
 		free(check);
+		if(m_errno)
+			printf("racine carree: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("racine carree: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("racine carree: %s\n", error_msg[m_errno]);
 	}
 	//exit(0);
 	//free(format);
-	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]),1);
+	r = puissance(argv[1],argv[2], sz, format,atoi(argv[3]),0);
 	if(r){
 		printf("%s^%s  = %s\n", argv[1], argv[2], r);
 		free(r);
+		if(m_errno)
+			printf("puissance: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("puissance: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("puissance: %s\n", error_msg[m_errno]);
 	}
 	printf("\t\tTrigonometrie:\n");
 	r = cosinus(argv[1], format, sz,0, 0, atoi(argv[3]), 0);
 	if(r){
 		printf("le cosinus de \'%s\':%s\n", argv[1],r);
 		free(r);
+		if(m_errno)
+			printf("cosinus: %s\n", error_msg[m_errno]);
+	}else{
+		if(o_errno)
+			printf("cosinus: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("cosinus: %s\n", error_msg[m_errno]);
 	}
 	r = cosinus(argv[2], format, sz, 0, 0, atoi(argv[3]), 0);
 	if(r){
 		printf("le cosinus de \'%s\':%s\n", argv[2], r);
 		free(r);
+		if(m_errno)
+			printf("cosinus: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("cosinus: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("cosinus: %s\n", error_msg[m_errno]);
 	}
 	r = sinus(argv[1], format, sz, 0, 0, atoi(argv[3]), 0);
 	if(r){
 		printf("le sinus de \'%s\':%s\n", argv[1],r);
 		free(r);
+		if(m_errno)
+			printf("sinus: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("sinus: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("sinus: %s\n", error_msg[m_errno]);
 	}
 	r = sinus(argv[2], format, sz, 0, 0, atoi(argv[3]), 0);
 	if(r){
 		printf("le sinus de \'%s\':%s\n", argv[2], r);
 		free(r);
+		if(m_errno)
+			printf("sinus: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("sinus: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("sinus: %s\n", error_msg[m_errno]);
 	}
 	r = tangente(argv[1], format, sz, 0, 0, atoi(argv[3]), 0);
 	if(r){
 		printf("la tangente de \'%s\':%s\n", argv[1],r);
 		free(r);
+		if(m_errno)
+			printf("tangente: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("tangente: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("tangente: %s\n", error_msg[m_errno]);
 	}
 	r = tangente(argv[2], format, sz, 0, 0, atoi(argv[3]), 0);
 	if(r){
 		printf("la tangente de \'%s\':%s\n", argv[2], r);
 		free(r);
+		if(m_errno)
+			printf("tangente: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("tangente: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("tangente: %s\n", error_msg[m_errno]);
 	}
 	printf("\t\t\t===\n");
 	r = log_n(argv[1], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("Logarithme Neperien de '%s': %s\n", argv[1], r);
 		free(r);
+		if(m_errno)
+			printf("log_n: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("log_n: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("log_n: %s\n", error_msg[m_errno]);
 	}
 	r = log_n(argv[2], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("Logarithme Neperien de '%s': %s\n", argv[2], r);
 		free(r);
+		if(m_errno)
+			printf("log_n: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("log_n: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("log_n: %s\n", error_msg[m_errno]);
 	}
 	r = log_10(argv[1], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("Logarithme 10 de '%s': %s\n", argv[1], r);
 		free(r);
+		if(m_errno)
+			printf("log_10: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("log_10: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("log_10: %s\n", error_msg[m_errno]);
 	}
 	r = log_10(argv[2], sz, format,atoi(argv[3]), 0);
 	if(r){
 		printf("Logarithme 10 de '%s': %s\n", argv[2], r);
 		free(r);
+		if(m_errno)
+			printf("log_10: %s\n", error_msg[m_errno]);
 	}else{
-		printf("%s\n", error_msg[m_errno]);
+		if(o_errno)
+			printf("log_10: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("log_10: %s\n", error_msg[m_errno]);
 	}
 	/*r = exponentiel(argv[1], sz, format, atoi(argv[3]), 0);
 	if(r){
 		printf("Exponentiel '%s': %s\n", argv[1], r);
 		free(r);
+		if(m_errno)
+			printf("exponentiel: %s\n", error_msg[m_errno]);
+	}else{
+		if(o_errno)
+			printf("exponentiel: %s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("exponentiel: %s\n", error_msg[m_errno]);
 	}
 	r = exponentiel(argv[2], sz, format, atoi(argv[3]), 0);
 	if(r){
 		printf("Exponentiel '%s': %s\n", argv[2], r);
 		free(r);
+		if(m_errno)
+			printf("exponentiel: %s\n", error_msg[m_errno]);
+	}else{
+		if(o_errno)
+			printf("exponentiel:%s\n", o_err_msg[o_errno]);
+		if(m_errno)
+			printf("exponentiel: %s\n", error_msg[m_errno]);
 	}*/
 	free(format);
 	return 0;

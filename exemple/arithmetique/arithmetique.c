@@ -452,6 +452,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 			free(i);
 			return NULL;
 		}
+		free(resultat);
 		if(neg){
 			free(n1);
 			n1 = division("1", pseudo, virgule, 0);
