@@ -16,6 +16,10 @@
 #define TRIGO(fn) \
 	char *dot, /**f = "%.48Lf",*/ *arg_ = NULL, *t_arg, pi[50], npi[51], *pi_ = NULL, *temp, *t = NULL, *mul, buffer[internal_buflen], *pbuf, *form;\
 	long double val, format_;\
+	if(internal_buflen < 3){ \
+		error_set(SET, 1); \
+		return NULL; \
+	} \
 	error_set(SET, 0);\
 	form = format+2;\
 	format_ = strtold(form,NULL);\
@@ -206,7 +210,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 	unsigned long int l;
 	long double pseudo_, /*pseudo_tst,*/ tst;
 	int eq, neg = 0;
-	if(internal_buflen < 2){
+	if(internal_buflen < 3){
 		error_set(SET, 1);
 		return NULL;
 	}
@@ -470,7 +474,6 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		free(i);
 		free(n1);
 		free(n2);
-		//printf("%Lf\n", pseudo_ *pseudo_);
 		return pseudo;
 	}
 	free(j);
@@ -592,7 +595,7 @@ void *puissance(void *num1, void *num2, unsigned long int internal_buflen, char 
 		*pi, *result, *dot_ = NULL, *pdot_, *p, *tst_, tst__[68], *_format_, f[20], comp[21];\
 	unsigned long int l;\
 	long double tst;\
-	if(internal_buflen < 2){\
+	if(internal_buflen < 3){\
 		error_set(SET, 1); \
 		return NULL; \
 	} \
@@ -770,6 +773,11 @@ void *racine_carree(void *num1, unsigned long int virgule, int approximation){
 	if(equal(num1, "0") < 0){
 		free(n);
 		error_set(SET, 4);
+		return NULL;
+	}
+	if(virgule == 0){
+		free(n);
+		error_set(SET, 6);
 		return NULL;
 	}
 	while(strchr(n, '.')){

@@ -4,12 +4,13 @@ enum error_op{
 	GET = 0,
 	SET = 1
 };
-const char *error_msg[6] = {	"succe",
+const char *error_msg[7] = {	"succe",
 								"Tampon interne trop petit (internal_buflen)",
 								"-nan detecte",
 								"-inf detected",
 								"Racine carree d'un nombre negatif",
-								"Arrondit systeme: trop de chiffre apres la virgule"
+								"Arrondit systeme: trop de chiffre apres la virgule",
+								"precision trop basse"
 							};
 #define m_errno m_errno_()
 int m_errno_(void);
