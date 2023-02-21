@@ -1,4 +1,5 @@
 x=5
+y=3.7
 define cosinus (x){
 	i=1
 	fac=2
@@ -64,5 +65,8 @@ print "\nln: "
 print ln
 print "\nln: "
 print l(x)
+print "\npuissance: "
+log(x)
+print e(y*ln)
 print "\n"
 quit
