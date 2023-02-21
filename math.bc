@@ -1,0 +1,68 @@
+x=5
+define cosinus (x){
+	i=1
+	fac=2
+	cos=1
+	while((x^(i*2))/fac != 0){
+		cos += (-1^i)*(x^(i*2))/fac
+		fac=1
+		i++;
+		for(f = 1; f <= i*2;f++){
+			fac *= f;
+		}
+	}
+}
+define sinus (x){
+	i=1
+	fac=6
+	sin = x
+	while((x^(i*2))/fac != 0){
+		sin += (-1^i)*(x^(i*2+1))/fac
+		fac=1
+		i++;
+		for(f = 1; f <= i*2+1;f++){
+			fac *= f;
+		}
+	}
+}
+define log (x){
+	l=x
+	xl=l
+	last_=0
+	i=2
+	c=1
+	ln = l
+	while(l > 1.5){
+		l = sqrt(l)
+		c*=2
+	}
+	xl=l-1
+	l=xl
+	while(l != last_){
+		last_ = l
+		l += (-1)^(i+1)*(xl^i)/i
+		i++
+	}
+	ln=c*l
+}
+cosinus(x)
+print "cosinus: "
+print cos
+print "\ncosinus: "
+print c(x)
+print "\n"
+sinus(x)
+print "sinus: "
+print sin
+print "\nsinus: "
+print s(x)
+print "\ntangente: "
+print sin/cos
+print "\n"
+log(x)
+print "\nln: "
+print ln
+print "\nln: "
+print l(x)
+print "\n"
+quit
