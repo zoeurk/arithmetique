@@ -1,5 +1,7 @@
-x=5
-y=3.7
+x=3
+y=2.7
+#z=2
+#z_=0.7
 define cosinus (x){
 	i=1
 	fac=2
@@ -46,6 +48,24 @@ define log (x){
 	}
 	ln=c*l
 }
+define exp (x){
+	#x^n/n!
+	#1+x+((x^2)/2)+((x^3)/(1*2*3))+((x^4)/(1*2*3*4))+((x^n)/n!)
+	scale=56
+	e=1+x
+	last_=0
+	j=0
+	fac=2
+	while(e != last_){
+		last_=e
+		fac++
+		fac_=1
+		for(i=1; i < fac; i++){
+			fac_*=i
+		}
+		e+=x^(fac-1)/fac_
+	}
+}
 cosinus(x)
 print "cosinus: "
 print cos
@@ -65,8 +85,19 @@ print "\nln: "
 print ln
 print "\nln: "
 print l(x)
-print "\npuissance: "
 log(x)
+print "\npuissance: "
 print e(y*ln)
 print "\n"
+log(x)
+exp(y*ln)
+print "\npuissance: "
+print e
+print "\n"
+#log(3)
+#exp(z_*ln)
+#x=e*3^2
+#print "\npuisance: "
+#print x
+#print "\n"
 quit
