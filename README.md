@@ -15,3 +15,7 @@ Nota:
 mathinbin.c est ici dans un pur but de curiositée.
 gcc mathinbin.c
 ./a.out num1 num2 virgule
+
+Bon j'ai essayé d'optimiser operation.c et je suis au moins 2x plus len que bc :/  
+Voir opertion.c  
+./a.out num1 num2 virgule
