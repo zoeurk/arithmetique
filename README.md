@@ -1,5 +1,5 @@
-# arithmetique  
-  (ATTENTION: Aucune garanties) 
+# arithmetique (!!ARCH: 64bits!!)  
+  (ATTENTION: Aucune garanties)  
 Librairie de fonction mathematique.  
 les librairies sont libre d'usage, de modification et (re/)distribution  
 libtoolize  
