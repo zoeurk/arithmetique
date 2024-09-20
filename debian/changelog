@@ -1,0 +1,5 @@
+liboperation (0.1-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Thomas Marsaleix <zoeurk@gmail.com>  Wed, 18 Sep 2024 14:08:52 +0200

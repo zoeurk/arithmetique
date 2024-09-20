@@ -1,0 +1,24 @@
+Source: liboperation
+Priority: optional
+Maintainer: Thomas Marsaleix <zoeurk@gmail.com>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Section: libs
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/liboperation
+#Vcs-Git: https://salsa.debian.org/debian/liboperation.git
+
+Package: liboperation-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: liboperation (= ${binary:Version}), ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+Package: liboperation
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

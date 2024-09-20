@@ -1,0 +1,10 @@
+cp -r liboperation-0.1.orig liboperation-0.1
+cd liboperation-0.1
+rm -rf scripts main Makefile
+libtoolize
+aclocal
+autoreconf --install
+dh_make -l -y --createorig -e "zoeurk@gmail.com"
+rm -rf debian
+cp -r ../debian ./
+dpkg-buildpackage -us -uc --source-option=--include-removal --source-option=--auto-commit

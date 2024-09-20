@@ -1,0 +1,10 @@
+b587ef560da439a643c2b9782f91069b  ./Makefile
+92bafe8fc2bd7a67982918691ba46e5c  ./lib/operation.h
+e6524970ba470083da435115f1e6b108  ./lib/Makefile.in
+fa59fe8e8e0e19df1dc268d87852ae56  ./lib/Makefile.am
+e6053b408bd040209225471df8af5e5c  ./lib/operation.c
+7e83782c47b5476515b9d3a5161f4784  ./test/test.c
+d94a8c45757cb3e4211afa62faa01713  ./main/main.c
+f1bb23a487af01f3fec18a943f658235  ./Makefile.in
+1b334057894aeffda0ea65fe8c33b23c  ./Makefile.am
+e31172d46137b18c158874635168d8ea  ./configure.ac
