@@ -1,6 +1,6 @@
 ### liboperation
 librairie d'operation:  
-+,-,*,/,%,puissance  
++,-,*,/,%,puissance,modulo  
   
 A tester...  
 AUCUNE GARANTIE
