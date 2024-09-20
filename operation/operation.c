@@ -1,0 +1,1276 @@
+#include "operation.h"
+char *parse_nbr(char *n){
+	char *ret, *pret, *pn, *cp = NULL;
+	size_t len = 0;
+	int neg = 0, zero = 1, num = 0, dot = 0;
+	for(pn = n;*pn != 0;pn++)
+		if((*pn == '-' || *pn == '+') && num == 0){
+			if(*pn == '-')
+				neg = !neg;
+		}else{
+			num = 1;
+			if(*pn == '0' && zero == 1){
+				cp = pn;
+				len = 1;
+				continue;
+			}else{
+				if(zero == 1 && len == 1){
+					len = 0;
+					cp = NULL;
+				}
+				zero = 0;
+				len++;
+				if(cp == NULL)
+					cp = pn;
+				if(*pn == '.'){
+					if(dot == 0){
+						if(*(pn+1) != 0)
+							dot = 1;
+						else
+							len--;
+					}else{
+						fprintf(stderr, "Invalid Number\n");
+						return NULL;
+					}
+				}else{
+					if(*pn < '0' || *pn > '9'){
+						fprintf(stderr, "Invalid Number\n");
+						return NULL;
+					}
+				}
+			}
+		}
+	if(dot)
+		for(;*(pn-1) == '0'; pn--, len--);
+	if(cp){
+		if(*cp == '.')
+			len++;
+	}else{
+		cp = n;
+		len = 1;
+	}
+	if(neg)
+		len++;
+	if((pret = ret = calloc(len+1, sizeof(char))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	if(neg){
+		*pret = '-';
+		pret++;
+		len--;
+	}
+	if(cp && *cp == '.'){
+		*pret = '0';
+		pret++;
+		len--;
+	}
+	memcpy(pret, cp, len);
+	return ret;
+}
+
+struct nbr *encode_nbr(char *n){
+	struct nbr *r;
+	struct bin *pnum, *sv;
+	unsigned long int c = 1, i,k;
+	int j;
+	char *pn = n;
+	if((r = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	if(*n == '-' || *n == '+'){
+		r->neg = (*n == '-') ? 1 : 0;
+		pn++;
+		n++;
+	}
+	if((pnum = r->num = calloc(1, sizeof(struct bin))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	for(pn = pn + strlen(pn)-1;pn >= n; pn--){
+		if(*pn == '.'){
+			r->dot = r->val;
+			r->val = 0;
+			c = 1;
+			if((pnum->next = calloc(1, sizeof(struct bin))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			pnum->next->prev = pnum;
+			r->num->prev = pnum->next;
+			pnum = pnum->next;
+			continue;
+		}
+		if(++pnum->nmemb == BLK+1){
+			pnum->nmemb = BLK;
+			c = 1;
+			if((pnum->next = calloc(1, sizeof(struct bin))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			pnum->next->prev = pnum;
+			r->num->prev = pnum->next;
+			pnum = pnum->next;
+			pnum->nmemb = 1;
+		}
+		i = (*pn - (3 << 4)) * c;
+		c *= 10;
+		r->val++;
+		pnum->num += i;
+	}
+	if(r->dot > 9){
+		for(pnum = r->num, i = r->dot;i > 0; i -= pnum->nmemb, pnum = pnum->next);
+		pnum = pnum->prev;
+		if(pnum != r->num){
+			for(j = 0, i = 1; j < pnum->nmemb; j++, i *= 10);
+			k = D_MAX/(i/10);
+			for(sv = pnum; pnum != r->num; pnum = pnum->prev){
+				pnum->num *= k;
+				pnum->num += (pnum->prev->num/i);
+				pnum->prev->num -= ((pnum->prev->num/(i)*i));
+			}
+			sv->nmemb = BLK;
+			r->num->nmemb = j;
+		}
+	}
+	if(r->val == 1 && r->dot == 0 && r->num->num == 0 && r->neg){
+		r->neg = 0;
+	}
+	return r;
+}
+void print_nbr(struct nbr *n){
+	const size_t jj = D_MAX;
+	struct bin *b;
+	unsigned long int len = n->val, j, cnum;
+	int dot = (n->dot > 0), i, k, num;
+	if(n->neg)
+		putchar('-');
+	for(b = (n->num->prev) ? n->num->prev : n->num; b != NULL;b = (b == n->num) ? NULL : b->prev){
+		if(b->nmemb < 9){
+			for(j = 1, i = 0, k = b->nmemb-1; i < k; i++)
+				j *= 10;
+		}else
+			j = jj;
+		for(j = j, i = 0, cnum = b->num; j; i++){
+			num = cnum/j;
+			putchar(num | (3 << 4));
+			cnum -= num*j;
+			j /= 10;
+		}
+		len -= b->nmemb;
+		if(dot == 1 && len == 0){
+			putchar('.');
+			dot = 0;
+			len = n->dot;
+		}
+	}
+	putchar('\n');
+}
+void *destroy_nbr(struct nbr *n){
+	struct bin *b, *pb;
+	for(b = n->num; b != NULL;){
+		pb = b->next;
+		free(b);
+		b = pb;
+	}
+	if(n->n)
+		free(n->n);
+	free(n);
+	return NULL;
+}
+int equal(struct nbr *num1, struct nbr *num2){
+	struct bin *b1, *b2;
+	unsigned long int len, len1, len2;
+	int ret;
+	if(num1->neg == 1 && num2->neg == 1)
+		ret = -1;
+	else
+		if(num1->neg == 0 && num2->neg == 0)
+			ret = 1;
+		else
+			if(num1->neg == 0 && num2->neg == 1)
+				return 1;
+			else
+				return -1;
+	if(num1->val > num2->val)
+		return 1*ret;
+	else
+		if(num1->val < num2->val)
+			return -1*ret;
+	len1 = num1->val + num1->dot;
+	len2 = num2->val + num2->dot;
+	b1 = num1->num;
+	b2 = num2->num;
+	b1 = (!b1->prev) ? b1 : b1->prev;
+	b2 = (!b2->prev) ? b2 : b2->prev;
+	len = (len1 < len2)? len1 : len2;
+	do{
+		if(b1->num > b2->num)
+			return 1*ret;
+		else
+			if(b1->num < b2->num)
+				return -1*ret;
+		len -= (len1 < len2) ? b1->nmemb : b2->nmemb;
+		b1 = b1->prev;
+		b2 = b2->prev;
+	}while(len != 0);
+	if((b1 && b1 != num1->num->prev) && (b2 && b2 != num2->num->prev))
+		return 0;
+	if(b1 && b1 != num1->num->prev){
+		for(b1 = b1; b1->num == 0; b1 = b1->prev){
+			if(b1 == num1->num)
+				return 0;
+		}
+		return 1*ret;
+	}else{
+		if(b2 && b2 != num2->num->prev){
+			for(b2 = b2; b2->num == 0; b2 = b2->prev){
+				if(b2 == num2->num)
+					return 0;
+			}
+			return -1*ret;
+		}
+	}
+	return 0;
+}
+struct bin *new_num(unsigned long int val, unsigned long int dot){
+	struct bin *new = NULL, *pnew;
+	unsigned long int lval, ldot;
+	int sval, sdot;
+	sval = val%BLK;
+	sdot = dot%BLK;
+	lval = val/BLK + (sval > 0);
+	ldot = dot/BLK + (sdot > 0);
+	while(lval || ldot){
+		if(new == NULL){
+			if((pnew = new = calloc(1, sizeof(struct bin))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+		}else{
+			if((pnew->next = calloc(1, sizeof(struct bin))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			pnew->next->prev = pnew;
+			new->prev = pnew->next;
+			pnew = pnew->next;
+		}
+		if(lval > 0){
+			lval--;
+		}else{
+			ldot--;
+		}
+	}
+	return new;
+}
+void *dup_nbr(struct nbr *num){
+	struct bin *b1, *b2;
+	struct nbr *res;
+	if((res = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	res->num = new_num(num->val, num->dot);
+	for(b1 = num->num, b2 = res->num; b1; b1 = b1->next, b2 = b2->next){
+		b2->num = b1->num;
+		b2->nmemb = b1->nmemb;
+	}
+	res->val = num->val;
+	res->dot = num->dot;
+	res->neg = num->neg;
+	return res;
+}
+void *bymul10(struct nbr *num, int fac, int faclen){
+	struct bin *nw = NULL, *r, z = { 0, 1, NULL, NULL };
+	struct nbr zero = { 1, 0, NULL, 0, NULL };
+	int n;
+	zero.num = &z;
+	if(equal(num, &zero) == 0){
+		return num;
+	}
+	r = (num->num->prev) ? num->num->prev : num->num;
+	if(r->nmemb+faclen > BLK){
+		if((nw = calloc(1, sizeof(struct bin))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		r->next = nw;
+		r->next->prev = r;
+		nw->next = NULL;
+		num->num->prev = nw;
+		nw->nmemb = r->nmemb + faclen - BLK;
+	}else
+		r->nmemb += faclen;
+	for(;r;r = r->prev){
+		r->num *= fac;
+		if((n = r->num / D_MAX_LIMIT) ){
+			r->num %= D_MAX_LIMIT;
+			if(r->next == nw){
+				r->next->num = n;
+			}else{
+				r->next->num += n;
+			}
+		}
+		if(nw)
+			r->nmemb = BLK;
+		if(r == num->num)
+			break;
+	}
+	num->val += faclen;
+	return num;
+}
+unsigned long int nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigned long int bytes){
+	unsigned long int letread = bytes, val = 0;
+	int mul[C_BLK] = COEFS, toread, blkbytes, bisread = 0;
+	letread = bytes;
+	if((toread = (bytes)%BLK) == 0)
+		toread = BLK;
+	bisread = toread;
+	blkbytes = (*b1)->nmemb - *bstart;
+	do{
+		if((*b1)->nmemb - *bstart >= toread){
+			(*b2)->num *= mul[toread];
+			(*b2)->num += ((*b1)->num%mul[(*b1)->nmemb - *bstart])/mul[(*b1)->nmemb - *bstart - toread];
+			bisread = toread;
+		}else{
+			(*b2)->num *= mul[(*b1)->nmemb - *bstart];
+			(*b2)->num += (*b1)->num%mul[(*b1)->nmemb - *bstart];
+			bisread = (*b1)->nmemb - *bstart;
+			*bstart = 0;
+		}
+		(*b2)->nmemb += bisread;
+		val += bisread;
+		letread -= bisread;
+		blkbytes -= bisread;
+		toread -= bisread;
+		if(blkbytes == 0){
+			if(!(*b1)->prev)
+				break;
+			(*b1) = (*b1)->prev;
+			blkbytes = (*b1)->nmemb;
+			*bstart = 0;
+		}else
+			*bstart = (*bstart + bisread);
+		if(toread == 0 && letread){
+			toread = BLK;
+			(*b2) = (*b2)->prev;
+		}
+	}while(letread);
+	return val;
+}
+void *addition(struct nbr *num1, struct nbr *num2){
+	struct bin *pb1, *pb2, *pbr/*, z = ZERO_BIN*/;
+	struct nbr *res/*, zero = ZERO(&z)*/;
+	unsigned long int dot, val, cdot;
+	unsigned long int b1n, b2n;
+	int i, j, nmemb1, nmemb2, add = 0, retenue = 0,
+		cf, mul[C_BLK] = COEFS;
+	if(num1->neg && !num2->neg){
+		num1->neg = 0;
+		res = soustraction(num2, num1);
+		num1->neg = 1;
+		return res;
+	}else{
+		if(!num1->neg && num2->neg){
+			num2->neg = 0;
+			res = soustraction(num1, num2);
+			num2->neg = 1;
+			return res;
+		}
+	}
+	dot = (num1->dot > num2->dot) ? num1->dot : num2->dot;
+	val = (num1->val > num2->val) ? num1->val : num2->val;
+	if((res = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	res->dot = dot;
+	res->val = val;
+	res->num = pbr = new_num(val + 1, dot);
+	if(num1->dot > num2->dot){
+		cdot = num1->dot - num2->dot;
+		dot = num2->dot;
+		pb1 = num1->num;
+		pb2 = num2->num;
+	}else{
+		if(num1->dot < num2->dot){
+			dot = num1->dot;
+			cdot = num2->dot - num1->dot;
+			pb2 = num1->num;
+			pb1 = num2->num;
+		}else{
+			pb1 = num1->num;
+			pb2 = num2->num;
+			cdot = 0;
+		}
+	}
+	if(cdot){
+		/*printf("DEBUG1:");*/
+		for(i = cdot/BLK; i > 0; i--){
+			printf(" 1 :");
+			pbr->num = pb1->num;
+			pbr->nmemb = pb1->nmemb;
+			cdot -= pbr->nmemb;
+			pb1 = pb1->next;
+			pbr = pbr->next;
+		}
+		if(cdot >= (unsigned long int)pb1->nmemb){
+			/*printf(" 2 :");*/
+			pbr->nmemb = pb1->nmemb;
+			pbr->num = pb1->num;
+			cdot -= pbr->nmemb;
+			pbr = pbr->next;
+			pb1 = pb1->next;
+		}
+		if(cdot){
+			/*printf("3 :");*/
+			pbr->nmemb = pb1->nmemb;
+			cf = mul[cdot];
+			cdot = mul[pbr->nmemb];
+			pbr->num = pb1->num;
+			pbr->num -= (pbr->num/cf)*cf;
+			pbr->num += (pb1->num/cf)*cf + pb2->num*cf;
+			if(pbr->num >= cdot){
+				retenue = 1;
+				pbr->num -= cdot;
+			}
+			pbr = pbr->next;
+			pb1 = pb1->next;
+			pb2 = pb2->next;
+		}
+		/*printf("\n");*/
+	}
+	for(	nmemb1 = pb1->nmemb,
+		nmemb2 = pb2->nmemb,
+		b1n = pb1->num,
+		b2n = pb2->num;
+		pbr;
+		pbr = pbr->next
+	){
+		pbr->num = b1n + b2n + retenue;
+		if(nmemb1 == BLK || nmemb2 == BLK){
+			if(pbr->num >= D_MAX_LIMIT){
+				pbr->num -= D_MAX_LIMIT;
+				retenue = 1;
+			}else
+				retenue = 0;
+			add = i = BLK;
+		}else{
+			for(	cf = 1,
+				j = add = i = (nmemb1 > nmemb2) ? nmemb1 : nmemb2;
+				j > 0;
+				j--,
+				cf *= 10
+			);
+			if(pbr->num >= (unsigned long int)cf){
+				if(pbr->next){
+					pbr->num -= cf;
+					retenue = 1;
+				}else{
+					add++;
+					res->val++;
+					retenue = 0;
+				}
+			}else
+				retenue = 0;
+		}
+		if(dot){
+			dot -= i;
+		}else{
+			if(val){
+				val -= i;
+			}else{
+				add = 1;
+			}
+		}
+		pbr->nmemb = add;
+		if(pb1){
+			pb1 = pb1->next;
+			if(pb1){
+				b1n = pb1->num;
+				nmemb1 = pb1->nmemb;
+			}else
+				nmemb1 = b1n = 0;
+		}else
+			nmemb1 = b1n = 0;
+		if(pb2){
+			pb2 = pb2->next;
+			if(pb2){
+				b2n = pb2->num;
+				nmemb2 = pb2->nmemb;
+			}else
+				nmemb2 = b2n = 0;
+		}else
+			nmemb2 = b2n = 0;
+	}
+	if(res->num->prev && res->num->prev->nmemb == 0 && res->num->prev->num == 0){
+		pb1 = res->num->prev;
+		res->num->prev = pb1->prev;
+		pb1->prev->next = NULL;
+		free(pb1);
+	}
+	res->neg = (num1->neg && num2->neg);
+	return res;
+}
+void *soustraction(struct nbr *num1, struct nbr *num2){
+	struct bin *pb1, *pb2, *pbr/*, z = ZERO_BIN*/;
+	struct nbr *res, *pn1, *pn2/*, zero = ZERO(&z)*/;
+	unsigned long int n1, n2, cdot, i;
+	int nmemb1, nmemb2, neg = 0, cf, mul[C_BLK] = COEFS, retenue = 0;
+	if(num1->neg && !num2->neg){
+		num1->neg = 0;
+		res = addition(num2, num1);
+		num1->neg = res->neg = 1;
+		return res;
+	}else{
+		if(!num1->neg && num2->neg){
+			num2->neg = 0;
+			res = addition(num2, num1);
+			num2->neg = 1;
+			return res;
+		}else{
+			if(num1->neg && num2->neg){
+				num2->neg = 0;
+				num1->neg = 0;
+				res = soustraction(num2, num1);
+				num2->neg = 1;
+				num1->neg = 1;
+				return res;
+			}
+		}
+	}
+	if((res = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	if(equal(num1, num2) == 0){
+		if((res->num = calloc(1, sizeof(struct bin))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		res->num->num = 0;
+		res->num->nmemb = 1;
+		res->val = 1;
+		return res;
+	}
+	res->val = (num1->val > num2->val) ? num1->val : num2->val;
+	res->dot = (num1->dot > num2->dot) ? num1->dot : num2->dot;
+	pbr = res->num = new_num(res->val, res->dot);
+	if(equal(num1, num2) < 0){
+		pb1 = num2->num;
+		pb2 = num1->num;
+		pn1 = num2;
+		pn2 = num1;
+		neg = 1;
+	}else{
+		pb1 = num1->num;
+		pb2 = num2->num;
+		pn1 = num1;
+		pn2 = num2;
+	}
+	if(pn1->dot > pn2->dot){
+		cdot = pn1->dot - pn2->dot;
+		for(i = cdot/BLK; i > 0; i--){
+			pbr->num = pb1->num;
+			pbr->nmemb = pb1->nmemb;
+			cdot -= pbr->nmemb;
+			pb1 = pb1->next;
+			pbr = pbr->next;
+		}
+		if(cdot >= (unsigned long int)pb1->nmemb){
+			pbr->nmemb = pb1->nmemb;
+			pbr->num = pb1->num;
+			cdot -= pbr->nmemb;
+			pbr = pbr->next;
+			pb1 = pb1->next;
+		}
+		if(cdot){
+			pbr->nmemb = pb1->nmemb;
+			cf = mul[cdot];
+			cdot = mul[(pb2->nmemb > pb1->nmemb) ? pb2->nmemb : pb1->nmemb];
+			pbr->num = pb1->num;
+			pbr->num -= (pbr->num/cf)*cf;
+			if((n1 = (pb1->num/cf)*cf) >= (n2 = pb2->num*cf)){
+				pbr->num += n1 - n2;
+			}else{
+				pbr->num += cdot - n1 - n2;
+				retenue = 1;
+			}
+			pb2 = pb2->next;
+			pbr = pbr->next;
+			pb1 = pb1->next;
+		}
+		/*printf("\n");*/
+	}else{
+		if(pn1->dot < pn2->dot){
+			cdot = pn2->dot - pn1->dot;
+			for(i = cdot/BLK; i > 0; i--){
+				pbr->nmemb = pb2->nmemb;
+				cf = mul[pbr->nmemb];
+				pbr->num = cf - pb2->num - retenue;
+				retenue = 1;
+				cdot -= pbr->nmemb;
+				pb2 = pb2->next;
+				pbr = pbr->next;
+			}
+			if(cdot >= (unsigned long int)pb2->nmemb){
+				pbr->nmemb = pb2->nmemb;
+				cf = mul[pbr->nmemb];
+				pbr->num = cf - pb2->num - retenue;
+				retenue = 1;
+				cdot -= pbr->nmemb;
+				pbr = pbr->next;
+				pb2 = pb2->next;
+			}
+			if(cdot){
+				pbr->nmemb = pb2->nmemb;
+				cf = mul[cdot];
+				cdot = mul[(pb2->nmemb > pb1->nmemb) ? pb2->nmemb : pb1->nmemb];
+				pbr->num = pb2->num;
+				pbr->num -= (pbr->num/cf)*cf;
+				pbr->num = cf - pbr->num - retenue;
+				retenue = 1;
+				if((n1 = pb1->num*cf) >= (n2 = ((pb2->num/cf))*cf)){
+					pbr->num += n1 - n2 - cf;
+					retenue = 0;
+				}else{
+					pbr->num += cdot - n2 + n1 - cf;
+					retenue = 1;
+				}
+				pbr = pbr->next;
+				pb1 = pb1->next;
+				pb2 = pb2->next;
+			}
+			/*printf("\n");*/
+		}
+	}
+	for(	nmemb1 = pb1->nmemb,
+		nmemb2 = pb2->nmemb,
+		n1 = pb1->num,
+		n2 = pb2->num;
+		pbr;
+		pbr = pbr->next
+	){
+		if(n1 >= n2 + retenue){
+			pbr->num = n1 - n2 - retenue;
+			pbr->nmemb = (nmemb1 > nmemb2) ? nmemb1 : nmemb2;
+			retenue = 0;
+		}else{
+			pbr->nmemb = (nmemb1 > nmemb2) ? nmemb1 : nmemb2;
+			cf = mul[pbr->nmemb];
+			pbr->num = cf + n1 - n2 - retenue;
+			retenue = 1;
+		}
+		if(pb1){
+			pb1 = pb1->next;
+			if(pb1){
+				n1 = pb1->num;
+				nmemb1 = pb1->nmemb;
+			}else
+				nmemb1 = n1 = 0;
+		}else
+			nmemb1 = n1 = 0;
+		if(pb2){
+			pb2 = pb2->next;
+			if(pb2){
+				n2 = pb2->num;
+				nmemb2 = pb2->nmemb;
+			}else
+				nmemb2 = n2 = 0;
+		}else
+			nmemb2 = n2 = 0;
+	}
+	if(retenue)
+		res->num->prev->num += retenue*mul[res->num->prev->nmemb-1];
+	/*ADJUST 0*/
+	ADJUST_0(res, pb1, pb2);
+	res->neg = neg;
+	return res;
+}
+void *multiplication(struct nbr *num1, struct nbr *num2){
+	struct bin *bn1, *bn2, *pbr1, *pbr2, *pbr3, z = ZERO_BIN;
+	struct nbr *res, zero = ZERO( NULL );
+	unsigned long int n1, n2, n3, dot, dot_, val, retenue;
+	int ret, nmemb1, rnmemb1, nmemb2, rnmemb2, nmemb3, rnmemb3, mul[C_BLK] = COEFS;
+	zero.num = &z;
+	if((res = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	if(equal(num1, &zero) == 0 || equal(num2, &zero) == 0){
+		if((res->num = calloc(1, sizeof(struct bin))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		res->num->num = 0;
+		res->num->nmemb = 1;
+		res->val = 1;
+		return res;
+	}
+	val = num1->val + num2->val;
+	dot = res->dot = num1->dot + num2->dot;
+	pbr1 = res->num = new_num(val, res->dot);
+	for(	dot_ = dot,
+		ret = rnmemb1 = nmemb1 = 0,
+		bn1 = num1->num,
+		pbr2 = pbr1 = res->num;
+		n1 = 0,
+		bn1;
+		pbr2 = pbr1
+	){
+		while(bn1 && nmemb1 < BLK){
+			if(nmemb1 + bn1->nmemb - rnmemb1 > BLK){
+				rnmemb1 = nmemb1 + bn1->nmemb - BLK;
+				n1 += (bn1->num%mul[bn1->nmemb-rnmemb1])*mul[nmemb1];
+				nmemb1 = BLK;
+				break;
+			}else{
+				if(rnmemb1){
+					n1 = bn1->num/mul[bn1->nmemb - rnmemb1];
+					nmemb1 = rnmemb1;
+				}else{
+					n1 += bn1->num*mul[nmemb1];
+					nmemb1 += bn1->nmemb;
+				}
+				rnmemb1 = 0;
+			}
+			bn1 = bn1->next;
+		}
+		for(	bn2 = num2->num,
+			dot = dot_,
+			rnmemb2 = rnmemb3 = nmemb2 = nmemb3 = 0,
+			retenue = 0;
+			n2 = n3 = 0,
+			bn2;
+		){
+			while(bn2 && nmemb2 < BLK){
+				if(nmemb2 + bn2->nmemb -rnmemb2 > BLK){
+					rnmemb2 = nmemb2 + bn2->nmemb -BLK;
+					n2 += (bn2->num%mul[bn2->nmemb - rnmemb2])*mul[nmemb2];
+					nmemb2 = BLK;
+					break;
+				}else{
+					if(rnmemb2){
+						n2 = bn2->num/mul[bn2->nmemb-rnmemb2];
+						nmemb2 = rnmemb2;
+					}else{
+						n2 += bn2->num*mul[nmemb2];
+						nmemb2 += bn2->nmemb;
+					}
+					rnmemb2 = 0;
+				}
+				bn2 = bn2->next;
+			}
+			for(pbr3 = pbr2; pbr3 && nmemb3 < BLK;){
+				n3 += ((pbr3->num)*mul[nmemb3]);
+				nmemb3 += pbr3->nmemb;
+				if(n3 == 0){
+					n3 = pbr3->num;
+					nmemb3 = pbr3->nmemb;
+				}
+				pbr3 = pbr3->next;
+			}
+			pbr2->num = n1 * n2 + n3;
+			retenue = ret = 0;
+			pbr2->nmemb = nmemb2 + nmemb1;
+			if(pbr2->nmemb > BLK){
+				ret = pbr2->nmemb - BLK;
+				retenue = pbr2->num/mul[BLK];
+				pbr2->num -= retenue * mul[BLK];
+				pbr2->nmemb = BLK;
+				if(retenue/mul[ret-1] == 0){
+					--ret;
+				}
+			}
+			if(nmemb2 == BLK){
+				nmemb2 = 0;
+			}
+			nmemb3 = 0;
+			if(pbr2->next){
+				pbr2 = pbr2->next;
+				pbr2->num += retenue;
+				if(pbr2->nmemb < ret)
+					pbr2->nmemb = ret;
+				if(pbr2->num/mul[pbr2->nmemb] != 0)
+					pbr2->nmemb++;
+				retenue = pbr2->prev->num/mul[BLK-1];
+				if(retenue == 0)
+					ret = 0;
+			}
+		}
+		if(nmemb1 == BLK){
+			nmemb1 = 0;
+		}
+		ret = 0;
+		retenue = 0;
+		pbr1 = pbr1->next;
+	}
+	if(dot && (dot %= BLK) != 0){
+		pbr1 = res->num->prev;
+		pbr1->num *= mul[pbr1->prev->nmemb - dot];
+		pbr1->num += pbr1->prev->num/mul[dot];
+		pbr1->prev->num -= (pbr1->prev->num/mul[dot])*mul[dot];
+		pbr1->nmemb += pbr1->prev->nmemb - dot;
+		for(pbr1 = pbr1->prev; pbr1 && pbr1 != res->num; pbr1 = pbr1->prev){
+			pbr1->num *= mul[BLK-dot];
+			pbr1->num += pbr1->prev->num/mul[dot];
+			pbr1->nmemb = BLK;
+			pbr1->prev->num -= (pbr1->prev->num/mul[dot])*mul[dot];
+		}
+		pbr1->num %= mul[dot];
+		pbr1->nmemb = dot;
+	}
+	for(res->val = 0, pbr1 = res->num; pbr1; pbr1 = pbr1->next){
+		res->val += pbr1->nmemb;
+	}
+	res->val -= res->dot;
+	/*ADJUST 0*/
+	ADJUST_0(res, pbr1, pbr2);
+	if(num1->neg != num2->neg)
+		res->neg = 1;
+	return res;
+}
+void *spuissance(struct nbr *num, size_t pui){
+	struct bin _un_ = { 1, 1, NULL, NULL };
+	struct nbr *n = num, *res = NULL, un = { 1, 0, NULL, 0, NULL }, *pseudo = &un, *p;
+	size_t comp = pui;
+	un.num = &_un_;
+	if(pui == 0){
+		if((res = calloc(1, sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		if((res->num = calloc(1, sizeof(struct bin))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		memcpy(res, &un, sizeof(struct nbr));
+		memcpy(res->num, &_un_, sizeof(struct bin));
+		return res;
+	}
+	while(comp > 1){
+		if(comp%2){
+			comp--;
+			p = multiplication(n, pseudo);
+			if(pseudo != &un)
+				destroy_nbr(pseudo);
+			pseudo = p;
+		}else{
+			comp /= 2;
+			res = multiplication(n, n);
+			if(n != num)
+				destroy_nbr(n);
+			n = res;
+		}
+	}
+	if(pseudo != &un){
+		res = multiplication(pseudo, n);
+		destroy_nbr(pseudo);
+		if(n != num)
+			destroy_nbr(n);
+	}else{
+		if(n == num)
+			res = dup_nbr(n);
+	}
+	return res;
+}
+void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int scale, int approximation){
+	struct bin *bdividende, *breste,
+		bdix = { 10, 2, NULL, NULL }, bsingle = { 0, 1, NULL, NULL }, *bs, *bt, bx = { 0, 1, NULL, NULL };
+	struct nbr *res, *diviseur, *dividende, *quotient, *mod, *reste = NULL,
+		dix = { 2, 0, NULL, 0,  "10"}, *fac, *temp, *temp_, *temp__, nx = { 1, 0, NULL, 0 , NULL};
+	unsigned long int val, len, dot_0 = 0;
+	int neg1, neg2, x, start = 0, mul[C_BLK] = COEFS;
+	dix.num = &bdix;
+	nx.num = &bx;
+	if(equal(num2, &nx) == 0){
+		fprintf(stderr, "Division by 0\n");
+		return NULL;
+	}
+	if(equal(num1, &nx) == 0){
+		if((res = calloc(1, sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		if((*modulo = calloc(1, sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		res->num = new_num(1, 0);
+		(*modulo)->num = new_num(1, 0);
+		res->val = res->num->nmemb = (*modulo)->val = (*modulo)->num->nmemb = 1;
+		return res;
+	}
+	if((neg1 = num1->neg)){
+		num1->neg = 0;
+	}
+	if((neg2 = num2->neg)){
+		num2->neg = 0;
+	}
+	if(num2->dot){
+		dot_0 = num2->dot;
+		fac = spuissance(&dix, dot_0);
+		diviseur = multiplication(num2, fac);
+		dividende = multiplication(num1, fac);
+		destroy_nbr(fac);
+		DOT(diviseur, bs);
+	}else{
+		diviseur = num2;
+		dividende = num1;
+	}
+	if(scale + approximation > 0){
+		fac = spuissance(&dix, scale + approximation);
+		temp = multiplication(dividende, fac);
+		if(dividende != num1)
+			destroy_nbr(dividende);
+		destroy_nbr(fac);
+		dividende = temp;
+	}
+	if(diviseur == num2){
+		diviseur = dup_nbr(num2);
+	}
+	if(dividende == num1){
+		dividende = dup_nbr(num1);
+	}
+	while(dividende->dot > 0){
+		dividende->dot -= dividende->num->nmemb;
+		bt = dividende->num;
+		dividende->num = dividende->num->next;
+		dividende->num->prev = (bt->prev != dividende->num) ? bt->prev : NULL;
+		free(bt);
+	}
+	DOT(dividende, bs);
+	bdividende = (dividende->num->prev) ? dividende->num->prev: dividende->num;
+	val = dividende->val;
+	len = diviseur->val;
+	if(len <= val){
+		if((reste = calloc(1, sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		reste->num = new_num(len, 0);
+		breste = (reste->num->prev) ? reste->num->prev : reste->num;
+		reste->val = nbytescpy(&breste, &bdividende, &start, len);
+		val -= reste->val;
+		if(equal(reste, diviseur) < 0 && val > 0){
+			bymul10(reste, 10, 1);
+			bs = &bsingle;
+			nbytescpy(&bs, &bdividende, &start, 1);
+			reste->num->num += bsingle.num;
+		}
+		if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		if((quotient->num = calloc(1, sizeof(struct bin))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		val = dividende->val - reste->val + (approximation == 0);
+		for(;;){
+			if(equal(reste, diviseur) >= 0){
+				for(x = 9; x > 0; x--){
+					bx.num = x;
+					temp = multiplication(diviseur, &nx);
+					if(equal(reste, temp) >= 0){
+						temp_ = soustraction(reste, temp);
+						destroy_nbr(reste);
+						destroy_nbr(temp);
+						reste = temp_;
+						break;
+					}else{
+						destroy_nbr(temp);
+					}
+				}
+				quotient = bymul10(quotient, 10, 1);
+				quotient->num->num += x;
+			}else{
+				quotient = bymul10(quotient, 10, 1);
+				x = 0;
+			}
+			if(val){
+				val--;
+				if(!val){
+					*modulo = dup_nbr(reste);
+					if(approximation == 0)
+						break;
+				}
+			}else
+				break;
+			bs = &bsingle;
+			bsingle.num = bsingle.nmemb = 0;
+			nbytescpy(&bs, &bdividende, &start, 1);
+			bymul10(reste, 10, 1);
+			reste->num->num += bs->num;
+		}
+	}else{
+		if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		if((quotient->num = calloc(1, sizeof(struct bin))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		quotient->val = quotient->num->nmemb = 1;
+		*modulo = dup_nbr(dividende);
+	}
+	if(reste && !*modulo){
+		*modulo = dup_nbr(reste);
+	}
+	if(approximation && reste){
+		if(x >= 5){
+			fac = addition(&dix, quotient);
+			destroy_nbr(quotient);
+			quotient = fac;
+		}
+		for(bt = (quotient->num->prev) ? quotient->num->prev : quotient->num, bt->nmemb--; ;){
+			x = bt->num%10;
+			bt->num/=10;
+			if(!(bt = bt->prev) || bt == quotient->num->prev){
+				break;
+			}
+			bt->num += (unsigned long int)(x)*D_MAX_LIMIT;
+		}
+		quotient->val--;
+	}
+	if(quotient->val <= scale){
+		if((res = calloc(1,sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		res->num = new_num(1, scale);
+		for(	bt = (quotient->num->prev) ? quotient->num->prev : quotient->num,
+			bs = res->num->prev->prev,
+			val = scale - quotient->val,
+			len = quotient->val;
+			;
+		){
+			if(val){
+				bs->nmemb = (val>BLK) ? BLK : val;
+				val -= bs->nmemb;
+				res->dot += bs->nmemb;
+			}else{
+				res->dot += bt->nmemb;
+				bs->num *= mul[bt->nmemb];
+				bs->num += bt->num;
+				bs->nmemb += bt->nmemb;
+				if(bs->nmemb > BLK){
+					bs->prev->num = bs->num%mul[bs->nmemb - BLK];
+					bs->num /= mul[bs->nmemb - BLK];
+					bs->prev->nmemb = bs->nmemb - BLK;
+					bs->nmemb = BLK;
+				}
+				len -= bt->nmemb;
+				if(bt == quotient->num)
+					break;
+				bt = bt->prev;
+			}
+			if(bs->nmemb >= BLK)
+				bs = bs->prev;
+		}
+		res->val = res->num->prev->nmemb = 1;
+	}else{
+		if(scale){
+			if((res = calloc(1,sizeof(struct nbr))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			res->num = new_num(quotient->val - scale, scale);
+			x = scale%BLK;
+			bt = quotient->num;
+			bs = res->num;
+			if(x){
+				bs->num = bt->num%mul[x];
+				bs->nmemb = x;
+				bs = bs->next;
+			}
+			for(len = scale; bs;len -= bt->nmemb, bs = bs->next){
+				bs->num = bt->num/mul[x];
+				bs->nmemb = bt->nmemb - x;
+				if(!(bt = bt->next))
+					break;
+				bs->num += (bt->num%mul[BLK-x])*mul[BLK-x];
+				bs->nmemb = BLK;
+				bs->num -= (bs->num/mul[BLK]) * mul[BLK];
+			}
+			res->val = quotient->val - scale;
+			res->dot = scale;
+		}else
+			res = quotient;
+	}
+	if(num1->dot > dot_0 && scale < num1->dot - dot_0){
+		fac = spuissance(&dix, num1->dot - dot_0 - scale);
+		dot_0 += num1->dot - dot_0 -scale;
+		temp = multiplication(*modulo, fac);
+		temp__ = multiplication(dividende, fac);
+		destroy_nbr(fac);
+		fac = spuissance(&dix, num1->dot);
+		temp_ = multiplication(num1, fac);
+		destroy_nbr(fac);
+		DOT(temp_, bs);
+		mod = soustraction(temp_, temp__);
+		destroy_nbr(temp_);
+		destroy_nbr(temp__);
+		destroy_nbr(*modulo);
+		temp_ = addition(temp, mod);
+		destroy_nbr(temp);
+		destroy_nbr(mod);
+		*modulo = temp_;
+	}
+	bx.num = 0;
+	if(equal(*modulo, &nx) != 0 && (scale || dot_0)){
+		if((*modulo)->val <= scale + dot_0){
+			if((mod = calloc(1,sizeof(struct nbr))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			mod->num = new_num(1, scale + dot_0);
+			for(	bt = ((*modulo)->num->prev) ? (*modulo)->num->prev : (*modulo)->num,
+				bs = mod->num->prev->prev,
+				val = scale + dot_0 - (*modulo)->val,
+				len = (*modulo)->val;
+				;
+			){
+				if(val){
+					bs->nmemb = (val>BLK) ? BLK : val;
+					val -= bs->nmemb;
+					mod->dot += bs->nmemb;
+				}else{
+					mod->dot += bt->nmemb;
+					bs->num *= mul[bt->nmemb];
+					bs->num += bt->num;
+					bs->nmemb += bt->nmemb;
+					if(bs->nmemb > BLK){
+						bs->prev->num = bs->num%mul[bs->nmemb - BLK];
+						bs->num /= mul[bs->nmemb - BLK];
+						bs->prev->nmemb = bs->nmemb - BLK;
+						bs->nmemb = BLK;
+					}
+					len -= bt->nmemb;
+					if(bt == (*modulo)->num)
+						break;
+					bt = bt->prev;
+				}
+				if(bs->nmemb >= BLK)
+					bs = bs->prev;
+			}
+			mod->val = mod->num->prev->nmemb = 1;
+			destroy_nbr(*modulo);
+			*modulo = mod;
+		}else{
+			if(scale || dot_0){
+				if((mod = calloc(1,sizeof(struct nbr))) == NULL){
+					perror("calloc()");
+					exit(EXIT_FAILURE);
+				}
+				mod->num = new_num((*modulo)->val - scale - dot_0, scale + dot_0);
+				x = (scale+dot_0)%BLK;
+				bt = (*modulo)->num;
+				bs = mod->num;
+				if(x){
+					bs->num = bt->num%mul[x];
+					bs->nmemb = x;
+					bs = bs->next;
+				}
+				for(len = scale + dot_0; len;len -= bt->nmemb){
+					bs->num = bt->num/mul[x];
+					bs->nmemb = bt->nmemb - x;
+					if(!(bt = bt->next))
+						break;
+					bs->num += (bt->num%mul[BLK-x])*mul[BLK-x];
+					bs->nmemb = BLK;
+					bs->num -= (bs->num/mul[BLK]) * mul[BLK];
+					bs = bs->next;
+				}
+				mod->val = (*modulo)->val - scale -dot_0;
+				mod->dot = scale + dot_0;
+				destroy_nbr(*modulo);
+				*modulo = mod;
+			}
+		}
+	}
+	if(neg1 != neg2)
+		res->neg = 1;
+	if(neg1){
+		if(equal(*modulo, &nx) != 0)
+			(*modulo)->neg = 1;
+	}
+	num1->neg = neg1;
+	num2->neg = neg2;
+	if(reste)
+		destroy_nbr(reste);
+	if(res != quotient)
+		destroy_nbr(quotient);
+	destroy_nbr(diviseur);
+	destroy_nbr(dividende);
+	return res;
+}
+void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int scale, int approximation){
+	struct bin _two_ = { 2, 1, NULL, NULL }, _un_ = { 1, 1, NULL, NULL }, _zero_ = { 0, 1, NULL, NULL };
+	struct nbr two = { 1, 0, NULL, 0, NULL }, un = { 1, 0, NULL, 0, NULL }, zero = { 1, 0, NULL, 0, NULL }, *pseudo = &un, *p, *div, *d, *mod = NULL, *n, *res = NULL;
+	int neg = 0;
+	two.num = &_two_;
+	un.num = &_un_;
+	zero.num = &_zero_;
+	if(equal(num2, &zero) == 0){
+		if((res = calloc(1, sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		if((res->num = calloc(1, sizeof(struct bin))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		memcpy(res, &un, sizeof(struct nbr));
+		memcpy(res->num, &_un_, sizeof(struct bin));
+		return res;
+	}
+	if(num2->neg){
+		neg = num2->neg;
+		num2->neg = 0;
+	}
+	n = num1;
+	div = num2;
+	while(equal(div, &un) != 0){
+		d = division(div, &two, &mod, 0, 0);
+		if(div != num2)
+			destroy_nbr(div);
+		if(equal(mod, &un) == 0){
+			p = multiplication(n, pseudo);
+			if(pseudo != &un)
+				destroy_nbr(pseudo);
+			pseudo = p;
+		}
+		if(equal(d, &zero) != 0){
+			res = multiplication(n, n);
+			if(n != num1)
+				destroy_nbr(n);
+			n = res;
+		}
+		div = d;
+		destroy_nbr(mod);
+		mod = NULL;
+	}
+	if(pseudo != &un){
+		res = multiplication(pseudo, n);
+		destroy_nbr(pseudo);
+		if(n != num1)
+			destroy_nbr(n);
+	}else{
+		if(n == num1)
+			res = dup_nbr(n);
+	}
+	if(div != num2)
+		destroy_nbr(div);
+	if(neg){
+		div = division(&un, res, modulo, scale, approximation);
+		num2->neg = neg;
+		destroy_nbr(res);
+		res = div;
+	}
+	return res;
+}
+
