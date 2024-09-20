@@ -1074,6 +1074,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		res->val = res->num->prev->nmemb = 1;
 	}else{
 		if(scale){
+			/*Problem here*/
+			/*printf("Probleme to debug\n");*/
 			if((res = calloc(1,sizeof(struct nbr))) == NULL){
 				perror("calloc()");
 				exit(EXIT_FAILURE);
@@ -1089,10 +1091,10 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			}
 			for(len = scale; bs;len -= bt->nmemb, bs = bs->next){
 				bs->num = bt->num/mul[x];
-				bs->nmemb = bt->nmemb - x;
+				bs->nmemb = bt->nmemb-x;
 				if(!(bt = bt->next))
 					break;
-				bs->num += (bt->num%mul[BLK-x])*mul[BLK-x];
+				bs->num += (bt->num%mul[x])*mul[BLK-x];
 				bs->nmemb = BLK;
 				bs->num -= (bs->num/mul[BLK]) * mul[BLK];
 			}
@@ -1161,6 +1163,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			destroy_nbr(*modulo);
 			*modulo = mod;
 		}else{
+			/*Problem here*/
+			/*printf("Probleme to debug\n");*/
 			if(scale || dot_0){
 				if((mod = calloc(1,sizeof(struct nbr))) == NULL){
 					perror("calloc()");
@@ -1175,15 +1179,14 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 					bs->nmemb = x;
 					bs = bs->next;
 				}
-				for(len = scale + dot_0; len;len -= bt->nmemb){
-					bs->num = bt->num/mul[x];
+				for(len = scale + dot_0; bs;len -= bt->nmemb, bs = bs->next){
+					bs->num = bt->num/mul[bt->nmemb-x];
 					bs->nmemb = bt->nmemb - x;
 					if(!(bt = bt->next))
 						break;
-					bs->num += (bt->num%mul[BLK-x])*mul[BLK-x];
+					bs->num += (bt->num%mul[x])*mul[BLK-x];
 					bs->nmemb = BLK;
 					bs->num -= (bs->num/mul[BLK]) * mul[BLK];
-					bs = bs->next;
 				}
 				mod->val = (*modulo)->val - scale -dot_0;
 				mod->dot = scale + dot_0;
