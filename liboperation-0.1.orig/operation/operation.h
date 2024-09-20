@@ -28,7 +28,7 @@ struct nbr{
 	#define D_MAX_LIMIT 1000000000
 	#define COEFS { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, D_MAX, D_MAX_LIMIT }
 #endif
-#define ZERO_BIN { 1, 0, NULL, NULL }
+#define ZERO_BIN { 0, 1, NULL, NULL }
 #define ZERO(zero_bin) { 1, 0, zero_bin, 0, NULL }
 #define DOT(res_nbr, bin_ptr) \
 	while(res_nbr->dot && res_nbr->num->num%10 == 0){ \

@@ -72,6 +72,7 @@ int main(int argc, char **argv){
 	if(nbr2->dot == 0){
 		reste = NULL;
 		res = puissance(nbr1, nbr2, &reste, virgule, approx);
+		DOT(res, dot);
 		printf("%s ^ %s = ", argv[1], argv[2]);
 		print_nbr(res);
 		if(reste)

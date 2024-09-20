@@ -283,7 +283,7 @@ void *dup_nbr(struct nbr *num){
 	return res;
 }
 void *bymul10(struct nbr *num, int fac, int faclen){
-	struct bin *nw = NULL, *r, z = { 1, 0, NULL, NULL };
+	struct bin *nw = NULL, *r, z = { 0, 1, NULL, NULL };
 	struct nbr zero = { 1, 0, NULL, 0, NULL };
 	int n;
 	zero.num = &z;
@@ -878,7 +878,7 @@ void *spuissance(struct nbr *num, size_t pui){
 }
 void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int scale, int approximation){
 	struct bin *bdividende, *breste,
-		bdix = { 2, 10, NULL, NULL }, bsingle = { 0, 0, NULL, NULL }, *bs, *bt, bx = { 1, 0, NULL, NULL };
+		bdix = { 10, 2, NULL, NULL }, bsingle = { 0, 1, NULL, NULL }, *bs, *bt, bx = { 0, 1, NULL, NULL };
 	struct nbr *res, *diviseur, *dividende, *quotient, *mod, *reste = NULL,
 		dix = { 2, 0, NULL, 0,  "10"}, *fac, *temp, *temp_, *temp__, nx = { 1, 0, NULL, 0 , NULL};
 	unsigned long int val, len, dot_0 = 0;
@@ -945,11 +945,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	bdividende = (dividende->num->prev) ? dividende->num->prev: dividende->num;
 	val = dividende->val;
 	len = diviseur->val;
-	/*print_nbr(num1);
-	print_nbr(num2);
-	print_nbr(dividende);
-	print_nbr(diviseur);
-	exit(0);*/
 	if(len <= val){
 		if((reste = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
@@ -1197,8 +1192,10 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			}
 		}
 	}
-	if(neg1 != neg2)
-		res->neg = 1;
+	if(neg1 != neg2){
+		if(equal(res, &nx) != 0)	
+			res->neg = 1;
+	}
 	if(neg1){
 		if(equal(*modulo, &nx) != 0)
 			(*modulo)->neg = 1;
@@ -1214,8 +1211,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	return res;
 }
 void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int scale, int approximation){
-	struct bin _two_ = { 1, 2, NULL, NULL }, _un_ = { 1, 1, NULL, NULL }, _zero_ = { 1, 0, NULL, NULL };
-	struct nbr two = { 1, 0, NULL, 0, NULL }, un = { 1, 0, NULL, 0, NULL }, zero = { 1, 0, NULL, 0, NULL }, *pseudo = &un, *p, *div, *d, *mod, *n, *res = NULL;
+	struct bin _two_ = { 2, 1, NULL, NULL }, _un_ = { 1, 1, NULL, NULL }, _zero_ = { 0, 1, NULL, NULL };
+	struct nbr two = { 1, 0, NULL, 0, NULL }, un = { 1, 0, NULL, 0, NULL }, zero = { 1, 0, NULL, 0, NULL }, *pseudo = &un, *p, *div, *d, *mod = NULL, *n, *res = NULL;
 	int neg = 0;
 	two.num = &_two_;
 	un.num = &_un_;
