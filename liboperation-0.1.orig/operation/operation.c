@@ -1074,10 +1074,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		res->val = res->num->prev->nmemb = 1;
 	}else{
 		if(scale){
-			/*Problem here*/
-			#ifdef DEBUG
-				printf("A probleme can be found here\n");
-			#endif
 			if((res = calloc(1,sizeof(struct nbr))) == NULL){
 				perror("calloc()");
 				exit(EXIT_FAILURE);
@@ -1165,11 +1161,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			destroy_nbr(*modulo);
 			*modulo = mod;
 		}else{
-			/*Problem here*/
-			/*printf("Probleme to debug\n");*/
-			#ifdef DEBUG
-				printf("A probleme can be found here\n");
-			#endif
 			if(scale || dot_0){
 				if((mod = calloc(1,sizeof(struct nbr))) == NULL){
 					perror("calloc()");
