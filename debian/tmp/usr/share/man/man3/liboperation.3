@@ -1,0 +1,162 @@
+.\Manpage pour liboperation.
+.\Contact zoeurk.gmail.com
+.TH man 3 "5 janvier 2024" "0.1" "liboperation man page"
+.SH NAME
+liboperation
+.SH SYNOPSIS
+operation library documentation
+.SH DESCRIPTION
+.SH OPTIONS
+.TP
+.BR \-b , " \-\-buffer "\fIsize\fR
+Taille du \fIbuffer\fR.
+.TP
+Enironement
+.EX
+#if __WORDSIZE == 32
+	#define BLK 4
+	#define C_BLK BLK+1
+	#define D_MAX 1000
+	#define D_MAX_LIMIT 10000
+	#define COEFS { 1, 10, 100, 1000, 10000 }
+#else
+	#define BLK 9
+	#define C_BLK BLK+1
+	#define D_MAX 100000000
+	#define D_MAX_LIMIT 1000000000
+	#define COEFS { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 }
+#endif
+.EE
+.BR
+.TP
+#define DOT(res_nbr, bin_ptr)
+Remove all numbers == 0 a the end of dot
+.BR
+.TP
+#define ADJUST_0(res_nbr, bin_ptr1, bin_ptr2)
+Remove 0 starting the interger number
+.BR
+.TP
+struct bin
+.EX
+\fBstruct bin\fR{
+	\fBint\fR nmemb;			/* number of digits */
+	\fBunsigned long int\fR num;	/* number itself */
+	\fBstruct bin\fR *next;		/* next number, NULL if end*/
+	\fBstruct bin\fR *prev;		/* prev number */
+};
+.EE
+.BR
+.TP
+struct nbr
+.EX
+\fBstruct nbr\fR{
+	\fBchar\fR *n;				/* where is saved the number parsed and converted */
+	\fBchar\fR neg;				/* signe of the number */
+	\fBstruct bin\fR *num;		/* the number */
+	\fBunsigned long int\fR dot;	/* number of elements in dot */
+	\fBunsigned long int\fR val;	/* number of elements in value */
+};
+.EE
+.BR
+.TP
+\fBchar\fR *parse_nbr(\fBchar\fR *n);
+Parse number or return NULL
+.BR
+.TP
+\fBstruct nbr\fR *encode_nbr(\fBchar\fR *n);
+Convert number which should be parsed by \fBparse_nbr(char *n)\fR to a \fBstruct nbr *\fR.
+.BR
+.TP
+\fBvoid\fR print_nbr(\fBstruct nbr\fR *n);
+Print number \fBstruct nbr *\fR
+.BR
+.TP
+\fBvoid\fR *destroy_nbr(\fBstruct nbr\fR *n);
+Destroy number \fBstruct nbr *\fR
+.BR
+.TP
+\fBint\fR equal(\fBstruct nbr\fR *num1, \fBstruct nbr\fR *num2);
+compare num1 with num2
+.PP
+return
+.EX
+0:	if equal
+1:	if greater
+-1:	if lower
+.EE
+.BR
+.TP
+\fBstruct bin\fR *new_num(\fBunsigned long int\fR val, \fBunsigned long int\fR dot);
+Alloc a new binary number which can be give to \fI(struct nbr *)->num\fR;
+.BR
+.TP
+\fBvoid\fR *dup_nbr(\fBstruct nbr\fR *num);
+duplic number
+.BR
+.TP
+\fBvoid\fR *bymul10(\fBstruct nbr\fR *num, \fBint\fR fac, \fBint\fR faclen);
+multiply by fac
+.PP
+.EX
+for 32 bits:
+	fac is <= 10000
+	faclen is the number of '0' in fac
+for 64 bits:
+	fac is <= 1000000000
+	faclen is the number of '0' in fac
+.EE
+.BR
+.TP
+\fBunsigned long int\fR nbytescpy(\fBstruct bin\fR **b2, \fBstruct bin\fR **b1, \fBint\fR *bstart, \fBunsigned long int\fR bytes);
+Copy n bytes from b1 to b2
+.PP
+.EX
+*bstart:	remember number of bytes for next occurence
+bytes:	number of bytes to copy
+\fI**b2\fR:	must be allocated to the good len;
+.EE
+.BR
+.TP
+\fBvoid\fR *addition(\fBstruct nbr\fR *num1, \fBstruct nbr\fR *num2);
+addition num1 and num2
+.BR
+.TP
+\fBvoid\fR *soustraction(\fBstruct nbr\fR *num1, \fBstruct nbr\fR *num2);
+soustract num2 to num1
+.BR
+.TP
+\fBvoid\fR *multiplication(\fBstruct nbr\fR *num1, \fBstruct nbr\fR *num2);
+multiply num1 and num2
+.BR
+.TP
+\fBvoid\fR *spuissance(\fBstruct nbr\fR *num, \fBunsigned long int\fR pui);
+power of num by pui
+.BR
+.TP
+\fBvoid\fR *division(\fBstruct nbr\fR *num1, \fBstruct nbr\fR *num2, \fBstruct nbr\fR **modulo, \fBunsigned long int\fR scale, \fBint\fR approximation);
+divide num1 by num2
+.PP
+.EX
+**modulo:		for the modulo
+scale:		scale for divide
+approximation:	if an approximation need to be set
+.EE
+.BR
+.TP
+\fBvoid\fR *puissance(\fBstruct nbr\fR *num1, \fBstruct nbr\fR *num2, \fBstruct nbr\fR **modulo, \fBunsigned long int\fR scale, \fBint\fR approximation);
+power of num1 by num2 (num2 is Integer);
+.PP
+.EX
+modulo:		used if num2 < 0
+scale:		used if num2 < 0
+approximation:	used if num2 < 0
+.EE
+.BR
+.SH BUGS
+.EX
+Je sais pas
+	NO WARANTY WARNING
+.EE
+.SH AUTHORS
+ZoeurK (zoeurk@gmail.com)
