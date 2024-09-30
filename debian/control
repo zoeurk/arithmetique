@@ -13,12 +13,10 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends: liboperation (= ${binary:Version}), ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Description: header of liboperation
 
 Package: liboperation
 Architecture: any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Description: library for operation (+,-,/,%)
