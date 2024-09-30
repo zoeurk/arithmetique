@@ -19,4 +19,4 @@ Package: liboperation
 Architecture: any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: library for operation (+,-,/,%)
+Description: library for operation (+,-,*,/,%)
