@@ -3,7 +3,6 @@
 #include <stdio.h>
 struct bin{
 	unsigned long int num;
-	/*int full;*/
 	int nmemb;
 	struct bin *next;
 	struct bin *prev;

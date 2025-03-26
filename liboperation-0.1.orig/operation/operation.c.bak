@@ -91,8 +91,7 @@ struct nbr *encode_nbr(char *n){
 	for(pn = pn + strlen(pn)-1;pn >= n; pn--){
 		if(*pn == '.'){
 			r->dot = r->val;
-			/*r->bdot = r->bval;*/
-			/*r->bval = */r->val = 0;
+			r->val = 0;
 			c = 1;
 			if((pnum->next = calloc(1, sizeof(struct bin))) == NULL){
 				perror("calloc()");
@@ -118,28 +117,9 @@ struct nbr *encode_nbr(char *n){
 		i = (*pn - (3 << 4)) * c;
 		c *= 10;
 		r->val++;
-		/*if(r->val == BLK){
-			r->bval++;
-			r->val = 0;
-		}*/
 		pnum->num += i;
 	}
-	/*if(r->bdot){
-		for(pnum = r->num, i = r->bdot;i > 0; i -= (pnum->nmemb == BLK), pnum = pnum->next);
-		pnum = pnum->prev;
-		if(pnum != r->num){
-			for(j = 0, i = 1; j < pnum->nmemb; j++, i *= 10);
-			k = D_MAX/(i/10);
-			for(sv = pnum; pnum != r->num; pnum = pnum->prev){
-				pnum->num *= k;
-				pnum->num += (pnum->prev->num/i);
-				pnum->prev->num -= ((pnum->prev->num/(i)*i));
-			}
-			sv->nmemb = BLK;
-			r->num->nmemb = j;
-		}
-	}*/
-	if(r->dot > BLK){
+	if(r->dot > 9){
 		for(pnum = r->num, i = r->dot;i > 0; i -= pnum->nmemb, pnum = pnum->next);
 		pnum = pnum->prev;
 		if(pnum != r->num){
@@ -154,9 +134,6 @@ struct nbr *encode_nbr(char *n){
 			r->num->nmemb = j;
 		}
 	}
-	/*if(r->bval == 0 && r->val == 1 && r->bdot == 0 && r->dot == 0 && r->num->num == 0 && r->neg){
-		r->neg = 0;
-	}*/
 	if(r->val == 1 && r->dot == 0 && r->num->num == 0 && r->neg){
 		r->neg = 0;
 	}
@@ -165,12 +142,12 @@ struct nbr *encode_nbr(char *n){
 void print_nbr(struct nbr *n){
 	const size_t jj = D_MAX;
 	struct bin *b;
-	unsigned long int len = n->val/*, blen = n->bval*/, j, cnum;
-	int dot = (n->dot > 0 /*|| n->bdot > 0*/), i, k, num;
+	unsigned long int len = n->val, j, cnum;
+	int dot = (n->dot > 0), i, k, num;
 	if(n->neg)
 		putchar('-');
 	for(b = (n->num->prev) ? n->num->prev : n->num; b != NULL;b = (b == n->num) ? NULL : b->prev){
-		if(b->nmemb < BLK){
+		if(b->nmemb < 9){
 			for(j = 1, i = 0, k = b->nmemb-1; i < k; i++)
 				j *= 10;
 		}else
@@ -181,15 +158,11 @@ void print_nbr(struct nbr *n){
 			cnum -= num*j;
 			j /= 10;
 		}
-		/*if(len == 0)
-			blen--;
-		else*/
-			len -= b->nmemb;
-		if(dot == 1 && len == 0/* && blen == 0*/){
+		len -= b->nmemb;
+		if(dot == 1 && len == 0){
 			putchar('.');
 			dot = 0;
 			len = n->dot;
-			/*blen = n->bdot;*/
 		}
 	}
 	putchar('\n');
@@ -208,7 +181,7 @@ void *destroy_nbr(struct nbr *n){
 }
 int equal(struct nbr *num1, struct nbr *num2){
 	struct bin *b1, *b2;
-	unsigned long int len, len1, len2/*, blen, blen1, blen2*/;
+	unsigned long int len, len1, len2;
 	int ret;
 	if(num1->neg == 1 && num2->neg == 1)
 		ret = -1;
@@ -226,28 +199,22 @@ int equal(struct nbr *num1, struct nbr *num2){
 		if(num1->val < num2->val)
 			return -1*ret;
 	len1 = num1->val + num1->dot;
-	/*blen1 = num1->bval + num1->bdot;*/
 	len2 = num2->val + num2->dot;
-	/*blen1 = num1->bval + num1->bdot;*/
 	b1 = num1->num;
 	b2 = num2->num;
 	b1 = (!b1->prev) ? b1 : b1->prev;
 	b2 = (!b2->prev) ? b2 : b2->prev;
 	len = (len1 < len2)? len1 : len2;
-	/*blen = (blen1 < blen2) ? blen1 : blen2;*/
 	do{
 		if(b1->num > b2->num)
 			return 1*ret;
 		else
 			if(b1->num < b2->num)
 				return -1*ret;
-		if(len)
-			len -= (len1 < len2) ? b1->nmemb : b2->nmemb;
-		/*else
-			blen--;*/
+		len -= (len1 < len2) ? b1->nmemb : b2->nmemb;
 		b1 = b1->prev;
 		b2 = b2->prev;
-	}while(len != 0/* || blen != 0*/);
+	}while(len != 0);
 	if((b1 && b1 != num1->num->prev) && (b2 && b2 != num2->num->prev))
 		return 0;
 	if(b1 && b1 != num1->num->prev){
