@@ -119,7 +119,7 @@ struct nbr *encode_nbr(char *n){
 		r->val++;
 		pnum->num += i;
 	}
-	if(r->dot > 9){
+	if(r->dot > BLK){
 		for(pnum = r->num, i = r->dot;i > 0; i -= pnum->nmemb, pnum = pnum->next);
 		pnum = pnum->prev;
 		if(pnum != r->num){
@@ -147,7 +147,7 @@ void print_nbr(struct nbr *n){
 	if(n->neg)
 		putchar('-');
 	for(b = (n->num->prev) ? n->num->prev : n->num; b != NULL;b = (b == n->num) ? NULL : b->prev){
-		if(b->nmemb < 9){
+		if(b->nmemb < BLK){
 			for(j = 1, i = 0, k = b->nmemb-1; i < k; i++)
 				j *= 10;
 		}else
@@ -971,7 +971,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		val = dividende->val - reste->val + (approximation == 0);
 		for(;;){
 			if(equal(reste, diviseur) >= 0){
-				for(x = 9; x > 0; x--){
+				for(x = BLK; x > 0; x--){
 					bx.num = x;
 					temp = multiplication(diviseur, &nx);
 					if(equal(reste, temp) >= 0){
