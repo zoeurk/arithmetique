@@ -2,7 +2,7 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../operation/operation.h"
+#include "../operation/operation.1.h"
 int main(int argc, char **argv){
 	struct bin *dot;
 	struct nbr *nbr1, *nbr2, *res, *reste = NULL;

@@ -1,4 +1,4 @@
-#include "operation.h"
+#include "operation.1.h"
 char *parse_nbr(char *n){
 	char *ret, *pret, *pn, *cp = NULL;
 	size_t len = 0;
@@ -361,8 +361,8 @@ unsigned long int nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsig
 	return val;
 }
 void *addition(struct nbr *num1, struct nbr *num2){
-	struct bin *pb1, *pb2, *pbr;
-	struct nbr *res;
+	struct bin *pb1, *pb2, *pbr/*, z = ZERO_BIN*/;
+	struct nbr *res/*, zero = ZERO(&z)*/;
 	unsigned long int dot, val, cdot;
 	unsigned long int b1n, b2n;
 	int i, j, nmemb1, nmemb2, add = 0, retenue = 0,
@@ -407,6 +407,7 @@ void *addition(struct nbr *num1, struct nbr *num2){
 		}
 	}
 	if(cdot){
+		/*printf("DEBUG1:");*/
 		for(i = cdot/BLK; i > 0; i--){
 			printf(" 1 :");
 			pbr->num = pb1->num;
@@ -416,6 +417,7 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			pbr = pbr->next;
 		}
 		if(cdot >= (unsigned long int)pb1->nmemb){
+			/*printf(" 2 :");*/
 			pbr->nmemb = pb1->nmemb;
 			pbr->num = pb1->num;
 			cdot -= pbr->nmemb;
@@ -423,6 +425,7 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			pb1 = pb1->next;
 		}
 		if(cdot){
+			/*printf("3 :");*/
 			pbr->nmemb = pb1->nmemb;
 			cf = mul[cdot];
 			cdot = mul[pbr->nmemb];
@@ -437,6 +440,7 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			pb1 = pb1->next;
 			pb2 = pb2->next;
 		}
+		/*printf("\n");*/
 	}
 	for(	nmemb1 = pb1->nmemb,
 		nmemb2 = pb2->nmemb,
@@ -511,8 +515,8 @@ void *addition(struct nbr *num1, struct nbr *num2){
 	return res;
 }
 void *soustraction(struct nbr *num1, struct nbr *num2){
-	struct bin *pb1, *pb2, *pbr;
-	struct nbr *res, *pn1, *pn2;
+	struct bin *pb1, *pb2, *pbr/*, z = ZERO_BIN*/;
+	struct nbr *res, *pn1, *pn2/*, zero = ZERO(&z)*/;
 	unsigned long int n1, n2, cdot, i;
 	int nmemb1, nmemb2, neg = 0, cf, mul[C_BLK] = COEFS, retenue = 0;
 	if(num1->neg && !num2->neg){
@@ -598,6 +602,7 @@ void *soustraction(struct nbr *num1, struct nbr *num2){
 			pbr = pbr->next;
 			pb1 = pb1->next;
 		}
+		/*printf("\n");*/
 	}else{
 		if(pn1->dot < pn2->dot){
 			cdot = pn2->dot - pn1->dot;
@@ -638,6 +643,7 @@ void *soustraction(struct nbr *num1, struct nbr *num2){
 				pb1 = pb1->next;
 				pb2 = pb2->next;
 			}
+			/*printf("\n");*/
 		}
 	}
 	for(	nmemb1 = pb1->nmemb,
@@ -678,6 +684,7 @@ void *soustraction(struct nbr *num1, struct nbr *num2){
 	}
 	if(retenue)
 		res->num->prev->num += retenue*mul[res->num->prev->nmemb-1];
+	/*ADJUST 0*/
 	ADJUST_0(res, pb1, pb2);
 	res->neg = neg;
 	return res;
@@ -819,6 +826,7 @@ void *multiplication(struct nbr *num1, struct nbr *num2){
 		res->val += pbr1->nmemb;
 	}
 	res->val -= res->dot;
+	/*ADJUST 0*/
 	ADJUST_0(res, pbr1, pbr2);
 	if(num1->neg != num2->neg)
 		res->neg = 1;

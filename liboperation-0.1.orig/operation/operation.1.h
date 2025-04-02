@@ -8,10 +8,8 @@ struct bin{
 	struct bin *prev;
 };
 struct nbr{
-	/*unsigned long int bval;
-	unsigned long int bdot;*/
-	unsigned long int val;
-	unsigned long int dot;
+	size_t val;
+	size_t dot;
 	struct bin *num;
 	int neg;
 	char *n;

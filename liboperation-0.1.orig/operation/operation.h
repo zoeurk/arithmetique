@@ -3,18 +3,21 @@
 #include <stdio.h>
 struct bin{
 	unsigned long int num;
-	/*int full;*/
 	int nmemb;
+	int full;
 	struct bin *next;
 	struct bin *prev;
 };
 struct nbr{
-	/*unsigned long int bval;
-	unsigned long int bdot;*/
-	unsigned long int val;
-	unsigned long int dot;
-	struct bin *num;
+	unsigned long int bval;
+	unsigned long int bdot; /*128*/
+	int val;
+	int dot;
 	int neg;
+	/*#if  __WORDSIZE != 32
+		int ___;
+	#endif*/
+	struct bin *num;
 	char *n;
 };
 /*****************************************************************/
@@ -31,11 +34,16 @@ struct nbr{
 	#define D_MAX_LIMIT 1000000000
 	#define COEFS { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, D_MAX, D_MAX_LIMIT }
 #endif
-#define ZERO_BIN { 0, 1, NULL, NULL }
-#define ZERO(zero_bin) { 1, 0, zero_bin, 0, NULL }
+#define ZERO_BIN { 0, 1, 0, NULL, NULL }
+#define ZERO(zero_bin) { 0, 0, 1, 0, 0, zero_bin, NULL }
 #define DOT(res_nbr, bin_ptr) \
-	while(res_nbr->dot && res_nbr->num->num%10 == 0){ \
-		res_nbr->dot--; \
+	while((res_nbr->dot || res_nbr->bdot) && res_nbr->num->num%10 == 0){ \
+		if(res_nbr->dot){ \
+			res_nbr->dot--; \
+		}else{ \
+			res_nbr->dot = BLK-1;\
+			res_nbr->bdot--; \
+		} \
 		res_nbr->num->num /= 10; \
 		if(--res_nbr->num->nmemb == 0){ \
 			bin_ptr = res_nbr->num; \
@@ -54,8 +62,8 @@ struct nbr{
 		free(bin_ptr1); \
 	} \
 	for(	bin_ptr1 = (res_nbr->num->prev) ? res_nbr->num->prev : res_nbr->num; \
-		res_nbr->val > 1 && bin_ptr1->num/mul[bin_ptr1->nmemb -1] == 0; \
-		res_nbr->val-- \
+		(res_nbr->val > 1 || res_nbr->bval > 0) && bin_ptr1->num/mul[bin_ptr1->nmemb -1] == 0; \
+		/*res_nbr->val--*/ \
 	){ \
 		if(--bin_ptr1->nmemb == 0){ \
 			bin_ptr2 = res_nbr->num; \
@@ -64,6 +72,12 @@ struct nbr{
 			res_nbr->val -= bin_ptr1->nmemb; \
 			free(bin_ptr1); \
 			bin_ptr1 = (res_nbr->num->prev) ? res_nbr->num->prev : res_nbr->num; \
+		} \
+		if(res_nbr->val > 0){ \
+			res_nbr->val--; \
+		}else{ \
+			res_nbr->val = BLK-1; \
+			res_nbr->bval--; \
 		} \
 	}
 char *parse_nbr(char *n);
@@ -74,7 +88,11 @@ int equal(struct nbr *num1, struct nbr *num2);
 struct bin *new_num(unsigned long int val, unsigned long int dot);
 void *dup_nbr(struct nbr *num);
 void *bymul10(struct nbr *num, int fac, int faclen);
-unsigned long int nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigned long int bytes);
+struct retbcpy{
+	unsigned long int rblk;
+	int rbytes;
+};
+struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigned long int lbytes, unsigned long int bytes);
 void *addition(struct nbr *num1, struct nbr *num2);
 void *soustraction(struct nbr *num1, struct nbr *num2);
 void *multiplication(struct nbr *num1, struct nbr *num2);

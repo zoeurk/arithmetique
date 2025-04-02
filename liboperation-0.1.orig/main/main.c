@@ -2,12 +2,13 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../operation/operation.h"
+#include "../operation/operation.1.h"
 int main(int argc, char **argv){
+	struct retbcpy *cpy, rd = { 0, 0 };
 	struct bin *dot;
 	struct nbr *nbr1, *nbr2, *res, *reste = NULL;
 	unsigned long int virgule;
-	int comp = 0, approx = 0;
+	int comp = 0, approx = 0, start = 0;
 	char c, *pn1, *pn2, *end;
 	if(argc < 4 || argc > 5){
 		fprintf(stderr, "usage: %s num1 num2 virgule [approximation (yes|no)]\n", argv[0]);
@@ -48,22 +49,56 @@ int main(int argc, char **argv){
 	DOT(res, dot);
 	printf("%s + %s = ", argv[1], argv[2]);
 	print_nbr(res);
+	putchar('\n');
 	destroy_nbr(res);
 	res = soustraction(nbr1, nbr2);
 	DOT(res, dot);
 	printf("%s - %s = ", argv[1], argv[2]);
 	print_nbr(res);
+	putchar('\n');
 	destroy_nbr(res);
 	res = multiplication(nbr1, nbr2);
 	DOT(res, dot);
 	printf("%s * %s = ", argv[1], argv[2]);
 	print_nbr(res);
+	putchar('\n');
 	destroy_nbr(res);
-	if((res = division(nbr1, nbr2, &reste, virgule, approx)) != NULL){
+	res = calloc(1, sizeof(struct nbr));
+	res->num = new_num(nbr1->bval + (nbr1->val > 0), 0);
+	rd.rbytes = nbr1->val;
+	rd.rblk = nbr1->bval;
+	dot = (nbr1->num->prev) ? nbr1->num->prev : nbr1->num;
+	while(rd.rbytes || rd.rblk){
+		printf("%lu :: %i\n", rd.rblk, rd.rbytes);
+		cpy = nbytescpy(&res->num, &dot, &start, 0, (rd.rbytes >= 4 || rd.rblk) ? 4 : rd.rbytes);
+		res->val += (rd.rbytes >= 4 || rd.rbytes) ? 4 : rd.rbytes;
+		if(res->val >= BLK){
+			res->val -= BLK;
+			res->bval++;
+		}
+		rd.rblk -= cpy->rblk;
+		if(rd.rbytes >= cpy->rbytes){
+			rd.rbytes -= cpy->rbytes;
+		}else{
+			if(rd.rblk > 0){
+				rd.rbytes = BLK - (cpy->rbytes - rd.rbytes);
+				rd.rblk--;
+			}else
+				rd.rbytes = 0;
+		}
+		print_nbr(res);
+		putchar('\n');
+		printf("= = = = = =\n");
+	}
+	destroy_nbr(res);
+	/*rd.rbytes;
+	rd.rblk;*/
+	/*if((res = division(nbr1, nbr2, &reste, virgule, approx)) != NULL){
 		DOT(res, dot);
 		DOT(reste, dot);
 		printf("%s / %s = ", argv[1], argv[2]);
 		print_nbr(res);
+		putchar('\n');
 		printf("%s %% %s = ", argv[1], argv[2]);
 		print_nbr(reste);
 		destroy_nbr(res);
@@ -75,10 +110,11 @@ int main(int argc, char **argv){
 		DOT(res, dot);
 		printf("%s ^ %s = ", argv[1], argv[2]);
 		print_nbr(res);
+		putchar('\n');
 		if(reste)
 			destroy_nbr(reste);
 		destroy_nbr(res);
-	}
+	}*/
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	return 0;
