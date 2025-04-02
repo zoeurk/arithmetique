@@ -2,7 +2,7 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../operation/operation.1.h"
+#include "../operation/operation.h"
 int main(int argc, char **argv){
 	struct retbcpy *cpy, rd = { 0, 0 };
 	struct bin *dot;
@@ -65,6 +65,7 @@ int main(int argc, char **argv){
 	destroy_nbr(res);
 	res = calloc(1, sizeof(struct nbr));
 	res->num = new_num(nbr1->bval + (nbr1->val > 0), 0);
+	printf("%lu\n", nbr1->bval + (nbr1->val > 0));
 	rd.rbytes = nbr1->val;
 	rd.rblk = nbr1->bval;
 	dot = (nbr1->num->prev) ? nbr1->num->prev : nbr1->num;
