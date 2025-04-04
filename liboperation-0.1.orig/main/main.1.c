@@ -6,9 +6,10 @@
 int main(int argc, char **argv){
 	struct bin *dot;
 	struct nbr *nbr1, *nbr2, *res, *reste = NULL;
-	unsigned long int virgule;
-	int comp = 0, approx = 0;
+	unsigned long int virgule, n;
+	int comp = 0, approx = 0, start = 0;
 	char c, *pn1, *pn2, *end;
+	int coef[C_BLK] = COEFS;
 	if(argc < 4 || argc > 5){
 		fprintf(stderr, "usage: %s num1 num2 virgule [approximation (yes|no)]\n", argv[0]);
 		exit(EXIT_FAILURE);

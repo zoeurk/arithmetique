@@ -182,7 +182,6 @@ void print_nbr(struct nbr *n){
 				j *= 10;
 		}else
 			j = jj;*/
-		printf("= = =>%i\n", b->nmemb);
 		if(b->full)
 			j = jj;
 		else

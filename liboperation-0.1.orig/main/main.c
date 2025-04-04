@@ -64,32 +64,22 @@ int main(int argc, char **argv){
 	putchar('\n');
 	destroy_nbr(res);
 	res = calloc(1, sizeof(struct nbr));
-	res->num = new_num(nbr1->bval + (nbr1->val > 0), 0);
-	printf("%lu\n", nbr1->bval + (nbr1->val > 0));
+	res->num = new_num(1, 0);
 	rd.rbytes = nbr1->val;
 	rd.rblk = nbr1->bval;
 	dot = (nbr1->num->prev) ? nbr1->num->prev : nbr1->num;
 	while(rd.rbytes || rd.rblk){
-		printf("%lu :: %i\n", rd.rblk, rd.rbytes);
 		cpy = nbytescpy(&res->num, &dot, &start, 0, (rd.rbytes >= 4 || rd.rblk) ? 4 : rd.rbytes);
-		res->val += (rd.rbytes >= 4 || rd.rbytes) ? 4 : rd.rbytes;
-		if(res->val >= BLK){
+		res->val = (rd.rbytes >= 4 || rd.rbytes) ? 4 : rd.rbytes;
+		/*if(res->val >= BLK){
 			res->val -= BLK;
 			res->bval++;
 		}
-		rd.rblk -= cpy->rblk;
-		if(rd.rbytes >= cpy->rbytes){
-			rd.rbytes -= cpy->rbytes;
-		}else{
-			if(rd.rblk > 0){
-				rd.rbytes = BLK - (cpy->rbytes - rd.rbytes);
-				rd.rblk--;
-			}else
-				rd.rbytes = 0;
-		}
+		rd.rblk -= cpy->rblk;*/
 		print_nbr(res);
+		res->num->num = 0;
+		res->num->nmemb = 0;
 		putchar('\n');
-		printf("= = = = = =\n");
 	}
 	destroy_nbr(res);
 	/*rd.rbytes;
