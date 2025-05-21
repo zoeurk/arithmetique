@@ -2,11 +2,11 @@ CC=gcc
 ARG=-g -Wall -Wpadded -Wextra
 
 all:liboperation.so
-	 $(CC) $(ARG) main/main.1.c -o main-bin -D DEBUG -ansi -pedantic-errors -L./operation -loperation
+	 $(CC) $(ARG) main/main.c -o main-bin -ansi -pedantic-errors -L./operation -loperation
 
 liboperation.so:
-	$(CC) $(ARG) -fPIC -o ./operation/operation.o -D DEBUG -ansi -pedantic-errors -c ./operation/operation.1.c
-	$(CC) $(ARG) -o ./operation/liboperation.so -ansi -D DEBUG -pedantic-errors -shared ./operation/operation.o
+	$(CC) $(ARG) -fPIC -o ./operation/operation.o -ansi -pedantic-errors -c ./operation/operation.c
+	$(CC) $(ARG) -o ./operation/liboperation.so -ansi -pedantic-errors -shared ./operation/operation.o
 
 
 clean:

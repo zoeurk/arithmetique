@@ -10,14 +10,17 @@ test -n "$4" && ./main-bin $1 $2 $3 "$4" || ./main-bin $1 $2 $3 | sed '4 w resul
 printf "======= bc =========\n"
 VAL=`cat result.txt`
 rm result.txt
+echo "$VAL"
+RES=$(printf "$VAL\n" | sed 's/=/==/' | bc)
 printf " $VAL is "
-test `printf " $VAL\n" | bc` -eq 1 && printf "true\n" || printf "false\n"
+test $RES -eq 1  && printf "true\n" || printf "false\n"
 printf " $1 + $2 = `printf "scale=$3;$1 + $2\n" | bc`\n"
 printf " $1 - $2 = `printf "scale=$3;$1 - $2\n" | bc`\n"
 printf " $1 * $2 = `printf "scale=$mul;$1 * $2\n" | bc`\n"
 printf " $1 / $2 = `printf "scale=$3;$1 / $2\n" | bc`\n"
 printf " $1 %% $2 = `printf "scale=$3;$1 %% $2\n" | bc`\n"
 ./scripts/date.sh > date.bc
+#printf "scale=256;1.433 + -56\n1.433 - -56\n1.433 * -56\n1.433 / -56\n1.433 %% -56\n1.433 ^ -56\n" | bc
 printf " $1 ^ $2 = `printf "scale=$3;$1 ^ $2\n" | bc`\n"
 ./scripts/date.sh >> date.bc
 mv date.cal date.comp

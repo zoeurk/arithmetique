@@ -1,15 +1,14 @@
 .\Manpage pour liboperation.
 .\Contact zoeurk.gmail.com
-.TH man 3 "16 may 2025" "0.1" "liboperation man page"
+.TH man 3 "20 septembre 2024" "0.1" "liboperation man page"
 .SH NAME
 liboperation
 .SH SYNOPSIS
 operation library documentation
 .SH DESCRIPTION
-Library for make operations: +,-,*,/(and %), power...
-.SH Structures, Macros, Functions
+.SH OPTIONS
 .TP
-Environement
+Enironement
 .EX
 #if __WORDSIZE == 32
 	#define BLK 4
@@ -24,11 +23,6 @@ Environement
 	#define D_MAX_LIMIT 1000000000
 	#define COEFS { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 }
 #endif
-
-BLK			== number of bytes in block
-D_MAX		== max div in *10
-D_MAX_LIMIT	== max size of number
-COEFS		== all coeficients for an architecture
 .EE
 .BR
 .TP
@@ -43,51 +37,12 @@ Remove 0 starting the interger number
 struct bin
 .EX
 \fBstruct bin\fR{
-        \fBunsigned long int\fR num;	/* number itself */
-        \fBint\fR nmemb;				/* number of digits */
-        \fBint\fR full;				/* if nmemb is max, full = 1 else full = 0 */
-        \fBstruct bin\fR *next;		/* next number, NULL if end */
-        \fBstruct bin\fR *prev;		/* prev number */
-};
-.BR
-.TP
-#define INIT_BIN(num, nmemb, next, prev)
-Initialize \fBstruct bin\fR
-.BR
-.TP
-#define ZERO_BIN { 0, 1, 0, NULL, NULL }
-Set \fBstruct bin\fR to number \fIzero\fR
-.BR
-.TP
-\fBstruct nbr{
-        \fBunsigned long int\fR bval;				/* number of block elements in value */
-        \fBunsigned long int\fR bdot;				/* number of block elements in dot */
-        \fBint\fR val;							/* number of more elements in value */
-        \fBint\fR dot;							/* number of more elements in dot */
-        \fBint\fR neg;							/* signe of the number */
-        #if  __WORDSIZE != 32
-                #define PADDING 0
-                #define ZERO(zero_bin) { 0, 0, 1, 0, 0, PADDING, zero_bin, NULL }
-                #define INIT_NBR(sig, bval, val, bdot, dot, num, n)
-                        { bval, bdot, val, dot, (sig != 0 && sig != '+'), PADDING, num, n }
-                int ___;
-        #else
-                #define ZERO(zero_bin) { 0, 0, 1, 0, 0, zero_bin, NULL }
-                #define INIT_NBR(sig, bval, val, bdot, dot, num, n)
-                        { bval, bdot, val, dot, (sig != 0 && sig != '+'), num, n }
-        #endif
-        \fBstruct bin\fR *num;						/* the number */
-        \fBchar *n\fR;							/* where is saved the number parsed and converted */
+	\fBint\fR nmemb;			/* number of digits */
+	\fBunsigned long int\fR num;	/* number itself */
+	\fBstruct bin\fR *next;		/* next number, NULL if end*/
+	\fBstruct bin\fR *prev;		/* prev number */
 };
 .EE
-.BR
-.TP
-#define INIT_NBR(sig, bval, val, bdot, dot, num, n)
-Initialize \fBstruct nbr\fR
-.BR
-.TP
-#define ZERO(zero_bin)
-Initialize \fBstruct nbr\fR to number \fIzero\fR
 .BR
 .TP
 struct nbr
@@ -100,21 +55,6 @@ struct nbr
 	\fBunsigned long int\fR val;	/* number of elements in value */
 };
 .EE
-.BR
-.TP
-struct rebcpy
-.EX
-\fBstruct retbcpy\fR{
-        \fBunsigned long int\fR rblk;		/* number of block copyed */
-        \fBint\fR rbytes;			/* number of bytes in more copyed */
-        #if __WORDSIZE != 32
-                #define I_RBCPY { 0, 0, PADDING }
-                \fBint\fR ___; 
-        #else
-                #define I_RBCPY { 0, 0 }
-        #endif 
-};
-\fII_RBCPY\fR initialize \fBstruct retbcpy\fR
 .BR
 .TP
 \fBchar\fR *parse_nbr(\fBchar\fR *n);
@@ -165,16 +105,11 @@ for 64 bits:
 .EE
 .BR
 .TP
-\fBvoid\fR *align_dot(struct nbr *_num, \fBunsigned long int\fR blk, \fBint\fR bytes);
-Add blk and bytes of 0 at the end of doted number
-.BR
-.TP
-\fBstruct retbcpy\fR *nbytescpy(\fBstruct bin\fR **b2, \fBstruct bin\fR **b1, \fBint\fR *bstart, \fBunsigned long int\fR lbytes, \fBint\fR bytes);
-Copy lbytes of block and bytes from b1 to b2.
+\fBunsigned long int\fR nbytescpy(\fBstruct bin\fR **b2, \fBstruct bin\fR **b1, \fBint\fR *bstart, \fBunsigned long int\fR bytes);
+Copy n bytes from b1 to b2
 .PP
 .EX
 *bstart:	remember number of bytes for next occurence
-lbytes:	number of block of bytes to copy
 bytes:	number of bytes to copy
 \fI**b2\fR:	must be allocated to the good len;
 .EE
@@ -192,12 +127,8 @@ soustract num2 to num1
 multiply num1 and num2
 .BR
 .TP
-\fBvoid\fR *ispuissance(\fBstruct nbr\fR *num, \fBint\fR pui);
+\fBvoid\fR *spuissance(\fBstruct nbr\fR *num, \fBunsigned long int\fR pui);
 power of num by pui
-.BR
-.TP
-\fBvoid\fR *spuissance(\fBstruct nbr\fR *num, \fBunsigned long int\fR bpui, \fBint\fR pui);
-power of num by bpui (number of block) and pui
 .BR
 .TP
 \fBvoid\fR *division(\fBstruct nbr\fR *num1, \fBstruct nbr\fR *num2, \fBstruct nbr\fR **modulo, \fBunsigned long int\fR scale, \fBint\fR approximation);
@@ -221,10 +152,8 @@ approximation:	used if num2 < 0
 .BR
 .SH BUGS
 .EX
-	This man page use english but I'm not sure that is english :/
-	NOT FULLY TESTED
-	WARNING: NO WARANTY
-		(Maybe a lots of bugs)
+No limits are cheked
+	NO WARANTY WARNING
 .EE
 .SH AUTHORS
 ZoeurK (zoeurk@gmail.com)

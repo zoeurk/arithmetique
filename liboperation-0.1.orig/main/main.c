@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include "../operation/operation.h"
 int main(int argc, char **argv){
-	struct retbcpy *cpy, rd = { 0, 0 };
+	/*struct retbcpy *cpy, rd = I_RBCPY;*/
 	struct bin *dot;
 	struct nbr *nbr1, *nbr2, *res, *reste = NULL;
-	unsigned long int virgule;
-	int comp = 0, approx = 0, start = 0;
+	unsigned long int virgule, bvirg;
+	int comp = 0, approx = 0, virg;
 	char c, *pn1, *pn2, *end;
 	if(argc < 4 || argc > 5){
 		fprintf(stderr, "usage: %s num1 num2 virgule [approximation (yes|no)]\n", argv[0]);
@@ -28,6 +28,8 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	#endif
 	virgule = strtoul(argv[3], &end, 10);
+	virg = virgule%BLK;
+	bvirg = virgule/BLK;
 	if(*end != 0){
 		fprintf(stderr, "Invalid number for dot:\n\tendptr == %s\n\tinput == %s\n", end, argv[3]);
 		exit(EXIT_FAILURE);
@@ -57,34 +59,21 @@ int main(int argc, char **argv){
 	print_nbr(res);
 	putchar('\n');
 	destroy_nbr(res);
+	/*exit(0);*/
+	/*destroy_nbr(nbr1);
+	destroy_nbr(nbr2);
+	exit(0);*/
 	res = multiplication(nbr1, nbr2);
 	DOT(res, dot);
 	printf("%s * %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
 	destroy_nbr(res);
-	res = calloc(1, sizeof(struct nbr));
-	res->num = new_num(1, 0);
-	rd.rbytes = nbr1->val;
-	rd.rblk = nbr1->bval;
-	dot = (nbr1->num->prev) ? nbr1->num->prev : nbr1->num;
-	while(rd.rbytes || rd.rblk){
-		cpy = nbytescpy(&res->num, &dot, &start, 0, (rd.rbytes >= 4 || rd.rblk) ? 4 : rd.rbytes);
-		res->val = (rd.rbytes >= 4 || rd.rbytes) ? 4 : rd.rbytes;
-		/*if(res->val >= BLK){
-			res->val -= BLK;
-			res->bval++;
-		}
-		rd.rblk -= cpy->rblk;*/
-		print_nbr(res);
-		res->num->num = 0;
-		res->num->nmemb = 0;
-		putchar('\n');
-	}
-	destroy_nbr(res);
-	/*rd.rbytes;
-	rd.rblk;*/
-	/*if((res = division(nbr1, nbr2, &reste, virgule, approx)) != NULL){
+	/*res = spuissance(nbr1, bvirg, virg);
+	print_nbr(res);
+	putchar('\n');
+	destroy_nbr(res);*/
+	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx)) != NULL){
 		DOT(res, dot);
 		DOT(reste, dot);
 		printf("%s / %s = ", argv[1], argv[2]);
@@ -92,12 +81,13 @@ int main(int argc, char **argv){
 		putchar('\n');
 		printf("%s %% %s = ", argv[1], argv[2]);
 		print_nbr(reste);
+		putchar('\n');
 		destroy_nbr(res);
 		destroy_nbr(reste);
 	}
-	if(nbr2->dot == 0){
+	if(nbr2->dot == 0 && nbr2->bdot == 0){
 		reste = NULL;
-		res = puissance(nbr1, nbr2, &reste, virgule, approx);
+		res = puissance(nbr1, nbr2, &reste, bvirg, virg, approx);
 		DOT(res, dot);
 		printf("%s ^ %s = ", argv[1], argv[2]);
 		print_nbr(res);
@@ -105,7 +95,8 @@ int main(int argc, char **argv){
 		if(reste)
 			destroy_nbr(reste);
 		destroy_nbr(res);
-	}*/
+	}else
+		printf("Puissance non scalaire.\n");
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	return 0;

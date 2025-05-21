@@ -8,15 +8,26 @@ struct bin{
 	struct bin *next;
 	struct bin *prev;
 };
+#define INIT_BIN(num, nmemb, next, prev) \
+	{ num, nmemb, (nmemb == BLK), next, prev }
+#define ZERO_BIN { 0, 1, 0, NULL, NULL }
 struct nbr{
 	unsigned long int bval;
 	unsigned long int bdot; /*128*/
 	int val;
 	int dot;
 	int neg;
-	/*#if  __WORDSIZE != 32
-		int ___;
-	#endif*/
+	#if  __WORDSIZE != 32
+		#define PADDING 0
+		#define ZERO(zero_bin) { 0, 0, 1, 0, 0, PADDING, zero_bin, NULL }
+		#define INIT_NBR(sig, bval, val, bdot, dot, num, n) \
+			{ bval, bdot, val, dot, (sig != 0 && sig != '+'), PADDING, num, n }
+		int ___; /*128*/
+	#else
+		#define ZERO(zero_bin) { 0, 0, 1, 0, 0, zero_bin, NULL }
+		#define INIT_NBR(sig, bval, val, bdot, dot, num, n) \
+			{ bval, bdot, val, dot, (sig != 0 && sig != '+'), num, n }
+	#endif
 	struct bin *num;
 	char *n;
 };
@@ -34,8 +45,7 @@ struct nbr{
 	#define D_MAX_LIMIT 1000000000
 	#define COEFS { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, D_MAX, D_MAX_LIMIT }
 #endif
-#define ZERO_BIN { 0, 1, 0, NULL, NULL }
-#define ZERO(zero_bin) { 0, 0, 1, 0, 0, zero_bin, NULL }
+
 #define DOT(res_nbr, bin_ptr) \
 	while((res_nbr->dot || res_nbr->bdot) && res_nbr->num->num%10 == 0){ \
 		if(res_nbr->dot){ \
@@ -45,6 +55,7 @@ struct nbr{
 			res_nbr->bdot--; \
 		} \
 		res_nbr->num->num /= 10; \
+		res_nbr->num->full = 0; \
 		if(--res_nbr->num->nmemb == 0){ \
 			bin_ptr = res_nbr->num; \
 			res_nbr->num->next->prev = res_nbr->num->prev; \
@@ -65,6 +76,7 @@ struct nbr{
 		(res_nbr->val > 1 || res_nbr->bval > 0) && bin_ptr1->num/mul[bin_ptr1->nmemb -1] == 0; \
 		/*res_nbr->val--*/ \
 	){ \
+		bin_ptr1->full = 0;\
 		if(--bin_ptr1->nmemb == 0){ \
 			bin_ptr2 = res_nbr->num; \
 			bin_ptr1->prev->next = NULL; \
@@ -88,14 +100,22 @@ int equal(struct nbr *num1, struct nbr *num2);
 struct bin *new_num(unsigned long int val, unsigned long int dot);
 void *dup_nbr(struct nbr *num);
 void *bymul10(struct nbr *num, int fac, int faclen);
+void *align_dot(struct nbr *_num, unsigned long int blk, int bytes);
 struct retbcpy{
 	unsigned long int rblk;
 	int rbytes;
+	#if __WORDSIZE != 32
+		#define I_RBCPY { 0, 0, PADDING }
+		int ___;
+	#else
+		#define I_RBCPY { 0, 0 }
+	#endif
 };
 struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigned long int lbytes, unsigned long int bytes);
 void *addition(struct nbr *num1, struct nbr *num2);
 void *soustraction(struct nbr *num1, struct nbr *num2);
 void *multiplication(struct nbr *num1, struct nbr *num2);
-void *spuissance(struct nbr *num, size_t pui);
-void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int scale, int approximation);
-void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int scale, int approximation);
+void *ispuissance(struct nbr *num, int pui);
+void *spuissance(struct nbr *num, unsigned long int bpui, int pui);
+void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
+void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
