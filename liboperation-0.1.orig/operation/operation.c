@@ -460,11 +460,11 @@ void *align_dot(struct nbr *_num, unsigned long int blk, int bytes){
 }
 void *addition(struct nbr *num1, struct nbr *num2){
 	struct bin *pb1, *pb2, *pbr;
-	struct nbr *res, *nadd = NULL;
+	struct nbr *res, *nadd = NULL, *n1, *n2;
 	unsigned long int bdot, bval, cbdot;
 	unsigned long int b1n, b2n;
 	int i, j, nmemb1, nmemb2, add = 0, retenue = 0,
-		cf, full, full1, full2, dot, val, cdot;
+		cf, full, full1, full2, dot, val, cdot, mul[C_BLK] = COEFS;
 	if(num1->neg && !num2->neg){
 		num1->neg = 0;
 		res = soustraction(num2, num1);
@@ -478,6 +478,10 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			return res;
 		}
 	}
+	for(pb1 = num1->num; pb1; pb1 = pb1->next)
+		printf("%lu\n", pb1->num);
+	for(pb1 = num2->num; pb1; pb1 = pb1->next)
+		printf("%lu\n", pb1->num);
 	if(num1->bval > num2->bval || (num1->bval == num2->bval && num1->val > num2->val)){
 		val = num1->val;
 		bval = num1->bval;
@@ -488,10 +492,16 @@ void *addition(struct nbr *num1, struct nbr *num2){
 	if(num1->bdot > num2->bdot || (num1->bdot == num2->bdot && num1->dot > num2->dot)){
 		dot = num1->dot;
 		bdot = num1->bdot;
+		n1 = num1;
+		n2 = num2;
 	}else{
 		dot = num2->dot;
 		bdot = num2->bdot;
+		n1 = num2;
+		n2 = num1;
 	}
+	pb1 = n1->num;
+	pb2 = n2->num;
 	/*dot = (num1->dot > num2->dot) ? num1->dot : num2->dot;
 	val = (num1->val > num2->val) ? num1->val : num2->val;
 	bdot = (num1->bdot > num2->bdot) ? num1->bdot : num2->bdot;
@@ -512,8 +522,64 @@ void *addition(struct nbr *num1, struct nbr *num2){
 		);
 		exit(EXIT_FAILURE);
 	}
-	res->num = new_num(bval + 1, bdot + (dot > 0));
-	if(num1->bdot > num2->bdot || (num1->dot > num2->dot && num1->bdot >= num2->bdot)){
+	pbr = res->num = new_num(bval + 1, bdot + (dot > 0));
+	cbdot = num1->bdot - num2->bdot;
+	if(n1->dot > n2->dot)
+		cdot = n1->dot - n2->dot;
+	else{
+		cdot = BLK + n1->dot - n2->dot;
+		cbdot--;
+	}
+	if(cdot || cbdot){
+		for(i = cbdot; i > 0; i--){
+			printf("*********\n");
+			pbr->num = pb1->num;
+			pbr->nmemb = pb1->nmemb;
+			cbdot--;
+			pb1 = pb1->next;
+			pbr = pbr->next;
+		}
+		if(cdot >= pb1->nmemb){
+			printf("= = =\n");
+			pbr->nmemb = pb1->nmemb;
+			pbr->num = pb1->num;
+			cdot -= pbr->nmemb;
+			pbr = pbr->next;
+			pb1 = pb1->next;
+		}
+		if(cdot){
+			/*printf("==> %i:", cdot);*/
+			pbr->nmemb = pb1->nmemb;
+			pbr->full = pb1->full;
+			cf = mul[cdot];
+			i = mul[pbr->nmemb];
+			pbr->num = pb1->num;
+			pbr->num -= (pbr->num/cf)*cf;
+			pbr->num += (pb1->num/cf)*cf + pb2->num*cf;
+			/*printf("%lu\n", pb1->num%cf);
+			printf("==%lu, %lu\n", (pb1->num/cf)*cf, (pb2->num%mul[BLK-cdot])*cf);*/
+			printf("=>%lu :: %lu\n", pb1->num, pb2->num);
+			if(pbr->num >= (unsigned long int) cdot){
+				retenue = 1;
+				pbr->num -= i;
+			}
+			cf = mul[BLK];
+			printf("+>%lu :: %lu\n", pb1->next->num, pb2->num);
+			/*printf("=>%lu::%lu\n", pb1->num/mul[pb1->nmemb-cdot], pb2->num);*/
+			printf("%i, %i\n", pb1->nmemb, pb2->nmemb);
+			pbr = pbr->next;
+			pb1 = pb1->next;
+			pb2 = pb2->next;
+			printf("->%lu :: %lu\n", pb1->next->num, pb2->num);
+			/*printf("%lu :: %lu\n", pb1->num%*/
+			/*printf("%lu, %lu :: %lu\n", pb1->num, pb1->num/cf, pb2->num);*/
+			pb1 = pb1->next;
+			pb2 = pb2->next;
+		}
+		printf("===\n");
+		exit(0);
+	}
+	/*if(num1->bdot > num2->bdot || (num1->dot > num2->dot && num1->bdot >= num2->bdot)){
 		if(num2->dot || num2->bdot){
 			cbdot = num1->bdot - num2->bdot;
 			if(num1->dot > num2->dot)
@@ -586,7 +652,7 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			cbdot = 0;
 			pbr = res->num;
 		}
-	}
+	}*/
 	for(	nmemb1 = pb1->nmemb,
 		nmemb2 = pb2->nmemb,
 		full1 = pb1->full,
@@ -671,6 +737,10 @@ void *addition(struct nbr *num1, struct nbr *num2){
 		destroy_nbr(dres);*/
 	if(nadd)
 		destroy_nbr(nadd);
+	for(pbr = res->num; pbr; pbr = pbr->next)
+		printf("%lu\n", pbr->num);
+	print_nbr(res);
+	exit(0);
 	return res;
 }
 void *soustraction(struct nbr *num1, struct nbr *num2){
