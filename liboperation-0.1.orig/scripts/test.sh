@@ -21,7 +21,7 @@ printf " $1 / $2 = `printf "scale=$3;$1 / $2\n" | bc`\n"
 printf " $1 %% $2 = `printf "scale=$3;$1 %% $2\n" | bc`\n"
 ./scripts/date.sh > date.bc
 #printf "scale=256;1.433 + -56\n1.433 - -56\n1.433 * -56\n1.433 / -56\n1.433 %% -56\n1.433 ^ -56\n" | bc
-printf " $1 ^ $2 = `printf "scale=$3;$1 ^ $2\n" | bc`\n"
+printf " $1 ^ $2 = `printf "scale=$3;$1 ^ $2\n" | BC_LINE_LENGTH=0 bc`\n"
 ./scripts/date.sh >> date.bc
 mv date.cal date.comp
 echo "./main-bin: $(./scripts/date-comp.sh)"

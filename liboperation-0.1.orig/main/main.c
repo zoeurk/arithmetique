@@ -85,6 +85,9 @@ int main(int argc, char **argv){
 		destroy_nbr(res);
 		destroy_nbr(reste);
 	}
+	/*destroy_nbr(nbr1);
+	destroy_nbr(nbr2);
+	exit(0);*/
 	if(nbr2->dot == 0 && nbr2->bdot == 0){
 		reste = NULL;
 		res = puissance(nbr1, nbr2, &reste, bvirg, virg, approx);

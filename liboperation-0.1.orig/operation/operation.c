@@ -129,8 +129,8 @@ struct nbr *encode_nbr(char *n){
 		r->val--;
 		r->bval++;
 	}
-	if(r->bdot){
-		for(pnum = r->num, i = r->bdot;i > 0; i -= (pnum->nmemb == BLK), pnum = pnum->next);
+	if(r->dot && r->bdot){
+		for(pnum = r->num, i = r->bdot+1;i > 0; i--, pnum = pnum->next);
 		pnum = pnum->prev;
 		if(pnum != r->num){
 			for(j = 0, i = 1; j < pnum->nmemb; j++, i *= 10);
@@ -143,6 +143,7 @@ struct nbr *encode_nbr(char *n){
 			sv->nmemb = BLK;
 			sv->full = 1;
 			r->num->nmemb = j;
+			r->num->full = (j == BLK) ? 1 : 0;
 		}
 	}
 	if(r->bval == 0 && r->val == 1 && r->bdot == 0 && r->dot == 0 && r->num->num == 0 && r->neg){
@@ -460,11 +461,11 @@ void *align_dot(struct nbr *_num, unsigned long int blk, int bytes){
 }
 void *addition(struct nbr *num1, struct nbr *num2){
 	struct bin *pb1, *pb2, *pbr;
-	struct nbr *res, *nadd = NULL, *n1, *n2;
-	unsigned long int bdot, bval, cbdot;
+	struct nbr *res, *n1, *n2;
+	unsigned long int bdot, bval, cbdot = 0;
 	unsigned long int b1n, b2n;
 	int i, j, nmemb1, nmemb2, add = 0, retenue = 0,
-		cf, full, full1, full2, dot, val, cdot, mul[C_BLK] = COEFS;
+		cf, full = 0, full1 = 0, full2 = 0, dot, val, cdot = 0, mul[C_BLK] = COEFS;
 	if(num1->neg && !num2->neg){
 		num1->neg = 0;
 		res = soustraction(num2, num1);
@@ -478,10 +479,6 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			return res;
 		}
 	}
-	for(pb1 = num1->num; pb1; pb1 = pb1->next)
-		printf("%lu\n", pb1->num);
-	for(pb1 = num2->num; pb1; pb1 = pb1->next)
-		printf("%lu\n", pb1->num);
 	if(num1->bval > num2->bval || (num1->bval == num2->bval && num1->val > num2->val)){
 		val = num1->val;
 		bval = num1->bval;
@@ -523,32 +520,41 @@ void *addition(struct nbr *num1, struct nbr *num2){
 		exit(EXIT_FAILURE);
 	}
 	pbr = res->num = new_num(bval + 1, bdot + (dot > 0));
-	cbdot = num1->bdot - num2->bdot;
-	if(n1->dot > n2->dot)
-		cdot = n1->dot - n2->dot;
-	else{
-		cdot = BLK + n1->dot - n2->dot;
-		cbdot--;
+	cbdot = n1->bdot - n2->bdot;
+	if(n1->dot || n2->dot){
+		if(n1->dot >= n2->dot)
+			cdot = n1->dot - n2->dot;
+		else{
+			cdot = BLK + n1->dot - n2->dot;
+			cbdot--;
+		}
 	}
 	if(cdot || cbdot){
+		pb1 = n1->num;
+		pb2 = n2->num;
 		for(i = cbdot; i > 0; i--){
-			printf("*********\n");
 			pbr->num = pb1->num;
 			pbr->nmemb = pb1->nmemb;
-			cbdot--;
+			pbr->full = pb1->full;
+			if(pbr->full)
+				cbdot--;
+			else{
+				cbdot--;
+				cdot += BLK;
+				cdot -= pb1->nmemb;
+			}
 			pb1 = pb1->next;
 			pbr = pbr->next;
 		}
 		if(cdot >= pb1->nmemb){
-			printf("= = =\n");
 			pbr->nmemb = pb1->nmemb;
+			pbr->full = pb1->full;
 			pbr->num = pb1->num;
 			cdot -= pbr->nmemb;
 			pbr = pbr->next;
 			pb1 = pb1->next;
 		}
 		if(cdot){
-			/*printf("==> %i:", cdot);*/
 			pbr->nmemb = pb1->nmemb;
 			pbr->full = pb1->full;
 			cf = mul[cdot];
@@ -556,103 +562,15 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			pbr->num = pb1->num;
 			pbr->num -= (pbr->num/cf)*cf;
 			pbr->num += (pb1->num/cf)*cf + pb2->num*cf;
-			/*printf("%lu\n", pb1->num%cf);
-			printf("==%lu, %lu\n", (pb1->num/cf)*cf, (pb2->num%mul[BLK-cdot])*cf);*/
-			printf("=>%lu :: %lu\n", pb1->num, pb2->num);
-			if(pbr->num >= (unsigned long int) cdot){
+			if(pbr->num >= (unsigned long int) i){
 				retenue = 1;
 				pbr->num -= i;
 			}
-			cf = mul[BLK];
-			printf("+>%lu :: %lu\n", pb1->next->num, pb2->num);
-			/*printf("=>%lu::%lu\n", pb1->num/mul[pb1->nmemb-cdot], pb2->num);*/
-			printf("%i, %i\n", pb1->nmemb, pb2->nmemb);
 			pbr = pbr->next;
 			pb1 = pb1->next;
 			pb2 = pb2->next;
-			printf("->%lu :: %lu\n", pb1->next->num, pb2->num);
-			/*printf("%lu :: %lu\n", pb1->num%*/
-			/*printf("%lu, %lu :: %lu\n", pb1->num, pb1->num/cf, pb2->num);*/
-			pb1 = pb1->next;
-			pb2 = pb2->next;
 		}
-		printf("===\n");
-		exit(0);
 	}
-	/*if(num1->bdot > num2->bdot || (num1->dot > num2->dot && num1->bdot >= num2->bdot)){
-		if(num2->dot || num2->bdot){
-			cbdot = num1->bdot - num2->bdot;
-			if(num1->dot > num2->dot)
-				cdot = num1->dot - num2->dot;
-			else{
-				cdot = BLK + num1->dot - num2->dot;
-				cbdot--;
-			}
-			pb1 = num1->num;
-			nadd = align_dot(num2, cbdot, cdot);
-			pb2 = nadd->num;
-			pbr = res->num;
-		}else{
-			for(	cbdot = num1->bdot,
-				cdot = num1->dot,
-				pbr = res->num,
-				pb1 = num1->num;
-				cbdot > 0 || cdot > 0;
-				pb1 = pb1->next,
-				pbr = pbr->next
-			){
-				pbr->num = pb1->num;
-				pbr->nmemb = pb1->nmemb;
-				pbr->full = pb1->full;
-				if(cbdot)
-					cbdot--;
-				else
-					cdot = 0;
-			}
-			pb2 = num2->num;
-		}
-	}else{
-		if(num1->bdot < num2->bdot || (num1->dot < num2->dot && num1->bdot == num2->bdot)){
-			if(num1->dot || num1->bdot){
-				dot = num1->dot;
-				cbdot = num2->bdot - num1->bdot;
-				if(num2->dot  > num1->dot)
-					cdot = num2->dot - num1->dot;
-				else{
-					cdot = BLK + num2->dot - num1->dot;
-					cbdot--;
-				}
-				pb1 = num2->num;
-				nadd = align_dot(num1, cbdot, cdot);
-				pb2 = nadd->num;
-				pbr = res->num;
-			}else{
-				for(	cbdot = num2->bdot,
-					cdot = num2->dot,
-					pbr = res->num,
-					pb1 = num2->num;
-					cbdot > 0 || cdot > 0;
-					pb1 = pb1->next,
-					pbr = pbr->next
-				){
-					pbr->num = pb1->num;
-					pbr->nmemb = pb1->nmemb;
-					pbr->full = pb1->full;
-					if(cbdot)
-						cbdot--;
-					else
-						cdot = 0;
-				}
-				pb2 = num1->num;
-			}
-		}else{
-			pb1 = num1->num;
-			pb2 = num2->num;
-			cdot = 0;
-			cbdot = 0;
-			pbr = res->num;
-		}
-	}*/
 	for(	nmemb1 = pb1->nmemb,
 		nmemb2 = pb2->nmemb,
 		full1 = pb1->full,
@@ -735,19 +653,15 @@ void *addition(struct nbr *num1, struct nbr *num2){
 	res->neg = (num1->neg && num2->neg);
 	/*if(dres)
 		destroy_nbr(dres);*/
-	if(nadd)
-		destroy_nbr(nadd);
-	for(pbr = res->num; pbr; pbr = pbr->next)
-		printf("%lu\n", pbr->num);
-	print_nbr(res);
-	exit(0);
+	/*if(nadd)
+		destroy_nbr(nadd);*/
 	return res;
 }
 void *soustraction(struct nbr *num1, struct nbr *num2){
 	struct bin *pb1, *pb2, *pbr;
-	struct nbr *res, *pn1, *pn2, *nadd = NULL;
-	unsigned long int n1, n2, cbdot;
-	int nmemb1, nmemb2, neg = 0, cf, mul[C_BLK] = COEFS, retenue = 0, cdot;
+	struct nbr *res, *pn1, *pn2;
+	unsigned long int n1, n2, cbdot = 0;
+	int i, nmemb1, nmemb2, neg = 0, cf, mul[C_BLK] = COEFS, retenue = 0, cdot = 0;
 	if(num1->neg && !num2->neg){
 		num1->neg = 0;
 		res = addition(num2, num1);
@@ -813,81 +727,111 @@ void *soustraction(struct nbr *num1, struct nbr *num2){
 		res->dot = num2->dot;
 	}
 	pbr = res->num = new_num(res->bval + (res->val > 0), res->bdot + (res->dot > 0));
-	if(pn1->bdot > pn2->bdot || (pn1->dot > pn2->dot && pn1->bdot == pn2->bdot)){
-		res->bdot = pn1->bdot;
-		res->dot = pn1->dot;
-		if(pn2->dot || pn2->bdot){
-			cbdot = pn1->bdot - pn2->bdot;
-			if(pn1->dot > pn2->dot)
-				cdot = pn1->dot - pn2->dot;
-			else{
-				cdot = BLK + pn1->dot - pn2->dot;
+	if(pn1->bdot > pn2->bdot || (pn1->bdot == pn2->bdot && pn1->dot > pn2->dot)){
+		cbdot = pn1->bdot - pn2->bdot;
+		if(pn1->dot >= pn2->dot)
+			cdot = pn1->dot - pn2->dot;
+		else{
+			cdot = BLK + pn1->dot - pn2->dot;
+			cbdot--;
+		}
+		/*cdot = pn1->dot - pn2->dot;*/
+		for(i = cbdot; i > 0; i--){
+			pbr->num = pb1->num;
+			pbr->nmemb = pb1->nmemb;
+			pbr->full = pb1->full;
+			if(pbr->full)
 				cbdot--;
+			else{
+				cdot += BLK;
+				cbdot--;
+				cdot -= pbr->nmemb;
 			}
-			nadd = align_dot(pn2, cbdot, cdot);
-			pb2 = nadd->num;
-		}else{	/*printf("1\n");*/
-			for(	cbdot = pn1->bdot,
-				cdot = pn1->dot,
-				pbr = res->num,
-				pb1 = pn1->num;
-				cbdot > 0 || cdot > 0;
-				pb1 = pb1->next,
-				pbr = pbr->next
-			){
-				/*printf("%lu (%i) => ", pb1->num, pb1->nmemb);*/
-				/*pbr->num = mul[pb1->nmemb+1] - pb1->num - retenue;*/
-				pbr->num = pb1->num;
-				/*printf("%lu\n", pbr->num);*/
-				pbr->nmemb = pb1->nmemb;
-				pbr->full = pb1->full;
-				/*retenue = 1;*/
-				if(cbdot)
-					cbdot--;
-				else
-					cdot = 0;
+			pb1 = pb1->next;
+			pbr = pbr->next;
+		}
+		if(cdot >= pb1->nmemb){
+			pbr->full = pb1->full;
+			pbr->nmemb = pb1->nmemb;
+			pbr->num = pb1->num;
+			cdot -= pbr->nmemb;
+			pbr = pbr->next;
+			pb1 = pb1->next;
+		}
+		if(cdot){
+			pbr->nmemb = pb1->nmemb;
+			pbr->full = pb1->full;
+			cf = mul[cdot];
+			cdot = mul[(pb2->nmemb > pb1->nmemb) ? pb2->nmemb : pb1->nmemb];
+			pbr->num = pb1->num;
+			pbr->num -= (pbr->num/cf)*cf;
+			if((n1 = (pb1->num/cf)*cf) >= (n2 = pb2->num*cf)){
+				pbr->num += n1 - n2;
+			}else{
+				pbr->num += n1 - n2 + cdot;
+				retenue = 1;
 			}
-			pb2 = pn2->num;
+			pb2 = pb2->next;
+			pbr = pbr->next;
+			pb1 = pb1->next;
 		}
 	}else{
 		if(pn1->bdot < pn2->bdot || (pn1->dot < pn2->dot && pn1->bdot == pn2->bdot)){
-			res->bdot = pn2->bdot;
-			res->dot = pn2->dot;
-			if(pn1->dot || pn1->bdot){
-				cbdot = pn2->bdot - pn1->bdot;
-				if(pn2->dot >= pn1->dot)
-					cdot = pn2->dot - pn1->dot;
-				else{
-					cdot = BLK + pn2->dot - pn1->dot;
-					cbdot--;
-				}
-				nadd = align_dot(pn1, cbdot, cdot);
-				pb1 = nadd->num;
-			}else{	/*printf("2\n");*/
-				for(	cbdot = pn2->bdot,
-					cdot = pn2->dot,
-					pbr = res->num,
-					pb2 = pn2->num;
-					cbdot > 0 || cdot > 0;
-					pb2 = pb2->next,
-					pbr = pbr->next
-				){
-					pbr->num = mul[pb2->nmemb] - pb2->num - retenue;
-					/*pbr->num = pb1->num;*/
-					/*printf("%lu\n", pbr->num);*/
-					pbr->nmemb = pb2->nmemb;
-					pbr->full = pb2->full;
-					retenue = 1;
-					if(cbdot)
-						cbdot--;
-					else
-						cdot = 0;
-				}
-				pb1 = pn1->num;
+			cbdot = pn2->bdot - pn1->bdot;
+			if(pn2->dot >= pn1->dot)
+				cdot = pn2->dot - pn1->dot;
+			else{
+				cdot = BLK + pn2->dot - pn1->dot;
+				cbdot--;
 			}
-		}else{
-			res->bdot = pn2->bdot;
-			res->dot = pn2->dot;
+			for(i = cbdot; i > 0; i--){
+				pbr->nmemb = pb2->nmemb;
+				pbr->full = pb2->full;
+				if(pbr->full)
+					cbdot--;
+				else{
+					cdot += BLK;
+					cbdot--;
+					cdot -= pbr->nmemb;
+				}
+				cf = mul[pbr->nmemb];
+				pbr->num = cf - pb2->num - retenue;
+				retenue = 1;
+				cdot -= pbr->nmemb;
+				pb2 = pb2->next;
+				pbr = pbr->next;
+			}
+			if(cdot >= pb2->nmemb){
+				pbr->nmemb = pb2->nmemb;
+				pbr->full = pb2->full;
+				cf = mul[pbr->nmemb];
+				pbr->num = cf - pb2->num - retenue;
+				retenue = 1;
+				cdot -= pbr->nmemb;
+				pbr = pbr->next;
+				pb2 = pb2->next;
+			}
+			if(cdot){
+				pbr->nmemb = pb2->nmemb;
+				pbr->full = pb2->full;
+				cf = mul[cdot];
+				cdot = mul[(pb2->nmemb > pb1->nmemb) ? pb2->nmemb : pb1->nmemb];
+				pbr->num = pb2->num;
+				pbr->num -= (pbr->num/cf)*cf;
+				pbr->num = cf - pbr->num - retenue;
+				retenue = 1;
+				if((n1 = pb1->num*cf) > (n2 = ((pb2->num/cf))*cf)){
+					pbr->num += n1 - n2 - cf;
+					retenue = 0;
+				}else{
+					pbr->num += n1 - n2 + cdot - cf;
+					/*pbr->num += cdot - n2 + n1 - cf;*/
+					retenue = 1;
+				}
+				pbr = pbr->next;
+				pb1 = pb1->next;
+				pb2 = pb2->next;
+			}
 		}
 	}
 	for(	nmemb1 = pb1->nmemb,
@@ -935,8 +879,8 @@ void *soustraction(struct nbr *num1, struct nbr *num2){
 	putchar('\n');*/
 	ADJUST_0(res, pb1, pb2);
 	res->neg = neg;
-	if(nadd)
-		destroy_nbr(nadd);
+	/*if(nadd)
+		destroy_nbr(nadd);*/
 	return res;
 }
 void *multiplication(struct nbr *num1, struct nbr *num2){
