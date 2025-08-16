@@ -1,5 +1,5 @@
 #!/bin/sh
-rm -v math.* calcule.txt bc.txt
+rm -v math.* calcule.txt bc.txt 2>/dev/null
 for i in $(seq 25)
 do
 	SCALE=$((26*$(shuf -i 0-65535 -n1)/65535))
