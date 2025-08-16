@@ -84,7 +84,8 @@ int main(int argc, char **argv){
 		putchar('\n');
 		destroy_nbr(res);
 		destroy_nbr(reste);
-	}
+	}else
+		printf("NULL\n");
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	exit(0);

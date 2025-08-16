@@ -41,7 +41,7 @@ char *parse_nbr(char *n){
 			}
 		}
 	if(dot)
-		for(;*(pn-1) == '0'; pn--, len--);
+		for(;*(pn) == '0'; pn--, len--);
 	if(cp){
 		if(*cp == '.')
 			len++;
@@ -1258,7 +1258,7 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 				bs = bs->prev;
 		}
 		res->val = res->num->prev->nmemb = 1;
-		printf(" => %lu\n", res->num->prev->prev->num);
+		/*printf(" => %lu\n", res->num->prev->prev->num);*/
 		/*exit(0);*/
 	}else{	/*printf("division_2\n");*/
 		if(bscale || scale){
@@ -1301,11 +1301,11 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 			res->bdot = bscale;
 			if(res->num->prev && res->num->prev->nmemb < BLK)
 				res->num->prev->full = 0;
-			printf("%lu :: %i\n", res->num->prev->num, res->val);
+			/*printf("%lu :: %i\n", res->num->prev->num, res->val);*/
 			if(res->num->prev->nmemb == 0)
 				res->num->prev->nmemb = res->val = 1;
 		}else{
-			printf("ARGH\n");
+			/*printf("ARGH\n");*/
 			res = num;
 		}
 	}
@@ -1315,10 +1315,10 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	struct retbcpy *bcpy;
 	struct bin *bdividende, *breste,
 		bdix = { 10, 2, 0, NULL, NULL }, bsingle = { 0, 1, 0, NULL, NULL }, *bs, *bt, bx = { 0, 1, 0, NULL, NULL };
-	struct nbr *res, *diviseur, *dividende, *quotient, *mod, *reste = NULL,
+	struct nbr *res = NULL, *diviseur, *dividende, *quotient, *mod, *reste = NULL,
 		dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" ), *fac, *fac_, *temp, *temp_, *temp__, nx = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL );
 	unsigned long int bval, blen, bdot_0 = 0, cbscale;
-	int neg1, neg2, x, start = 0, mul[C_BLK] = COEFS, val, len, dot_0 = 0, cscale;
+	int neg1, neg2, x, start = 0, val, len, dot_0 = 0, cscale;
 	dix.num = &bdix;
 	nx.num = &bx;
 	if(equal(num2, &nx) == 0){
@@ -1811,8 +1811,10 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	num2->neg = neg2;
 	if(reste)
 		destroy_nbr(reste);
-	if(res != quotient)
+	if(res != quotient && res != NULL){
 		destroy_nbr(quotient);
+	}else
+		res = quotient;
 	destroy_nbr(diviseur);
 	destroy_nbr(dividende);
 	return res;
@@ -1859,8 +1861,9 @@ void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigne
 				destroy_nbr(n);
 			n = res;
 		}
-		if(n->dot > BLK)
+		if(n->dot > BLK){
 			exit(0);
+		}
 		div = d;
 		destroy_nbr(mod);
 		mod = NULL;
