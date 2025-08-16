@@ -1620,8 +1620,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			*modulo = mod;
 		}else{
 			if(scale || dot_0 || bscale || bdot_0){
-				/*printf("modulo_2\n");*/
-				/*printf("TO TEST:%i,%i,%lu,%lu\n", scale, dot_0, bscale, bdot_0);*/
+				printf("modulo_2\n");
+				printf("TO TEST:%i,%i,%lu,%lu ==> %lu %i\n", scale, dot_0, bscale, bdot_0, (*modulo)->bval, (*modulo)->val);
 				if((mod = calloc(1,sizeof(struct nbr))) == NULL){
 					perror("calloc()");
 					exit(EXIT_FAILURE);
@@ -1632,13 +1632,13 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 					blen++;
 					x -= BLK;
 				}
-				/*if((*modulo)->val >= x){*/
+				if((*modulo)->val >= scale + dot_0){
 					mod->num = new_num((*modulo)->bval - bscale - bdot_0 + (((*modulo)->val - scale - dot_0) > 0),
 								blen + (x > 0));
-				/*}else{
-					mod->num = new_num((*modulo)->bval - bscale - bdot_0 + ((BLK - (*modulo)->val - scale - dot_0) > 0),
+				}else{
+					mod->num = new_num((*modulo)->bval - bscale - bdot_0 + ((BLK + (*modulo)->val - scale - dot_0) > 0) -1,
 								blen + (x > 0));
-				}*/
+				}
 				bt = (*modulo)->num;
 				bs = mod->num;
 				if(x){
@@ -1653,8 +1653,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 					if(!(bt = bt->next))
 						break;
 					bs->num += (bt->num%mul[x])*mul[BLK-x];
-					bs->nmemb = (bs->next) ? BLK : dot_0 - (*modulo)->val;
-					bs->full = (bs->nmemb == BLK);
+					bs->nmemb = BLK;
+					bs->full = 1;
 					bs->num -= (bs->num/mul[BLK]) * mul[BLK];
 				}
 					/*for(blen = (bscale + bdot_0); bs;blen--, bs = bs->next){
@@ -1689,11 +1689,17 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 					mod->bdot++;
 				}
 				if((*modulo)->val >= scale + dot_0){
-					mod->val = (*modulo)->val - scale - dot_0;
+					mod->num->prev->nmemb = mod->val = (*modulo)->val - scale - dot_0;
 				}else{
-					mod->val = BLK + (*modulo)->val - scale - dot_0;
+					printf("OK: 9 + %i - %i - %i\n", (*modulo)->val, scale, dot_0);
+					mod->num->prev->nmemb = mod->val = BLK + (*modulo)->val - scale - dot_0;
 					mod->bval--;
+					if(mod->val < 0){
+						mod->val = mod->num->prev->nmemb += BLK;
+						mod->bval--;
+					}
 				}
+				mod->num->prev->full = (mod->num->prev->nmemb == BLK);
 				/*printf("%lu :: %i => %lu\n", mod->bval, mod->val, mod->num->num);*/
 				destroy_nbr(*modulo);
 				*modulo = mod;
@@ -1702,6 +1708,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	}
 	/*(*modulo)->num->prev->nmemb = 4;
 	(*modulo)->num->prev->full = 0;*/
+	printf("%lu :: %i, %lu :: %i\n", (*modulo)->bval, (*modulo)->val, (*modulo)->bdot, (*modulo)->dot);
 	if(neg1 != neg2){
 		if(equal(res, &nx) != 0)	
 			res->neg = 1;
