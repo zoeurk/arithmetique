@@ -16,6 +16,6 @@ do
 	LD_LIBRARY_PATH=./operation ./main-bin $VAL1 $VAL2 $SCALE | sed '1, 4d' > math.txt || exit
 	sed 's/^.*= *//g' math.txt >> math.result.txt
 	printf "$VAL1+$VAL2\n$VAL1-$VAL2\nscale=$S_MUL;$VAL1*$VAL2\nscale=$SCALE;$VAL1/$VAL2\nscale=$SCALE;$VAL1%%$VAL2\n" | BC_LINE_LENGTH=0 bc >> bc.txt
-	sed -e 's/^\./0./g' -e 's/\(\.*\)0*$/\1/g' -i bc.txt
+	sed -e 's/^\./0./g' -e '/\./ s/0*$//g' -e 's/\.$//g' -i bc.txt
 	diff -q math.result.txt bc.txt || exit
 done
