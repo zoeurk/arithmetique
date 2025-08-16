@@ -196,8 +196,8 @@ void *destroy_nbr(struct nbr *n){
 }
 int equal(struct nbr *num1, struct nbr *num2){
 	struct bin *b1, *b2;
-	unsigned long int blen, blen1, blen2;
-	int ret, len, len1, len2;
+	unsigned long int blen, blen1, blen2, sbdot, dmul, n1, n2;
+	int i, ret, len, len1, len2, sdot;
 	if(num1->neg == 1 && num2->neg == 1)
 		ret = -1;
 	else
@@ -223,6 +223,8 @@ int equal(struct nbr *num1, struct nbr *num2){
 	b2 = (!b2->prev) ? b2 : b2->prev;
 	len = (len1 < len2)? len1 : len2;
 	blen = (blen1 < blen2) ? blen1 : blen2;
+	sdot = num1->val;
+	sbdot = num1->bval;
 	do{
 		if(b1->num > b2->num)
 			return 1*ret;
@@ -230,12 +232,55 @@ int equal(struct nbr *num1, struct nbr *num2){
 			if(b1->num < b2->num)
 				return -1*ret;
 		if(len)
-			len -= (len1 < len2) ? b1->nmemb : b2->nmemb;
+			len -= b1->nmemb;
 		else
 			blen--;
+		if(sdot && b1->nmemb != BLK){
+			sdot -= b1->nmemb;
+		}
+		if(sbdot && b1->full)
+			sbdot--;
 		b1 = b1->prev;
 		b2 = b2->prev;
+		if(!sbdot && !sdot)
+			break;
 	}while(len != 0 || blen != 0);
+	if(b1 && b2)
+		do{
+			if(b1->nmemb != b2->nmemb){
+				if(b1->nmemb > b2->nmemb){
+					for(dmul = 1, i = b1->nmemb - b2->nmemb; i > 0; i--)
+						dmul *= 10;
+					/*dmul = 10^(b1->nmemb - b2->nmemb);*/
+					n1 = b1->num;
+					n2 = b2->num * dmul;
+				}else{
+					if(b1->nmemb < b2->nmemb){
+						for(dmul = 1, i = b2->nmemb - b1->nmemb; i > 0; i--)
+							dmul *= 10;
+						n1 = b1->num * dmul;
+						n2 = b2->num;
+					}
+				}
+				if(n1 > n2){
+					return 1*ret;
+				}else{
+					return -1*ret;
+				}
+			}
+			/*printf("DOT = %lu :: %lu\n", b1->num, b2->num);*/
+			if(b1->num > b2->num)
+				return 1*ret;
+			else
+				if(b1->num < b2->num)
+					return -1*ret;
+			if(len)
+				len -= (len1 < len2) ? b1->nmemb : b2->nmemb;
+			else
+				blen--;
+			b1 = b1->prev;
+			b2 = b2->prev;
+		}while(len != 0 || blen != 0);
 	if((b1 && b1 != num1->num->prev) && (b2 && b2 != num2->num->prev))
 		return 0;
 	if(b1 && b1 != num1->num->prev){
@@ -797,7 +842,6 @@ void *soustraction(struct nbr *num1, struct nbr *num2){
 				cf = mul[pbr->nmemb];
 				pbr->num = cf - pb2->num - retenue;
 				retenue = 1;
-				cdot -= pbr->nmemb;
 				pb2 = pb2->next;
 				pbr = pbr->next;
 			}
