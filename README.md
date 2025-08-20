@@ -4,4 +4,4 @@ librairie d'operation:
   
 A tester...  
 AUCUNE GARANTIE
-Probably not working
+Probably not working(/looks like to work)
