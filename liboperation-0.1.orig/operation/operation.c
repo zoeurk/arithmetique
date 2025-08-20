@@ -1,4 +1,5 @@
 #include "operation.h"
+fuck
 char *parse_nbr(char *n){
 	char *ret, *pret, *pn, *cp = NULL;
 	size_t len = 0;
