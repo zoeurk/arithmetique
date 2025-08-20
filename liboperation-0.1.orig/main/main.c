@@ -60,15 +60,15 @@ int main(int argc, char **argv){
 	putchar('\n');
 	destroy_nbr(res);
 	/*exit(0);*/
-	/*destroy_nbr(nbr1);
-	destroy_nbr(nbr2);
-	exit(0);*/
 	res = multiplication(nbr1, nbr2);
 	DOT(res, dot);
 	printf("%s * %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
 	destroy_nbr(res);
+	/*destroy_nbr(nbr1);
+	destroy_nbr(nbr2);
+	exit(0);*/
 	/*res = spuissance(nbr1, bvirg, virg);
 	print_nbr(res);
 	putchar('\n');
