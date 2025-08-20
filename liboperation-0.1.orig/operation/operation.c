@@ -37,8 +37,13 @@ char *parse_nbr(char *n){
 				}
 			}
 		}
-	if(dot)
+	if(dot){
 		for(;*(pn-1) == '0'; pn--, len--);
+		if(*(pn-1) == '.'){
+			pn--;
+			len--;
+		}
+	}
 	if(cp){
 		if(*cp == '.')
 			len++;

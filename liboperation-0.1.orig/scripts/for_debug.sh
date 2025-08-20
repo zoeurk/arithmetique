@@ -7,7 +7,7 @@ then
 fi
 for j in 999999999999999999999999 1 0.1
 do
-	for i in $(seq 25)
+	for i in $(seq 100)
 	do
 		SCALE=$((26*$(shuf -i 0-65535 -n1)/65535))
 		SCALE1=$((26*$(shuf -i 0-65535 -n1)/65535))
