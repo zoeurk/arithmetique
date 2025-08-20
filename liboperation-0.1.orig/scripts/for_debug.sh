@@ -5,7 +5,7 @@ then
 	printf "You need to compile program\n"
 	exit
 fi
-for j in 999999999999999999999999 1
+for j in 999999999999999999999999 1 0.1
 do
 	for i in $(seq 25)
 	do
