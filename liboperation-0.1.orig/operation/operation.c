@@ -663,7 +663,7 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			if(val){
 				val -= i;
 			}else{
-				if(add != i)
+				if(add)
 					add = 1;
 			}
 		}
