@@ -507,7 +507,7 @@ void *addition(struct nbr *num1, struct nbr *num2){
 	struct nbr *res, *n1, *n2;
 	unsigned long int bdot, bval, cbdot = 0;
 	unsigned long int b1n, b2n;
-	int i, j, nmemb1, nmemb2, add = 0, retenue = 0,
+	int i, j, nmemb1, nmemb2, add, retenue = 0,
 		cf, full = 0, full1 = 0, full2 = 0, dot, val, cdot = 0, mul[C_BLK] = COEFS;
 	if(num1->neg && !num2->neg){
 		num1->neg = 0;
@@ -619,8 +619,10 @@ void *addition(struct nbr *num1, struct nbr *num2){
 		full1 = pb1->full,
 		full2 = pb2->full,
 		b1n = pb1->num,
-		b2n = pb2->num;
+		b2n = pb2->num,
+		i = 0;
 		pbr;
+		i = 0,
 		pbr = pbr->next
 	){
 		pbr->num = b1n + b2n + retenue;
