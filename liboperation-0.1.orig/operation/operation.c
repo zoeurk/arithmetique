@@ -668,7 +668,7 @@ void *addition(struct nbr *num1, struct nbr *num2){
 			if(val){
 				val -= i;
 			}else{
-				if(add)
+				if(add != i)
 					add = 1;
 			}
 		}
@@ -1214,6 +1214,8 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
 		}
+		/*for(bs = num->num;bs;bs = bs->next)
+			printf("%lu : %i : %i\n", bs->num, bs->nmemb, bs->full);*/
 		/*printf("division_1\n");*/
 		res->num = new_num(1, bscale + (scale > 0));
 		/*print_nbr(num);
@@ -1614,6 +1616,10 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			destroy_nbr(temp);
 			destroy_nbr(mod);
 			*modulo = temp_;
+		/*print_nbr(*modulo);
+		putchar('\n');
+		for(bs = (*modulo)->num;bs;bs = bs->next)
+			printf(">>%lu : %i : %i\n", bs->num, bs->nmemb, bs->full);*/
 		}
 	}
 	bx.num = 0;
@@ -1625,7 +1631,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			cbscale++;
 		}
 		/*print_nbr(*modulo);
-		putchar('\n');*/
+		putchar('\n');
+		printf("%lu, %i\n", cbscale, cscale);*/
 		mod = bymin10(*modulo, cbscale, cscale);
 		if(mod != *modulo){
 			destroy_nbr(*modulo);
