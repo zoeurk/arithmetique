@@ -250,6 +250,7 @@ int equal(struct nbr *num1, struct nbr *num2){
 	}while(len != 0 || blen != 0);
 	if(b1 && b2)
 		do{
+			/*printf("***\n");*/
 			if(b1->nmemb != b2->nmemb){
 				if(b1->nmemb > b2->nmemb){
 					for(dmul = 1, i = b1->nmemb - b2->nmemb; i > 0; i--)
@@ -280,7 +281,8 @@ int equal(struct nbr *num1, struct nbr *num2){
 			if(len)
 				len -= (len1 < len2) ? b1->nmemb : b2->nmemb;
 			else
-				blen--;
+				if(blen)
+					blen--;
 			b1 = b1->prev;
 			b2 = b2->prev;
 		}while(len != 0 || blen != 0);

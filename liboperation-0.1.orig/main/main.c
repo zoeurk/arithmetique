@@ -6,12 +6,12 @@
 #include "../arithmetique/arithmetique.h"
 int main(int argc, char **argv){
 	/*struct retbcpy *cpy, rd = I_RBCPY;*/
-	struct bin *dot, bdix = { 10, 2, 0, NULL, NULL };
-	struct nbr *nbr1, *nbr2, *res, *reste = NULL, dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" );
+	struct bin *dot/*, bdix = { 10, 2, 0, NULL, NULL }*/;
+	struct nbr *nbr1, *nbr2, *res, *reste = NULL/*, dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" )*/;
 	unsigned long int virgule, bvirg;
 	int comp = 0, approx = 0, virg;
 	char c, *pn1, *pn2, *end;
-	dix.num = &bdix;
+	/*dix.num = &bdix;*/
 	if(argc < 4 || argc > 5){
 		fprintf(stderr, "usage: %s num1 num2 virgule [approximation (yes|no)]\n", argv[0]);
 		exit(EXIT_FAILURE);
@@ -93,8 +93,7 @@ int main(int argc, char **argv){
 	}else
 		printf("NULL\n");
 	/*destroy_nbr(nbr1);
-	destroy_nbr(nbr2);
-	exit(0);*/
+	destroy_nbr(nbr2);*/
 	if(!nbr1->neg){
 		res = r_square(nbr1, bvirg, virg);
 		printf("Square Root of %s = ", argv[1]);
