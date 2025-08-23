@@ -1152,7 +1152,7 @@ void *ispuissance(struct nbr *num, int pui){
 }
 void *spuissance(struct nbr *num, unsigned long int bpui, int pui){
 	struct bin _un_ = { 1, 1, 0, NULL, NULL };
-	struct nbr *n = num, *tn, *in, *res = NULL, un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), *pseudo = &un, *p;
+	struct nbr *n = num/*, *tn*/, *in, *res = NULL, un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), *pseudo = &un, *p;
 	unsigned long int bcomp = bpui;
 	un.num = &_un_;
 	if(pui == 0 && bpui == 0){
@@ -1169,9 +1169,10 @@ void *spuissance(struct nbr *num, unsigned long int bpui, int pui){
 		return res;
 	}
 	in = ispuissance(num, pui);
-	if(!bpui)
+	if(!bpui){
 		return in;
-	tn = n = ispuissance(num, BLK);
+	}
+	/*tn = */n = ispuissance(num, BLK);
 	while(bcomp > 1){
 		if(bcomp%2){
 			bcomp--;
@@ -1190,15 +1191,25 @@ void *spuissance(struct nbr *num, unsigned long int bpui, int pui){
 	if(pseudo != &un){
 		res = multiplication(pseudo, n);
 		destroy_nbr(pseudo);
-		if(n != num)
+		if(n != num){
 			destroy_nbr(n);
+			n = NULL;
+		}
 	}else{
 		if(n == num)
 			res = dup_nbr(n);
 	}
-	if(n != tn){
+	/*if(n != tn){
+		res = n;
+	}*/
+	/*if(res != NULL)
+		n = res;*/
+	if(n == NULL)
 		n = res;
-	}
+	/*print_nbr(n);
+	putchar('\n');
+	print_nbr(in);
+	putchar('\n');*/
 	res = multiplication(n, in);
 	destroy_nbr(n);
 	destroy_nbr(in);
@@ -1523,6 +1534,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		quotient->val = quotient->num->nmemb = 1;
 		*modulo = dup_nbr(dividende);
 	}
+	/*print_nbr(quotient);
+	putchar('\n');*/
 	if(modulo && reste && !*modulo){
 		*modulo = dup_nbr(reste);
 	}

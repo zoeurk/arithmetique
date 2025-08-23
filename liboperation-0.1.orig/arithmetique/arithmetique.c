@@ -18,7 +18,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 	two.num = &_two;
 	half = division(&un, &two, NULL, 0, 1, 0);
 	/*DESTROY_MOD(mod);*/
-	div = division( num, &un, NULL, bscale, scale-1, 0 );
+	div = division( num, &un, NULL, bscale, scale, 0 );
 	DOT(div, dot);
 	/*DESTROY_MOD(mod);*/
 	add = addition( div, &un );
@@ -29,13 +29,13 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 	/*DESTROY_MOD(mod);*/
 	destroy_nbr(add);
 	if(bscale > 0 || scale > 0){
-		do{
+		/*do{*/
 			while(equal(f, r) != 0){
 				if(r != &un){
 					destroy_nbr(r);
 				}
 				r = f;
-				div = division( num, r, NULL, bscale, scale-1, 0 );
+				div = division( num, r, NULL, bscale, scale, 0 );
 				DOT(div, dot);
 				/*DESTROY_MOD(mod);*/
 				add = addition( div, r );
@@ -46,13 +46,13 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 				/*DESTROY_MOD(mod);*/
 				destroy_nbr(add);
 			}
-			s += 25%BLK;
+			/*s += 25%BLK;
 			bs += 25/BLK;
 			if(s >= BLK){
 				s -= BLK;
 				bs++;
 			}
-		}while(s < scale || bs < bscale);
+		}while(s < scale || bs < bscale);*/
 	}else{
 		m = multiplication(f, f);
 		while(equal(m, num) > 0){
@@ -79,7 +79,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 		destroy_nbr(r);
 	}
 	/*destroy_nbr(r);*/
-	/*return f;*/
+	return f;
 	/*DOT(f, dot);*/
 	r = division(f, &un, NULL, bscale, scale, 0);
 	/*DESTROY_MOD(mod);*/

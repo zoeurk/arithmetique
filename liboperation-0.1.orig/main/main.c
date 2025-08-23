@@ -6,11 +6,12 @@
 #include "../arithmetique/arithmetique.h"
 int main(int argc, char **argv){
 	/*struct retbcpy *cpy, rd = I_RBCPY;*/
-	struct bin *dot;
-	struct nbr *nbr1, *nbr2, *res, *reste = NULL;
+	struct bin *dot, bdix = { 10, 2, 0, NULL, NULL };
+	struct nbr *nbr1, *nbr2, *res, *reste = NULL, dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" );
 	unsigned long int virgule, bvirg;
 	int comp = 0, approx = 0, virg;
 	char c, *pn1, *pn2, *end;
+	dix.num = &bdix;
 	if(argc < 4 || argc > 5){
 		fprintf(stderr, "usage: %s num1 num2 virgule [approximation (yes|no)]\n", argv[0]);
 		exit(EXIT_FAILURE);
@@ -31,6 +32,13 @@ int main(int argc, char **argv){
 	virgule = strtoul(argv[3], &end, 10);
 	virg = virgule%BLK;
 	bvirg = virgule/BLK;
+	/*res = spuissance(&dix, bvirg, virg);
+	print_nbr(res);
+	putchar('\n');
+	for(dot = res->num; dot; dot = dot->next)
+		printf("%lu :: %i :: %i\n", dot->num, dot->nmemb, dot->full);
+	destroy_nbr(res);
+	exit(0);*/
 	if(*end != 0){
 		fprintf(stderr, "Invalid number for dot:\n\tendptr == %s\n\tinput == %s\n", end, argv[3]);
 		exit(EXIT_FAILURE);
