@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../operation/operation.h"
+#include "../arithmetique/arithmetique.h"
 int main(int argc, char **argv){
 	/*struct retbcpy *cpy, rd = I_RBCPY;*/
 	struct bin *dot;
@@ -66,9 +67,6 @@ int main(int argc, char **argv){
 	print_nbr(res);
 	putchar('\n');
 	destroy_nbr(res);
-	/*destroy_nbr(nbr1);
-	destroy_nbr(nbr2);
-	exit(0);*/
 	/*res = spuissance(nbr1, bvirg, virg);
 	print_nbr(res);
 	putchar('\n');
@@ -86,6 +84,25 @@ int main(int argc, char **argv){
 		destroy_nbr(reste);
 	}else
 		printf("NULL\n");
+	/*destroy_nbr(nbr1);
+	destroy_nbr(nbr2);
+	exit(0);*/
+	if(!nbr1->neg){
+		res = r_square(nbr1, bvirg, virg);
+		printf("Square Root of %s = ", argv[1]);
+		print_nbr(res);
+		putchar('\n');
+		destroy_nbr(res);
+	}else
+		printf("Square Root Not Computable: %s < 0", argv[1]);
+	if(!nbr2->neg){
+		res = r_square(nbr2, bvirg, virg);
+		printf("Square Root of %s = ", argv[2]);
+		print_nbr(res);
+		putchar('\n');
+		destroy_nbr(res);
+	}else
+		printf("Square Root Not Computable: %s < 0", argv[2]);
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	exit(0);

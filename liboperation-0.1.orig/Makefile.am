@@ -1,1 +1,1 @@
-SUBDIRS=operation
+SUBDIRS=operation arithmetique

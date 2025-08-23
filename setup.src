@@ -1,3 +1,5 @@
+printf "Setup Not Working\n"
+return 0
 cp -r liboperation-0.1.orig liboperation-0.1
 cd liboperation-0.1
 rm -rf scripts main Makefile

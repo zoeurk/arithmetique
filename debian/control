@@ -15,8 +15,21 @@ Multi-Arch: same
 Depends: liboperation (= ${binary:Version}), ${misc:Depends}
 Description: header of liboperation
 
+Package: libarithmetique-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: liboperation (= ${binary:Version}), ${misc:Depends}
+Description: header of libarithmetique
+
 Package: liboperation
 Architecture: any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: library for operation (+,-,*,/,%)
+
+Package: libarithmetique
+Architecture: any
+Multi-Arch: same
+Depends: liboperation ${shlibs:Depends}, ${misc:Depends}
+Description: library of arithmetique

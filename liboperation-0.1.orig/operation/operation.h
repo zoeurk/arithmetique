@@ -1,3 +1,5 @@
+#ifndef OPERATION_H
+#define OPERATION_H
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -120,3 +122,4 @@ void *spuissance(struct nbr *num, unsigned long int bpui, int pui);
 void *bymin10(struct nbr *num, unsigned long int bscale, int scale);
 void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
 void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
+#endif

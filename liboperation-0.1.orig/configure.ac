@@ -12,6 +12,7 @@ AC_PROG_CC
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-loperation':
 AC_CHECK_LIB([operation], [main])
+AC_CHECK_LIB([arithmetique], [main])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h])
@@ -25,5 +26,6 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
-                 operation/Makefile])
+                 operation/Makefile
+		 arithmetique/Makefile])
 AC_OUTPUT
