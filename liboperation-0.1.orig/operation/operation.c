@@ -1336,8 +1336,7 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 #define PRINT_NBR(n) \
 	print_nbr(n); \
 	putchar('\n');
-#define B_MIN 8
-#define M_BLK BLK - B_MIN
+#define M_BLK 1
 void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation){
 	struct retbcpy *bcpy;
 	struct bin *bdividende, *breste,
