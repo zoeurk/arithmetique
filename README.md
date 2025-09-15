@@ -4,5 +4,6 @@ librairie d'operation:
   
 A tester...  
 AUCUNE GARANTIE
-Probably not working(/looks like to work: tested with ./scripts/for_debug.sh) 
-see code for exit and power scalar
+Looks like to work but it is more slower than bc :(  
+I want to search why :P
+I'm open to work...(I'm creazy)[Just I need help]
