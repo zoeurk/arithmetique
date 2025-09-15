@@ -5,7 +5,9 @@
 #include "../operation/operation.h"
 #include "../arithmetique/arithmetique.h"
 int main(int argc, char **argv){
-	/*struct retbcpy *cpy, rd = I_RBCPY;*/
+	/*struct retbcpy *cpy;
+	struct bin *b1, *b2;
+	int start = 0;*/
 	struct bin *dot/*, bdix = { 10, 2, 0, NULL, NULL }*/;
 	struct nbr *nbr1, *nbr2, *res, *reste = NULL/*, dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" )*/;
 	unsigned long int virgule, bvirg;
@@ -51,6 +53,10 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	nbr1 = encode_nbr(pn1);
 	nbr2 = encode_nbr(pn2);
+	/*b2 = calloc(1, sizeof(struct bin));
+	cpy = nbytescpy(&b2, &nbr1->num->prev, &start, 1, 0);
+	printf("%lu\n", b2->num);
+	exit(0);*/
 	nbr1->n = pn1;
 	nbr2->n = pn2;
 	comp = equal(nbr1, nbr2);
@@ -93,7 +99,8 @@ int main(int argc, char **argv){
 	}else
 		printf("NULL\n");
 	/*destroy_nbr(nbr1);
-	destroy_nbr(nbr2);*/
+	destroy_nbr(nbr2);
+	exit(0);*/
 	if(!nbr1->neg){
 		res = r_square(nbr1, bvirg, virg);
 		printf("Square Root of %s = ", argv[1]);
