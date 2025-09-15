@@ -1,5 +1,0 @@
-LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 9168230716411078049896992430 98725871671625848783092905 0
-LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 100000000020 2 0
-LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 10000020 2 0
-LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 916823071641107804989699.912424339661875 98725871671625848783092.905 0
-LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 4111696040283817.39 5191729610131990.020233463035019455252918 19
