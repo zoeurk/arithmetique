@@ -4,4 +4,5 @@ librairie d'operation:
   
 A tester...  
 AUCUNE GARANTIE  
+Not Working  
 Less faster than BC

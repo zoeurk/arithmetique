@@ -49,6 +49,27 @@ struct nbr{
 #endif
 
 #define DOT(res_nbr, bin_ptr) \
+	bin_ptr = res_nbr->num ;\
+	while((res_nbr->dot || res_nbr->bdot) && bin_ptr->num%10 == 0){ \
+		if(res_nbr->dot){ \
+			res_nbr->dot--; \
+		}else{ \
+			res_nbr->dot = BLK-1;\
+			res_nbr->bdot--; \
+		} \
+		bin_ptr->num /= 10; \
+		bin_ptr->full = 0; \
+		if(--bin_ptr->nmemb == 0){ \
+			bin_ptr = bin_ptr->next; \
+			/*bin_ptr = res_nbr->num; \
+			res_nbr->num->next->prev = res_nbr->num->prev; \
+			res_nbr->num = res_nbr->num->next; \
+			res_nbr->num->prev->next = NULL; \
+			free(bin_ptr);*/ \
+		} \
+	}
+/*
+#define DOT(res_nbr, bin_ptr) \
 	while((res_nbr->dot || res_nbr->bdot) && res_nbr->num->num%10 == 0){ \
 		if(res_nbr->dot){ \
 			res_nbr->dot--; \
@@ -66,26 +87,28 @@ struct nbr{
 			free(bin_ptr); \
 		} \
 	}
+*/
 #define ADJUST_0(res_nbr, bin_ptr1, bin_ptr2) \
-	if(res_nbr->num->prev && res_nbr->num->prev->nmemb == 0){ \
+	/*if(res_nbr->num->prev && res_nbr->num->prev->nmemb == 0){ \
 		bin_ptr1 = res_nbr->num->prev; \
 		bin_ptr2 = res_nbr->num; \
 		bin_ptr1->prev->next = NULL; \
 		bin_ptr2->prev = (bin_ptr1->prev == res_nbr->num) ? NULL : bin_ptr1->prev; \
 		free(bin_ptr1); \
-	} \
+	}*/ \
 	for(	bin_ptr1 = (res_nbr->num->prev) ? res_nbr->num->prev : res_nbr->num; \
 		(res_nbr->val > 1 || res_nbr->bval > 0) && bin_ptr1->num/mul[bin_ptr1->nmemb -1] == 0; \
 		/*res_nbr->val--*/ \
 	){ \
 		bin_ptr1->full = 0;\
 		if(--bin_ptr1->nmemb == 0){ \
-			bin_ptr2 = res_nbr->num; \
+			bin_ptr1 = bin_ptr1->prev; \
+			/*bin_ptr2 = res_nbr->num; \
 			bin_ptr1->prev->next = NULL; \
-			bin_ptr2->prev = (bin_ptr1->prev == res_nbr->num) ? NULL : bin_ptr1->prev; \
+			bin_ptr2->prev = (bin_ptr1->prev == res_nbr->num) ? NULL : bin_ptr1->prev;*/ \
 			res_nbr->val -= bin_ptr1->nmemb; \
-			free(bin_ptr1); \
-			bin_ptr1 = (res_nbr->num->prev) ? res_nbr->num->prev : res_nbr->num; \
+			/*free(bin_ptr1); \
+			bin_ptr1 = (res_nbr->num->prev) ? res_nbr->num->prev : res_nbr->num;*/ \
 		} \
 		if(res_nbr->val > 0){ \
 			res_nbr->val--; \
@@ -114,9 +137,9 @@ struct retbcpy{
 	#endif
 };
 struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigned long int lbytes, unsigned long int bytes);
-void *addition(struct nbr *num1, struct nbr *num2);
-void *soustraction(struct nbr *num1, struct nbr *num2);
-void *multiplication(struct nbr *num1, struct nbr *num2);
+void *addition(struct nbr *num1, struct nbr *num2, struct nbr *result);
+void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result);
+void *multiplication(struct nbr *num1, struct nbr *num2, struct nbr *result);
 void *ispuissance(struct nbr *num, int pui);
 void *spuissance(struct nbr *num, unsigned long int bpui, int pui);
 void *bymin10(struct nbr *num, unsigned long int bscale, int scale);

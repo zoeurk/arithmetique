@@ -24,15 +24,15 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 	mul = dup_nbr(&un);
 	n = dup_nbr(num);
 	while(equal(n, &two) < 0){
-		temp = multiplication(n, &cent);
+		temp = multiplication(n, &cent, NULL);
 		fac = bymul10(mul, 10, 1);
 		destroy_nbr(n);
 		n = temp;
 	}
 	half = division(&un, &two, NULL, 0, 1, 0);
 	div = division( n, &un, NULL, bscale, scale, 0 );
-	add = addition( div, &un );
-	f = multiplication( add, half );
+	add = addition( div, &un, NULL );
+	f = multiplication( add, half, NULL );
 	f->num->num /= 10;
 	f->num->nmemb--;
 	if(f->num->full){
@@ -68,11 +68,11 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 			printf("\n%lu :: %i, %lu :: %i\n", r->bval, r->val, r->bdot, r->dot);*/
 			div = division( n, r, NULL, bscale, scale, 0 );
 			/*printf("<<<<add>>>>\n");*/
-			add = addition( div, r );
+			add = addition( div, r, NULL );
 			/*print_nbr(add);
 			printf("/2 = ");*/
 			/*f = multiplication( add, half );*/
-			f = multiplication( add, half );
+			f = multiplication( add, half, NULL );
 			f->num->num /= 10;
 			f->num->nmemb--;
 			if(f->num->full){
@@ -92,7 +92,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 			destroy_nbr(add);
 		}
 	}else{
-		m = multiplication(f, f);
+		m = multiplication(f, f, NULL);
 		while(equal(m, n) > 0){
 			destroy_nbr(m);
 			if(r != &un){
@@ -100,12 +100,12 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 			}
 			r = f;
 			div = division( num, r, NULL, 0, 0, 0 );
-			add = addition( div, r );
+			add = addition( div, r, NULL );
 			/*print_nbr(add);
 			putchar('\n');
 			print_nbr(&two);
 			putchar('\n');*/
-			f = multiplication( add, half );
+			f = multiplication( add, half, NULL );
 			/*f = division( add, &two, NULL, 0, 0, 0 );*/
 			rm = f->num;
 			f->num = f->num->next;
@@ -114,7 +114,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 			f->dot = 0;
 			destroy_nbr(div);
 			destroy_nbr(add);
-			m = multiplication(f, f);
+			m = multiplication(f, f, NULL);
 		}
 		destroy_nbr(m);
 	}

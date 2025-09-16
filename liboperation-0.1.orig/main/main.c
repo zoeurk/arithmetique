@@ -4,14 +4,21 @@
 #include <stdio.h>
 #include "../operation/operation.h"
 #include "../arithmetique/arithmetique.h"
+void *del(struct nbr *n){
+	struct bin *delete;
+	for(delete = n->num;delete;delete = delete->next)
+		delete->num = delete->nmemb = delete->full = 0;
+	n->val = n->dot = n->bval = n->bdot = 0;
+	return n;
+}
 int main(int argc, char **argv){
 	/*struct retbcpy *cpy;
-	struct bin *b1, *b2;
 	int start = 0;*/
-	struct bin *dot/*, bdix = { 10, 2, 0, NULL, NULL }*/;
-	struct nbr *nbr1, *nbr2, *res, *reste = NULL/*, dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" )*/;
-	unsigned long int virgule, bvirg;
-	int comp = 0, approx = 0, virg;
+	struct bin *b1, *b2;
+	struct bin *dot/*, *delete, bdix = { 10, 2, 0, NULL, NULL }*/;
+	struct nbr *nbr1, *nbr2, *res, *reste = NULL, *result/*, dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" )*/;
+	unsigned long int virgule, bvirg, bv = 0, bl;
+	int comp = 0, approx = 0, virg, v = 0, l;
 	char c, *pn1, *pn2, *end;
 	/*dix.num = &bdix;*/
 	if(argc < 4 || argc > 5){
@@ -59,28 +66,61 @@ int main(int argc, char **argv){
 	exit(0);*/
 	nbr1->n = pn1;
 	nbr2->n = pn2;
+	bv = nbr1->bdot + nbr2->bdot;
+	v = nbr1->dot + nbr2->dot;
+	if(v >= BLK){
+		v -= BLK;
+		bv++;
+	}
+	if(bv < bvirg || (bv == bvirg && v < virg)){
+		v = virg;
+		bv = bvirg;
+	}
+	bl = nbr1->bval + nbr2->bval;
+	l = nbr1->val + nbr2->val;
+	if(l >= BLK){
+		l -= BLK;
+		bl++;
+	}
+	if((result = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	result->num = new_num(bl + (l > 0), bv + (v > 0));
 	comp = equal(nbr1, nbr2);
 	c = (comp == 0) ? '=' : (comp == -1) ? '<' : '>';
 	printf("%s %c %s\n", argv[1], c, argv[2]);
-	res = addition(nbr1, nbr2);
+	res = addition(nbr1, nbr2, result);
 	DOT(res, dot);
 	printf("%s + %s = ", argv[1], argv[2]);
-	print_nbr(res);
+	print_nbr(result);
 	putchar('\n');
-	destroy_nbr(res);
-	res = soustraction(nbr1, nbr2);
+	/*result->val = result->dot = result->bval = result->bdot = 0;*/
+	result = del(result);
+	/*for(b1 = result->num, b2 = nbr1->num;b2;b1 = b1->next, b2 = b2->next){
+		b1->num = b2->num;
+		b1->full = b2->full;
+		b1->nmemb = b2->nmemb;
+	}
+	result->bval = nbr1->bval;
+	result->bdot = nbr1->bdot;
+	result->val = nbr1->val;
+	result->dot = nbr1->dot;*/
+	/*destroy_nbr(res);
+	destroy_nbr(nbr1);
+	destroy_nbr(nbr2);
+	exit(0);*/
+	res = soustraction(nbr1, nbr2, result);
 	DOT(res, dot);
 	printf("%s - %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
-	destroy_nbr(res);
-	/*exit(0);*/
-	res = multiplication(nbr1, nbr2);
+	result = del(result);
+	res = multiplication(nbr1, nbr2, result);
 	DOT(res, dot);
 	printf("%s * %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
-	destroy_nbr(res);
 	/*res = spuissance(nbr1, bvirg, virg);
 	print_nbr(res);
 	putchar('\n');
@@ -101,6 +141,10 @@ int main(int argc, char **argv){
 	/*destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	exit(0);*/
+	destroy_nbr(result);
+	destroy_nbr(nbr1);
+	destroy_nbr(nbr2);
+	exit(0);
 	if(!nbr1->neg){
 		res = r_square(nbr1, bvirg, virg);
 		printf("Square Root of %s = ", argv[1]);
