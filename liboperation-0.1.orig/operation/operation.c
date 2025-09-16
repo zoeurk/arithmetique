@@ -1615,6 +1615,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 					}
 				}*/
 				/*preste = dup_nbr(reste);*/
+				/*printf("**********\n");*/
 				for(bx.nmemb = 1, bx.num = 0, x = 0; (int)bx.num < mul[M_BLK]; bx.num++){
 					if(equal(reste, diviseur) < 0){
 						/*printf("=>%lu\n", bx.num);*/
@@ -1627,6 +1628,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 					destroy_nbr(reste);
 					reste = temp;
 				}
+				/*printf("##########\n");*/
 				quotient = bymul10(quotient, mul[sclen], sclen);
 				quotient->num->num += x;
 			/*}else{
