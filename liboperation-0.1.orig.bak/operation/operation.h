@@ -6,14 +6,13 @@
 struct bin{
 	unsigned long int num;
 	int nmemb;
-	short int full;
-	short int alloc;
+	int full;
 	struct bin *next;
 	struct bin *prev;
 };
 #define INIT_BIN(num, nmemb, next, prev) \
-	{ num, nmemb, (nmemb == BLK), 0, next, prev }
-#define ZERO_BIN { 0, 1, 0, 0, NULL, NULL }
+	{ num, nmemb, (nmemb == BLK), next, prev }
+#define ZERO_BIN { 0, 1, 0, NULL, NULL }
 struct nbr{
 	unsigned long int bval;
 	unsigned long int bdot; /*128*/
@@ -49,34 +48,6 @@ struct nbr{
 	#define COEFS { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, D_MAX, D_MAX_LIMIT }
 #endif
 
-#define DOT(res_nbr, bin_ptr, start) \
-	start = bin_ptr = res_nbr->num ;\
-	while((res_nbr->dot || res_nbr->bdot) && bin_ptr->num%10 == 0){ \
-		if(res_nbr->dot){ \
-			res_nbr->dot--; \
-		}else{ \
-			res_nbr->dot = BLK-1;\
-			res_nbr->bdot--; \
-		} \
-		bin_ptr->num /= 10; \
-		bin_ptr->full = 0; \
-		if(--bin_ptr->nmemb == 0){ \
-			bin_ptr = bin_ptr->next; \
-			/*bin_ptr = res_nbr->num; \
-			res_nbr->num->next->prev = res_nbr->num->prev; \
-			res_nbr->num = res_nbr->num->next; \
-			res_nbr->num->prev->next = NULL; \
-			free(bin_ptr);*/ \
-		} \
-	} \
-	for(;bin_ptr; bin_ptr = bin_ptr->next, start = start->next){ \
-		start->num = bin_ptr->num; \
-		start->nmemb = bin_ptr->nmemb; \
-		start->full = bin_ptr->full; \
-	} \
-	for(;start; start = start->next) \
-		start->num = start->nmemb = start->full = 0;
-/*
 #define DOT(res_nbr, bin_ptr) \
 	while((res_nbr->dot || res_nbr->bdot) && res_nbr->num->num%10 == 0){ \
 		if(res_nbr->dot){ \
@@ -95,7 +66,6 @@ struct nbr{
 			free(bin_ptr); \
 		} \
 	}
-*/
 #define ADJUST_0(res_nbr, bin_ptr1, bin_ptr2) \
 	/*if(res_nbr->num->prev && res_nbr->num->prev->nmemb == 0){ \
 		bin_ptr1 = res_nbr->num->prev; \
@@ -105,20 +75,16 @@ struct nbr{
 		free(bin_ptr1); \
 	}*/ \
 	for(	bin_ptr1 = (res_nbr->num->prev) ? res_nbr->num->prev : res_nbr->num; \
-		(res_nbr->val > 1 || res_nbr->bval > 0) && (bin_ptr1->nmemb == 0 || bin_ptr1->num/mul[bin_ptr1->nmemb -1] == 0); \
+		(res_nbr->val > 1 || res_nbr->bval > 0) && bin_ptr1->num/mul[bin_ptr1->nmemb -1] == 0; \
 		/*res_nbr->val--*/ \
 	){ \
-		if(bin_ptr1->nmemb == 0){ \
-			bin_ptr1 = bin_ptr1->prev; \
-			continue; \
-		} \
 		bin_ptr1->full = 0;\
 		if(--bin_ptr1->nmemb == 0){ \
 			bin_ptr1 = bin_ptr1->prev; \
 			/*bin_ptr2 = res_nbr->num; \
 			bin_ptr1->prev->next = NULL; \
 			bin_ptr2->prev = (bin_ptr1->prev == res_nbr->num) ? NULL : bin_ptr1->prev;*/ \
-			/*res_nbr->val -= bin_ptr1->nmemb;*/ \
+			res_nbr->val -= bin_ptr1->nmemb; \
 			/*free(bin_ptr1); \
 			bin_ptr1 = (res_nbr->num->prev) ? res_nbr->num->prev : res_nbr->num;*/ \
 		} \
@@ -136,11 +102,8 @@ void *destroy_nbr(struct nbr *n);
 int equal(struct nbr *num1, struct nbr *num2);
 struct bin *new_num(unsigned long int val, unsigned long int dot);
 void *dup_nbr(struct nbr *num);
-void *mv_dot(struct nbr *num, unsigned long int bscale, int scale);
 void *bymul10(struct nbr *num, int fac, int faclen);
-/*void *align_dot(struct nbr *_num, unsigned long int blk, int bytes);*/
-void *reset_num(struct nbr *n);
-int num_cpy(struct nbr *res, struct nbr *num);
+void *align_dot(struct nbr *_num, unsigned long int blk, int bytes);
 struct retbcpy{
 	unsigned long int rblk;
 	int rbytes;
@@ -152,9 +115,9 @@ struct retbcpy{
 	#endif
 };
 struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigned long int lbytes, unsigned long int bytes);
-void *addition(struct nbr *num1, struct nbr *num2, struct nbr *result);
-void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result);
-void *multiplication(struct nbr *num1, struct nbr *num2, struct nbr *result);
+void *addition(struct nbr *num1, struct nbr *num2);
+void *soustraction(struct nbr *num1, struct nbr *num2);
+void *multiplication(struct nbr *num1, struct nbr *num2);
 void *ispuissance(struct nbr *num, int pui);
 void *spuissance(struct nbr *num, unsigned long int bpui, int pui);
 void *bymin10(struct nbr *num, unsigned long int bscale, int scale);

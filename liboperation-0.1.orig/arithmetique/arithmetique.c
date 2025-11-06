@@ -1,4 +1,159 @@
 #include "arithmetique.h"
+#define SQRT 1
+#if SQRT == 1
+void *r_square(struct nbr *num, unsigned long int bscale, int scale){
+	/*
+		Heron's Method:
+		Xn+1 = 1/2 * ( Xn+S/Xn )
+	*/
+	struct bin _cent = INIT_BIN(100, 3, NULL, NULL), _un = INIT_BIN( 1, 1, NULL, NULL ), _two = INIT_BIN( 2, 1, NULL, NULL ), *dot, *rm;
+	struct nbr *temp, *n, *f, *r, *m, *div, *add, *fmul, *half, *fac = NULL, *mul, 
+		cent = INIT_NBR( 0, 0, 3, 0, 0, NULL, NULL ),
+		un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), two = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL );
+	un.num = &_un;
+	two.num = &_two;
+	cent.num = &_cent;
+	mul = dup_nbr(&un);
+	r = dup_nbr(&un);
+	n = dup_nbr(num);
+	while(equal(n, &two) < 0){
+		temp = multiplication(n, &cent, NULL);
+		fac = bymul10(mul, 10, 1);
+		destroy_nbr(n);
+		n = temp;
+	}
+	if((add = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	add->num = new_num(num->bval + (num->val > 0), bscale + (scale > 0));
+	if((fmul = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	fmul->num = new_num(num->bval + (num->val > 0), bscale + 1);
+	half = division(&un, &two, NULL, 0, 1, 0);
+	div = division( n, &un, NULL, bscale, scale, 0 );
+	(void)addition( div, &un, add );
+	(void)multiplication( add, half, fmul );
+	f = fmul;
+
+	f->num->num -= (f->num->num%10);
+	DOT(f, dot, rm);
+
+	/*f->num->nmemb--;
+	if(f->num->full){
+		f->num->full = 0;
+		f->bdot--;
+		f->dot = BLK-1;
+	}else
+		f->dot--;*/
+	/*if(f->num->nmemb == 0){
+		rm = f->num;
+		f->num = f->num->next;
+		f->num->prev = rm->prev;
+		free(rm);
+	}*/
+	/*f = division( add, &two, NULL, bscale, scale, 0 );*/
+	/*printf("*\n");*/
+	/*rm = f->num;
+	f->num = f->num->next;
+	f->num->prev = rm->prev;
+	f->dot = 0;
+	free(rm);*/
+	destroy_nbr(div);
+	/*destroy_nbr(add);*/
+	if(bscale > 0 || scale > 0 || fac){
+		while(equal(f, r) != 0){
+			destroy_nbr(r);
+			r = dup_nbr(f);
+			div = division( n, r, NULL, bscale, scale, 0 );
+			reset_num(add);
+			/*print_nbr(div);
+			putchar('\n');*/
+			/*print_nbr(r);
+			putchar('\n');*/
+			(void)addition( div, r, add );
+			/*print_nbr(add);
+			putchar('\n');*/
+			reset_num(fmul);
+			(void)multiplication( add, half, fmul );
+			/*print_nbr(fmul);
+			putchar('\n');*/
+			f = fmul;
+			f->num->num -= (f->num->num%10);
+			DOT(f, dot, rm);
+			/*putchar('>');
+			print_nbr(f);
+			putchar('\n');*/
+			/*f->num->nmemb--;
+			if(f->num->full){
+				f->num->full = 0;
+				f->bdot--;
+				f->dot = BLK-1;
+			}else
+				f->dot--;
+			if(f->num->nmemb == 0){
+				rm = f->num;
+				f->num = f->num->next;
+				f->num->prev = rm->prev;
+				free(rm);
+			}*/
+			/*f = division( add, &two, NULL, bscale, scale, 0 );*/
+			destroy_nbr(div);
+			/*destroy_nbr(add);*/
+		}
+	}else{
+		m = multiplication(f, f, NULL);
+		while(equal(m, n) > 0){
+			destroy_nbr(m);
+			if(r != &un){
+				destroy_nbr(r);
+			}
+			r = f;
+			div = division( num, r, NULL, 0, 0, 0 );
+			reset_num(add);
+			(void)addition( div, r, add );
+			reset_num(mul);
+			(void)multiplication( add, half, fmul );
+			f = fmul;
+			f->num->num /= 10;
+			DOT(f, dot, rm);
+			/*f = division( add, &two, NULL, 0, 0, 0 );*/
+			/*rm = f->num;
+			f->num = f->num->next;
+			f->num->prev = rm->prev;
+			free(rm);
+			f->dot = 0;*/
+			destroy_nbr(div);
+			/*destroy_nbr(add);*/
+			m = multiplication(f, f, NULL);
+		}
+		destroy_nbr(m);
+	}
+	if(r != &un){
+		destroy_nbr(r);
+	}
+	if(fac){
+		r = division(f, mul, NULL, bscale, scale, 0);
+		destroy_nbr(fac);
+		/*destroy_nbr(f);*/
+		f = r;
+	}else
+		destroy_nbr(mul);
+	/*destroy_nbr(fmul);*/
+	destroy_nbr(add);
+	destroy_nbr(n);
+	destroy_nbr(half);
+	return f;
+	/*DOT(f, dot);*/
+	r = division(f, &un, NULL, bscale, scale, 0);
+	/*DESTROY_MOD(mod);*/
+	destroy_nbr(f);
+	DOT(r, dot, rm);
+	return r;
+}
+#else
 void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 	#define DESTROY_MOD(mod) \
 		destroy_nbr(mod); \
@@ -47,13 +202,6 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 		f->num->prev = rm->prev;
 		free(rm);
 	}
-	/*f = division( add, &two, NULL, bscale, scale, 0 );*/
-	/*printf("*\n");*/
-	/*rm = f->num;
-	f->num = f->num->next;
-	f->num->prev = rm->prev;
-	f->dot = 0;
-	free(rm);*/
 	destroy_nbr(div);
 	destroy_nbr(add);
 	if(bscale > 0 || scale > 0 || fac){
@@ -62,17 +210,19 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 				destroy_nbr(r);
 			}
 			r = f;
-			/*print_nbr(n);
-			printf("\n%lu :: %i, %lu :: %i\n", n->bval, n->val, n->bdot, n->dot);
-			print_nbr(r);
-			printf("\n%lu :: %i, %lu :: %i\n", r->bval, r->val, r->bdot, r->dot);*/
 			div = division( n, r, NULL, bscale, scale, 0 );
-			/*printf("<<<<add>>>>\n");*/
+			print_nbr(div);
+			putchar('/');
+			print_nbr(r);
+			putchar('\n');
 			add = addition( div, r, NULL );
-			/*print_nbr(add);
-			printf("/2 = ");*/
-			/*f = multiplication( add, half );*/
+			putchar('+');
+			print_nbr(add);
+			putchar('\n');
 			f = multiplication( add, half, NULL );
+			putchar('>');
+			print_nbr(f);
+			putchar('\n');
 			f->num->num /= 10;
 			f->num->nmemb--;
 			if(f->num->full){
@@ -87,7 +237,6 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 				f->num->prev = rm->prev;
 				free(rm);
 			}
-			/*f = division( add, &two, NULL, bscale, scale, 0 );*/
 			destroy_nbr(div);
 			destroy_nbr(add);
 		}
@@ -101,12 +250,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 			r = f;
 			div = division( num, r, NULL, 0, 0, 0 );
 			add = addition( div, r, NULL );
-			/*print_nbr(add);
-			putchar('\n');
-			print_nbr(&two);
-			putchar('\n');*/
 			f = multiplication( add, half, NULL );
-			/*f = division( add, &two, NULL, 0, 0, 0 );*/
 			rm = f->num;
 			f->num = f->num->next;
 			f->num->prev = rm->prev;
@@ -146,6 +290,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 	r = division(f, &un, NULL, bscale, scale, 0);
 	/*DESTROY_MOD(mod);*/
 	destroy_nbr(f);
-	DOT(r, dot);
+	DOT(r, dot, rm);
 	return r;
 }
+#endif
