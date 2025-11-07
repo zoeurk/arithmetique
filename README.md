@@ -3,6 +3,6 @@ librairie d'operation:
 +,-,*,/,%,puissance
   
 AUCUNE GARANTIE  
-Not Working  
+Pas sûre que ça fonctionne  
 Less faster than BC
-Vous pouvez travailler dessus, je sais pas si j'aurai le temps
+Vous pouvez travailler dessus, je sais pas si j'aurais le temps

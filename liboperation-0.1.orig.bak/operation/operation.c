@@ -1707,6 +1707,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			PRINT_NBR(reste);*/
 		}
 	}else{
+		printf("OK\n");
 		if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
@@ -1779,6 +1780,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		}*/
 	}
 	if(bscale || scale){
+		PRINT_NBR(quotient);
+		printf("* * * * * *\n");
 		res = bymin10(quotient, bscale, scale);
 	}
 	/*printf("%i, %i\n",(num1->bdot > bdot_0 && bscale <= num1->bdot - bdot_0), (
