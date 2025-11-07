@@ -136,7 +136,7 @@ void *destroy_nbr(struct nbr *n);
 int equal(struct nbr *num1, struct nbr *num2);
 struct bin *new_num(unsigned long int val, unsigned long int dot);
 void *dup_nbr(struct nbr *num);
-void *mv_dot(struct nbr *num, unsigned long int bscale, int scale);
+void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale);
 void *bymul10(struct nbr *num, int fac, int faclen);
 /*void *align_dot(struct nbr *_num, unsigned long int blk, int bytes);*/
 void *reset_num(struct nbr *n);
