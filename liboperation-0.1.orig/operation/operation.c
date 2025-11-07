@@ -1861,12 +1861,10 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 }
 #endif
 void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
-	struct bin *b, *bn, *nmv, *end;
+	struct bin *bn, *nmv, *end;
 	struct nbr *n;
 	unsigned long int _bscale = 0, ubscale = 0, r_val, bs;
 	int _scale = 0, uscale = 0, rb_val, init = 0, mul[C_BLK] = COEFS, s;
-	/*scale=6;
-	bscale = 3;*/
 	if(scale == 0 && bscale <= num->bdot){
 		n = dup_nbr(num);
 		n->bval += bscale;
@@ -1874,8 +1872,6 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 		ADJUST_0(n, nmv, bn);
 		return n;
 	}
-	/*print_nbr(num);
-	printf(" >> %lu :: %i, %lu :: %i => ", num->bdot, num->dot, bscale, scale);*/
 	if(bscale < num->bdot || (bscale == num->bdot && scale <= num->dot)){
 		if(bscale < num->bdot || scale < num->dot){
 			init = 2;
@@ -1903,9 +1899,6 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 		s = scale;
 		bs = bscale;
 		end = bn;
-		/*printf(" :> %lu :: %i\n", bs, s);*/
-		/*printf("num\t= %lu, %i :: %lu, %i\nn\t= %lu, %i :: %lu, %i\nscale\t= %lu, %i\n",
-			num->bval, num->val, num->bdot, num->dot, num->bval, num->val, num->bdot, num->dot, bscale, scale);*/
 	}else{
 		s = num->dot;
 		bs = num->bdot;
@@ -1940,15 +1933,11 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 				ubscale++;
 				uscale -= BLK;
 			}
-		/*if(uscale >= BLK)
-			exit(0);*/
 		r_val = uscale;
 		rb_val = ubscale;
 	}
 	if(num->dot || num->bdot){
 		if(bn->nmemb + s > BLK){
-			/*BUG*/
-			/*printf("1\n");*/
 			nmv = bn->next;
 			nmv->num = bn->num / mul[BLK-s];
 			nmv->nmemb = n->val;
@@ -1958,7 +1947,6 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 			nmv->nmemb = BLK;
 			nmv->full = 1;
 			if(init == 0){
-				/*printf("2\n");*/
 				for(nmv = nmv->prev, bn = bn->prev; nmv->prev->next != NULL; bn = bn->prev, nmv = nmv->prev){
 					nmv->num = (bn->num % mul[bn->nmemb-s]) * mul[s] + bn->prev->num / mul[bn->prev->nmemb-s];
 					nmv->nmemb = BLK;
@@ -1967,39 +1955,26 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 				if(n->dot == 0 && n->bdot == 0)
 					nmv->num = nmv->nmemb = 0;
 			}else{
-				/*printf("FAILURE (%lu :: %i, %i, %i)=> ", bscale, scale, num->dot, s);
-				print_nbr(num);
-				putchar('\n');*/
-				/*printf("3\n");*/
 				for(nmv = nmv->prev, bn = bn->prev, bs+=2; bs; bs--, bn = bn->prev, nmv = nmv->prev){
 					nmv->num = (bn->num % mul[bn->nmemb-s]) * mul[s] + bn->prev->num / mul[bn->prev->nmemb-s];
 					nmv->nmemb = BLK;
 					nmv->full = 1;
 				}
 				for(;bn->prev->next != NULL && bn->prev->nmemb >= s; bn = bn->prev){
-					/*if(bn->prev->nmemb < s){
-						break;
-					}*/
 					bn->num = (bn->num % mul[bn->nmemb-s])
 							* mul[s] + bn->prev->num / mul[bn->prev->nmemb-s];
 					bn->nmemb = BLK;
 					bn->full = 1;
 				}
-				/*printf("ERREUR\n");*/
 				bn->num %= mul[BLK-s];
 				bn->num *= mul[bn->prev->nmemb];
 				bn->num += bn->prev->num;
-				/*bn->full = 0;*/
 				n->dot = bn->nmemb = BLK - s + bn->prev->nmemb;
 				print_nbr(n);
 				if(bn->nmemb == BLK){
-					/*if(bn->nmemb == BLK)
-						exit(0);*/
 					n->dot = 0;
 					n->bdot++;
 					bn->full = 1;
-					/*printf("FIN\n");*/
-					/*exit(0);*/
 				}
 				if(bn->nmemb >= BLK){
 					bn->prev->num = bn->num%mul[bn->nmemb - BLK];
@@ -2010,61 +1985,20 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 					bn->prev->full = 0;
 					bn->prev->num = bn->prev->nmemb = 0;
 				}else{
-					/*printf("4\n");*/
 					bn->full = 0;
 					bn->prev->full = 0;
 					bn->prev->nmemb = 0;
 					bn->prev->num = 0;
-					/*printf("DOT == %i, %i, %i\n", n->dot, s, bn->nmemb);*/
-					/*if(num->dot < s){
-						print_nbr(n);
-						printf(" > %i :: %i :: %i = %lu\n", n->dot, s, bn->nmemb, bn->num);
-						exit(0);
-					}else*/
-					/*printf("%i , %i\n", num->dot, s);*/
 					if(num->dot >= s){
 						n->dot = bn->nmemb = num->dot - s;
 						bn->num %= mul[bn->nmemb];
 					}
-					/*for(bn = n->num;bn;bn = bn->next)
-						printf("%lu :: %i :: %i\n", bn->num, bn->nmemb, bn->full);
-					print_nbr(n);
-					putchar('\n');*/
 				}
-				/*bn->num = 0;*/
-				/*putchar('\n');
-				for(b = n->num;b;b = b->next)
-					printf("%lu :: %i\n", b->num, b->nmemb);*/
 			}
-			/*printf("<<<<====>>>>\n");
-			print_nbr(n);
-			putchar('\n');
-			for(bn = n->num;bn;bn = bn->next)
-				printf("%lu :: %i :: %i\n", bn->num, bn->nmemb, bn->full);
-			printf("<<<<====>>>>\n");*/
-			/*printf(">>>>>");
-			print_nbr(n);
-			putchar('\n');*/
 		}else{
-			/*printf("5:%i:%i\n", n->dot, s);*/
 			for(nmv = bn->prev;nmv != end && nmv->nmemb != 0;bn = bn->prev, nmv = nmv->prev){
 				if(nmv->nmemb < s){
-					/*printf("scale=%lu :: %i\n", bscale, scale);*/
-					/*printf("%lu :: %i, %lu :: %i\n", bn->num, bn->nmemb, bn->prev->num, bn->prev->nmemb);*/
-					/*print_nbr(num);
-					putchar('\n');
-					print_nbr(n);
-					putchar('\n');
-					for(bn = n->num;bn;bn = bn->next)
-						printf("%lu :: %i\n", bn->num, bn->nmemb);*/
-					/*bn->num /= mul[nmv->nmemb];*/
-					/*for(bn = n->num;bn;bn = bn->next)
-						printf("%lu :: %i\n", bn->num, bn->nmemb);
-					printf("result = ");
-					print_nbr(n);
-					putchar('\n');*/
 					goto end;
-					/*exit(0);*/
 				}
 				bn->num *= mul[s];
 				bn->num += nmv->num / mul[nmv->nmemb-s];
@@ -2072,18 +2006,8 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 				nmv->nmemb -= s;
 				bn->nmemb += s;
 				bn->full = (bn->nmemb == BLK);
-				/*printf("%lu :: %lu\n", bn->num, nmv->num);*/
 			}
-			/*printf("FINISH\n");*/
 			goto after;
-			/*bn->num *= mul[BLK-s];
-			bn->num += nmv->num/mul[BLK-s];
-			nmv->nmemb = nmv->num = 0;*/
-			/*print_nbr(num);
-			putchar('\n');
-			print_nbr(n);
-			printf(" > %i, %i, %i\n", bn->nmemb, s, n->val);*/
-			/*bn->num = bn->nmemb = bn->full = 0;*/
 			end:;
 			bn->num *= mul[bn->prev->nmemb];
 			bn->num += bn->prev->num;
@@ -2092,20 +2016,9 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 			bn->prev->num = 0;
 			bn->prev->nmemb = 0;
 			bn->prev->full = 0;
-			/*for(b = n->num;b;b = b->next)
-				printf("%lu : %i\n", b->num, b->nmemb);*/
 			after:;
-			/*if(nmv->num != 0){
-				printf("= = = = = =\n");
-				for(bn = n->num; bn; bn = bn->next)
-					printf(">>%lu :: %i :: %i\n", bn->num, bn->nmemb, bn->full);
-				printf("= = = = = =\n");
-			}*/
 		}
 	}
-	/*printf("====>");
-	print_nbr(n);
-	putchar('\n');*/
 	if(n->num->nmemb == 0){
 		for(nmv = bn = n->num;bn->nmemb == 0; bn = bn->next);
 		for(;bn;nmv = nmv->next, bn = bn->next){
@@ -2115,20 +2028,13 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 		}
 		nmv->nmemb = nmv->full = nmv->num = 0;
 	}
-	/*print_nbr(n);
-	putchar('>');
-	printf("%lu :: %i >> %lu :: %i\n", n->bval, n->val, ubscale, uscale);
-	for(bn = n->num; bn; bn = bn->next)
-		printf("%lu :: %i :: %i\n", bn->num, bn->nmemb, bn->full);*/
 	if(uscale || ubscale){
 		ubscale -= n->bval;
 		uscale -= n->val;
 		if(uscale < 0){
 			ubscale--;
 			uscale += BLK;
-		}/*else
-			if(uscale == 0)
-				ubscale--;*/
+		}
 		for(nmv = bn = n->num; bn->next && bn->next->nmemb != 0; nmv = bn = bn->next);
 		for(;ubscale > 0; ubscale--, bn = bn->next);
 		if(n->val == 0 || n->val + uscale >= BLK){
@@ -2157,7 +2063,6 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 				bn->nmemb = BLK;
 			}
 			for(;bn->next;bn->num = 0, bn = bn->prev);
-			/*printf("* *  * * * *\n");*/
 		}
 		n->val = r_val;
 		n->bval = rb_val;
@@ -2169,16 +2074,7 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 			}
 		}
 	}
-	/*print_nbr(n);
-	putchar('>');
-	printf("%lu :: %i\n", n->bval, n->val);*/
-	/*if(n->dot == BLK){
-		n->dot = 0;
-		n->bdot++;
-	}*/
 	ADJUST_0(n, nmv, bn);
-	/*for(bn = n->num; bn; bn = bn->next)
-		printf("%lu :: %i :: %i\n", bn->num, bn->nmemb, bn->full);*/
 	return n;
 }
 #define PRINT_NBR(n) \
@@ -2187,14 +2083,13 @@ void *mv_dot(struct nbr *num, unsigned long int bscale, int scale){
 #define M_BLK 2
 void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation){
 	struct retbcpy *bcpy;
-	struct bin *bdividende, *breste, *b, _un = { 1, 1, 0, 0, NULL, NULL },
+	struct bin *bdividende, *breste, *b,
 		bdix = { 10, 2, 0, 0, NULL, NULL }, bsingle = { 0, 1, 0, 0, NULL, NULL }, *bs = NULL, *bt, bx = { 0, 1, 0, 0, NULL, NULL };
 	struct nbr *res = NULL, *diviseur, *dividende, *quotient, *mod = NULL, *reste = NULL,
-		dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" ), *fac, *fac_, *fac1, *temp, *temp_, *temp__,
-		nx = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), un = INIT_NBR( 0, 0, 1, 0, 0, NULL, "1" );
-	unsigned long int blk, bval, blen, mbdot,bdot_0 = 0, cbscale = 0, bfac, binit, lsc;
-	int neg1, neg2, x, a = 0, start = 0, val, len, dot_0 = 0, cscale = 0, cfac, sclen, mdot, mul[C_BLK] = COEFS, init, sc;
-	un.num = &_un;
+		dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" ), *temp, *temp_,
+		nx = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL );
+	unsigned long int blk, bval, blen, mbdot,bdot_0 = 0, cbscale = 0, binit, lsc;
+	int neg1, neg2, x, a = 0, start = 0, val, len, dot_0 = 0, cscale = 0, sclen, mdot, mul[C_BLK] = COEFS, init, sc;
 	dix.num = &bdix;
 	nx.num = &bx;
 	if(equal(num2, &nx) == 0){
@@ -2227,13 +2122,10 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	if(num2->dot || num2->bdot){
 		bdot_0 = num2->bdot;
 		dot_0 = num2->dot;
-		/*fac_ = spuissance(&dix, bdot_0, dot_0);
-		diviseur = multiplication(num2, fac_, NULL);*/
 		diviseur = mv_dot(num2, bdot_0, dot_0);
 		DOT(diviseur, bs, b);
 	}else{
 		diviseur = dup_nbr(num2);
-		fac_ = &un;
 	}
 	if(scale || bscale || bdot_0 || dot_0){
 		mbdot = bdot_0 + bscale;
@@ -2243,32 +2135,10 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			mbdot++;
 		}
 		temp = mv_dot(num1, mbdot, mdot);
-		/*fac = spuissance(&dix, bscale, scale);
-		fac1 = multiplication(fac, fac_, NULL);
-		temp = multiplication(num1, fac1, NULL);
-		if(fac_ != &un)
-			destroy_nbr(fac_);
-		destroy_nbr(fac);
-		destroy_nbr(fac1);*/
 		dividende = temp;
 	}else{
-		/*if(fac_ != &un){
-			temp = multiplication(num1, fac_, NULL);
-			destroy_nbr(fac_);
-			dividende = temp;
-		}else*/
-			dividende = dup_nbr(num1);
+		dividende = dup_nbr(num1);
 	}
-	/*}*/
-	/*PRINT_NBR(num2);
-	PRINT_NBR(diviseur);
-	PRINT_NBR(num1);
-	PRINT_NBR(dividende);
-	for(bt = dividende->num;bt;bt = bt->next)
-		printf("%lu :: %i :: %i\n",bt->num, bt->nmemb, bt->full);*/
-	/*printf("%lu :: %i, %lu :: %i\n", dividende->bval, dividende->val, dividende->bdot, dividende->dot);
-	printf("= = = = = = = = = = =\n");
-	printf("= = = = = = = = = = =\n");*/
 	if(dividende->bdot || dividende->dot){
 		if((mod = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
@@ -2276,15 +2146,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		}
 		mod->num = new_num(dividende->bval + (dividende->val > 0)+1, dividende->bdot + (dividende->dot > 0));
 		num_cpy(mod, dividende);
-		/*PRINT_NBR(mod);
-		PRINT_NBR(dividende);*/
-		/*mod = dup_nbr(dividende);*/
-		/*PRINT_NBR(mod);*/
-		/*for(bt=mod->num;bt;bt = bt->next)
-			printf("==>%lu :: %i\n", bt->num, bt->nmemb);
-		printf("%lu :: %i, %lu :: %i\n", mod->bval, mod->val, mod->bdot, mod->dot);*/
 		for(bt = mod->num->prev;mod->val || mod->bval;bt = bt->prev){
-			/*printf(">%lu :: %i :: %i\n", bt->num, bt->nmemb, bt->full);*/
 			bt->num = 0;
 			if(bt->full){
 				mod->bval--;
@@ -2297,17 +2159,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		bt->next->nmemb = 1;
 		mod->bval = 0;
 		mod->val = 1;
-		/*mv_dot(temp, dividende->bdot, dividende->dot);*/
 	}
-	/*printf("%lu :: %i, %lu :: %i\n", dividende->bval, dividende->val, dividende->bdot, dividende->dot);*/
-	/*printf("===========\n");*/
-	/*temp = mv_dot(mod, mod->bdot, mod->dot);*/
-	/*PRINT_NBR(mod);*/
-	/*PRINT_NBR(temp);*/
-	/*for(bt = mod->num;bt;bt = bt->next)
-		printf("%lu :: %i :: %i :: %i\n", bt->num, bt->nmemb, bt->full, bt->alloc);*/
-	/*exit(0);*/
-	/*bs = NULL;*/
 	bt = dividende->num;
 	for(bt = dividende->num; dividende->bdot > 0 || dividende->dot > 0; bt = bt->next){
 		if(dividende->dot){
@@ -2315,19 +2167,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		}else{
 			dividende->bdot--;
 		}
-		/*if(bt->nmemb > 0)*/
-			a = bt->num/mul[bt->nmemb-1];
-		/*bt = bt->next;*/
-		/*dividende->num = dividende->num->next;
-		dividende->num->prev = (bt->prev != dividende->num) ? bt->prev : NULL;
-		if(bt->alloc){
-			if(bs){
-				free(bs);
-				bs = bt;
-			}else{
-				bs = bt;
-			}
-		}*/
+		a = bt->num/mul[bt->nmemb-1];
 	}
 	for(bs = dividende->num, bt = bt; bt; bt = bt->next, bs = bs->next){
 		bs->num = bt->num;
@@ -2336,34 +2176,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	}
 	for(bs = bs;bs;bs = bs->next)
 		bs->num = bs->nmemb = bs->full = 0;
-	/*PRINT_NBR(dividende);
-	PRINT_NBR(temp);
-	printf("<<<<<>>>>>\n");*/
-	/*dividende->dot = dividende->bdot = 0;*/
-	/*printf("%lu\n", bt->num);*/
-	/*PRINT_NBR(dividende);*/
-	/*exit(0);*/
-	/*bs = dividende->num;
-	dividende->num = bs->next;
-	dividende->num->prev = bs->prev;
-	dividende->num->prev->next = NULL;*/
-	/*if(bs)
-		free(bs);*/
-	/*printf("+++>%lu\n",dividende->num->num);
-	for(bt = diviseur->num;bt;bt = bt->next){
-		printf("%lu :: %i :: %i :: %i\n", bt->num, bt->nmemb, bt->full, bt->alloc);
-	}
-	for(bt = dividende->num;bt;bt = bt->next){
-		printf("%lu :: %i :: %i :: %i\n", bt->num, bt->nmemb, bt->full, bt->alloc);
-	}*/
-	/*if(bs)
-		free(bs);*/
-	/*bdividende = (dividende->num->prev) ? dividende->num->prev: dividende->num;*/
-	/*PRINT_NBR(dividende);*/
 	for(bdividende = (dividende->num->prev) ? dividende->num->prev: dividende->num; bdividende->nmemb == 0 && bdividende != dividende->num;bdividende = bdividende->prev);
-	/*PRINT_NBR(dividende);
-	printf("%lu\n", bdividende->num);
-	exit(0);*/
 	bval = dividende->bval;
 	val = dividende->val;
 	blen = diviseur->bval;
@@ -2374,9 +2187,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		sc -= BLK;
 		lsc++;
 	}
-	/*PRINT_NBR(diviseur);
-	PRINT_NBR(dividende);
-	printf("%lu :: %i, %lu :: %i\n", blen, len, bval, val);*/
 	if(blen < bval || (blen == bval && len <= val)){
 		if((reste = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
@@ -2396,12 +2206,9 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0), lsc + (sc > 0));
 		for(blk = binit + (init > 0), bt = reste->num; blk > 1; blk--, bt = bt->next);
 		breste = bt;
-		/*printf("%lu :: %i, %i>>", binit, init, start);*/
 		bcpy = nbytescpy(&breste, &bdividende, &start, binit, init);
 		reste->val = bcpy->rbytes;
 		reste->bval = bcpy->rblk;
-		/*PRINT_NBR(reste);*/
-		/*exit(0);*/
 		if(equal(reste, diviseur) < 0){
 			if(reste->bval < dividende->bval || (reste->bval == dividende->bval && reste->val < dividende->val)){
 				bs = &bsingle;
@@ -2417,22 +2224,13 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			exit(EXIT_FAILURE);
 		}
 		quotient->num = new_num(num1->bval + (num1->val > 0), bscale + (scale > 0));
-		/*PRINT_NBR(diviseur);
-		PRINT_NBR(dividende);*/
 		for(;;){
 			for(bx.nmemb = 1, bx.num = 0, x = 0; (int)bx.num < mul[M_BLK]; bx.num++){
 				if(equal(reste, diviseur) < 0){
-					/*printf("%lu => ", bx.num);*/
-					/*PRINT_NBR(reste);*/
 					x = bx.num;
 					break;
 				}
-				/*print_nbr(reste);
-				putchar('-');
-				print_nbr(diviseur);
-				putchar('=');*/
 				soustraction(reste, diviseur, reste);
-				/*PRINT_NBR(reste);*/
 			}
 			quotient = bymul10(quotient, mul[sclen], sclen);
 			quotient->num->num += x;
@@ -2456,7 +2254,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 						}else{
 							val -= sclen;
 						}
-
 					}else{
 						val -= sclen;
 					}
@@ -2531,8 +2328,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			(void)addition(&nx, quotient, quotient);
 		}
 	}
-	/*for(bt = quotient->num;bt;bt = bt->next)
-		printf("%lu :: %i\n", bt->num, bt->nmemb);*/
 	if(bscale || scale){
 		res = bymin10(quotient, bscale, scale);
 		destroy_nbr(quotient);
@@ -2548,124 +2343,12 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 				bdot_0++;
 			}
 			temp = mv_dot(reste, mod->bdot, mod->dot);
-			/*printf("%i\n", mod->dot);*/
 			temp_ = mv_dot(mod, mod->bdot, mod->dot);
-			/*PRINT_NBR(reste);*/
-			/*for(bs = reste->num;bs;bs = bs->next)
-				printf("%lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
-			/*PRINT_NBR(mod);*/
-			/*for(bs = mod->num;bs;bs = bs->next)
-				printf("%lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
-			/*PRINT_NBR(temp);*/
-			/*for(bs = temp->num;bs;bs = bs->next)
-				printf("%lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
-			/*PRINT_NBR(temp_);*/
-			/*for(bs = temp_->num;bs;bs = bs->next)
-				printf("%lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
-			destroy_nbr(reste);
-			reset_num(mod);
-			/*destroy_nbr(mod);*/
-			/*PRINT_NBR(temp_);
-			for(bt = temp_->num;bt;bt = bt->next)
-				printf("%lu :: %i :: %i\n", bt->num, bt->nmemb, bt->full);*/
-			/*mod->val = mod->dot;
-			mod->bval = mod->bdot;
-			mod->dot = mod->bdot = 0;*/
 			(void)addition(temp, temp_, mod);
-			/*PRINT_NBR(mod);
-			for(bs = mod->num;bs;bs = bs->next)
-				printf("%lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
 			destroy_nbr(temp);
 			destroy_nbr(temp_);
-			/*PRINT_NBR(temp);
-			PRINT_NBR(quotient);*/
 			*modulo = mod;
 		}
-		/*if(	(num1->bdot > bscale || (num1->bdot == bscale && num1->dot > scale))
-			|| (
-				num1->bdot == bdot_0 && bscale == num1->bdot - bdot_0
-				&& num1->dot >= dot_0 && scale < num1->dot - dot_0
-			)
-		){
-			cbscale = bdot_0 + bscale;
-			cscale = dot_0 + scale;
-			if(cscale >= BLK){
-				cbscale++;
-				cscale -= BLK;
-			}
-			bfac = num1->bdot - cbscale;
-			if(cscale < num1->dot)
-				cfac = num1->dot - cscale;
-			else{
-				bfac--;
-				cfac = BLK + num1->dot - cscale;
-			}
-			fac = NULL;
-			if((num1->bdot > cbscale || (num1->bdot == cbscale && num1->dot > cscale))){
-				fac = spuissance(&dix, bfac, cfac);
-				dot_0 += num1->dot - dot_0 - scale;
-				bdot_0 += num1->bdot - bdot_0 - bscale;
-			}else{
-				if(	(num1->bdot > cbscale)){
-					fac = spuissance(&dix, bfac, cfac);
-					dot_0 += BLK + num1->dot - dot_0 - scale;
-					bdot_0 += num1->bdot - bdot_0 - bscale - 1;
-				}else{
-					fac = &nx;
-					nx.num->num = 1;
-				}
-			}
-			if(dot_0 >= BLK){
-				bdot_0++;
-				dot_0 -= BLK;
-			}
-			if(fac != &nx){
-				print_nbr(num1);
-				printf("=>%lu :: %i\n", num1->bdot, num1->dot);
-				PRINT_NBR(dividende);
-				PRINT_NBR(*modulo);
-				PRINT_NBR(*modulo);
-				PRINT_NBR(dividende);
-				PRINT_NBR(temp_);
-				putchar('\n');
-				temp = multiplication(*modulo, fac, NULL);
-				temp__ = multiplication(dividende, fac, NULL);
-				printf("\n<<<<<>>>>>\n");
-				PRINT_NBR(temp);
-				destroy_nbr(temp__);
-				destroy_nbr(fac);
-				print_nbr(temp__);
-				printf("\n<<<<<>>>>>\n");
-				fac = spuissance(&dix, num1->bdot, num1->dot);
-				temp_ = multiplication(num1, fac, NULL);
-				print_nbr(temp_);
-				destroy_nbr(temp_);
-				destroy_nbr(fac);
-				print_nbr(temp_);
-				printf("\n<==========>\n");
-				DOT(temp_, bs, b);
-				print_nbr(temp_);
-				putchar('-');
-				print_nbr(temp__);
-				mod = soustraction(temp_, temp__, NULL);
-				printf(" = ");
-				PRINT_NBR(mod);
-				exit(0);
-				destroy_nbr(temp_);
-				destroy_nbr(temp__);
-				temp_ = addition(temp, mod, NULL);
-				destroy_nbr(temp);
-				destroy_nbr(mod);
-				num_cpy(*modulo, temp_);
-				destroy_nbr(temp_);
-				putchar('>');
-				print_nbr(*modulo);
-				putchar('\n');
-				exit(0);
-				for(bs = (*modulo)->num;bs;bs = bs->next)
-					printf("%lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);
-			}
-		}*/
 		bx.num = 0;
 		if(scale || bscale || dot_0 || bdot_0){
 			cscale = scale + dot_0;
@@ -2674,20 +2357,9 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 				cscale -= BLK;
 				cbscale++;
 			}
-			/*printf("= = = =\n%lu :: %i\n= = = =\n", cbscale, cscale);
-			for(bs = (*modulo)->num;bs;bs = bs->next)
-				printf("%lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);
-			printf("%lu :: %i => ", bscale, scale);
-			print_nbr(num1);
-			putchar('%');
-			print_nbr(num2);
-			putchar('=');
-			PRINT_NBR((*modulo));*/
 			mod = bymin10(*modulo, cbscale, cscale);
 			destroy_nbr(*modulo);
 			*modulo = mod;
-			/*for(bs = mod->num;bs;bs = bs->next)
-				printf("%lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
 		}
 		if(neg1){
 			if(equal(*modulo, &nx) != 0)
