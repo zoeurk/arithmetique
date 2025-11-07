@@ -448,11 +448,6 @@ void *bymul10(struct nbr *num, int fac, int faclen){
 	struct bin *nw = NULL, *r, z = ZERO_BIN/*z = INIT_BIN( 0, 1, NULL, NULL )*/;
 	struct nbr zero = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL );
 	int n;
-	/*printf("bymul10():");
-	print_nbr(num);
-	putchar('\n');
-	for(r = num->num;r;r = r->next)
-		printf("%lu :: %i :: %i\n", r->num, r->nmemb, r->full);*/
 	zero.num = &z;
 	if(equal(num, &zero) == 0){
 		return num;
@@ -563,9 +558,6 @@ struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigne
 			*bstart = (*bstart + bisread);
 		if(toread == 0 && letread){
 			toread = BLK;
-			/*if((*b2)->nmemb == BLK)
-				(*b2)->full = 1;*/
-			/*(*b2)->full = 1;*/
 			(*b2) = (*b2)->prev;
 		}
 	}while(letread || letbread);
