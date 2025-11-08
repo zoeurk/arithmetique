@@ -287,26 +287,16 @@ int equal(struct nbr *num1, struct nbr *num2){
 		/*printf("%lu :: %lu\n", b1->num, b2->num);*/
 		b1 = b1->prev;
 		b2 = b2->prev;
-		if(!sbdot && !sdot)
-			break;
-	}while(len != 0 || blen != 0);
-	/*aprintf("%i :: %i, %lu :: %lu => %lu, %i, == %i\n", len1, len2, blen1, blen2, blen, len, ((!blen || (blen1 != blen2)) || (!len || (len1 != len2))));*/
-
+		/*if(!sbdot && !sdot)
+			break;*/
+	}while(sdot || sbdot);
+	/*while(len != 0 || blen != 0);*/
 	if(((blen || (blen1 != blen2)) || (len || (len1 != len2))) && b1 && b2)
 		do{
-			/*printf("= = = = =%lu :: %i, %i, %i\n", blen, len, len1,len2);
-			if(len < 0){
-				print_nbr(num1);
-				putchar('=');
-				print_nbr(num2);
-				putchar('\n');
-				exit(0);
-			}*/
 			if(b1->nmemb != b2->nmemb){
 				if(b1->nmemb > b2->nmemb){
 					for(dmul = 1, i = b1->nmemb - b2->nmemb; i > 0; i--)
 						dmul *= 10;
-					/*dmul = 10^(b1->nmemb - b2->nmemb);*/
 					n1 = b1->num;
 					n2 = b2->num * dmul;
 				}else{
@@ -329,14 +319,17 @@ int equal(struct nbr *num1, struct nbr *num2){
 			else
 				if(b1->num < b2->num)
 					return -1*ret;
-			if(!b1->full && len)
+			/*if(!b1->full && len)
 				len -= (len1 < len2) ? b1->nmemb : b2->nmemb;
 			else
 				if(blen)
-					blen--;
+					blen--;*/
 			b1 = b1->prev;
 			b2 = b2->prev;
-		}while(len != 0 || blen != 0);
+			/*if(b1->next == NULL || b2->next == NULL)
+				break;*/
+		}while(b1->next != NULL && b2->next != NULL);
+		/*while(len != 0 || blen != 0);*/
 	if((b1 && b1 != num1->num->prev) && (b2 && b2 != num2->num->prev)){
 		return 0;
 	}
@@ -1611,150 +1604,8 @@ void *spuissance(struct nbr *num, unsigned long int bpui, int pui){
 	return res;
 }
 #endif
-#define NEW 0
-#if NEW  == 1
-void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
-	struct nbr *res = NULL;
-	struct bin *bs, *bt;
-	unsigned long int bdot;
-	int mul[C_BLK] = COEFS;
-	if(num->bval < bscale || (num->bval == bscale && num->val <= scale)){
-		printf("* * * * * * * * *\n");
-		res = num;
-		res->bval = 0;
-		res->bdot = bscale;
-		res->val = 0;
-		res->dot = scale;
-		if(scale == 0){
-			bt = res->num->prev;
-			for(bdot = bscale, bt = res->num; bdot > 0; bdot--, bt = bt->next){
-				bt->nmemb = BLK;
-				bt->full = 1;
-			}
-			bt->nmemb = 1;
-			res->val = 1;
-			res->bval = 0;
-			return res;
-		}
-		for(bs = res->num;bs;bs = bs->next){
-			bs->nmemb = BLK;
-			bs->full = 1;
-		}
-		bt = res->num->prev;
-		while(bt->nmemb == 0)
-			bt = bt->prev;
-		if(bt->next)
-			bs = bt = bt->next;
-		else
-			bs = res->num->prev;
-		bt->num *= mul[bt->prev->nmemb - scale];
-		bt->num += bt->prev->num/mul[scale];
-		bt->prev->num -= (bt->prev->num/mul[scale])*mul[scale];
-		bt->nmemb += bt->prev->nmemb - scale;
-		if(bt->num == 0)
-			bt->nmemb = 0;
-		bt->prev->full = 0;
-		for(bt = bt->prev; bt && bt != res->num; bt = bt->prev){
-			bt->num *= mul[BLK-scale];
-			bt->num += bt->prev->num/mul[scale];
-			bt->nmemb = BLK;
-			bt->full = 1;
-			bt->prev->num -= (bt->prev->num/mul[scale])*mul[scale];
-		}
-		bt->num %= mul[scale];
-		bt->nmemb = scale;
-		bt->full = 0;
-		for(res->val = 0, bt = res->num; bt; bt = bt->next){
-			if((bt->full = (bt->nmemb == BLK))){
-				res->bval++;
-			}else
-				res->val += bt->nmemb;
-		}
-		res->bval -= res->bdot;
-		res->dot = scale;
-		res->bdot = bscale;
-		if(res->val >= res->dot)
-			res->val -= res->dot;
-		else{
-			res->val = BLK + res->val - res->dot;
-			res->bval--;
-		}
-		if(bs->nmemb != 0)
-			bs = bs->next;
-		res->val = bs->nmemb = 1;
-	}else{
-		res = num;
-		res->bdot = bscale;
-		res->dot = scale;
-		for(bt = res->num;bt;bt = bt->next){
-			bt->full = (bt->nmemb == BLK);
-		}
-		if(scale == 0){
-			res->val -= res->dot;
-			res->bval -= res->bdot;
-			return res;
-		}
-		res->val = 0;
-		res->bval = 0;
-		bt = res->num->prev;
-		while(bt->nmemb == 0)
-			bt = bt->prev;
-		if(bt->next)
-			bs = bt = bt->next;
-		else
-			bs = res->num->prev;
-		/*if(bt->prev->nmemb < scale){
-			printf(">>%lu, %lu, %i, %i\n", bt->num, bt->prev->num, bt->prev->nmemb, scale);
-		}*/
-		if(bt->prev->nmemb >= scale){
-			bt->num *= mul[bt->prev->nmemb - scale];
-			/*printf("BYMIN10 = %i\n", mul[bt->prev->nmemb - scale]);*/
-			bt->num += bt->prev->num/mul[scale];
-			bt->prev->num -= (bt->prev->num/mul[scale])*mul[scale];
-			/*printf("BT = %i :: %i : %i\n", bt->nmemb, bt->prev->nmemb, scale);*/
-			bt->nmemb += bt->prev->nmemb - scale;
-			/*printf("BT = %i\n", bt->nmemb);*/
-			if(bt->num == 0)
-				bt->nmemb = 0;
-		}
-		/*if(bt->nmemb > BLK){
-			bt->next->num = bt->num/mul[BLK];
-			bt->next->nmemb = bt->nmemb - BLK;
-			bt->num %= mul[BLK];
-			bt->nmemb = BLK;
-		}*/
-		bt->prev->full = 0;
-		for(bt = bt->prev; bt && bt != res->num; bt = bt->prev){
-			bt->num *= mul[BLK-scale];
-			bt->num += bt->prev->num/mul[scale];
-			bt->nmemb = BLK;
-			bt->full = 1;
-			bt->prev->num -= (bt->prev->num/mul[scale])*mul[scale];
-		}
-		bt->num %= mul[scale];
-		bt->nmemb = scale;
-		bt->full = 0;
-		for(res->val = 0, bt = res->num; bt; bt = bt->next){
-			if((bt->full = (bt->nmemb == BLK))){
-				res->bval++;
-			}else{
-				res->val += bt->nmemb;
-			}
-		}
-		res->bval -= res->bdot;
-		res->dot = scale;
-		res->bdot = bscale;
-		if(res->val >= res->dot){
-			res->val -= res->dot;
-		}else{
-			res->val = BLK + res->val - res->dot;
-			res->bval--;
-		}
-	}
-	/*printf(">>%lu :: %i\n", res->bval, res->val);*/
-	return res;
-}
-#else
+#define BYMIN10 1
+#if BYMIN10 == 0
 void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 	struct nbr *res = NULL;
 	struct bin *bs, *bt;
@@ -1831,18 +1682,22 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 				bs->num = bt->num%mul[x];
 				bs->nmemb = x;
 				bs->full = 0;
+				printf("%lu :: %lu\n", bs->num, bt->num);
 				bs = bs->next;
 			}
 			for(blen = bscale; bs;blen--, bs = bs->next){
 				bs->num = bt->num/mul[x];
 				bs->nmemb = bt->nmemb-x;
+				printf("=> %lu :: %lu\n", bs->num, bt->num);
 				if(!(bt = bt->next))
 					break;
 				bs->num += (bt->num%mul[x])*mul[BLK-x];
 				bs->nmemb = BLK;
 				bs->full = 1;
 				bs->num -= (bs->num/mul[BLK]) * mul[BLK];
+				printf("-> %lu :: %lu\n", bs->num, bt->num);
 			}
+			exit(0);
 			if(num->val > scale){
 				res->num->prev->nmemb = res->val = num->val - scale;
 				res->bval = num->bval - bscale;
@@ -1866,6 +1721,119 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 	}
 	return res;
 }
+#else
+void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
+	struct nbr *res = NULL;
+	struct bin *bs, *bt;
+	unsigned long int bval, blen, ltemp, ltemp_, rtemp;
+	int x, val, len, mul[C_BLK] = COEFS, temp, temp_, full = 0;
+	res = num;
+	print_nbr(num);
+	printf(" (%lu, %i) => %lu :: %i\n", num->bval, num->val, bscale, scale);
+	if(num->bval > bscale || (num->bval == bscale && num->val > scale)){
+		res->bval -= bscale;
+		res->bdot = bscale;
+		if(res->val < scale){
+			res->val += BLK - scale;
+			res->bval--;
+		}else
+			res->val -= scale;
+		res->dot = scale;
+		x = scale;
+		res = num;
+		bt = num->num;
+		bs = res->num;
+		/*for(bs = num->num, temp = bscale + 1;temp > 0;temp--, bs = bs->next)
+			if(bt->next->nmemb != 0)
+				bt = bt->next;*/
+		if(bt->nmemb >= x){
+			printf("OK\n");
+			for(;bt->next;bt = bt->next, bs = bs->next){
+				bs->num += bt->next->num * mul[bt->nmemb];
+				bt->next->num /= mul[bt->nmemb];
+			}
+			/*if(bscale > 0){
+				bs->num = bt->num/mul[x];
+				bs->nmemb = bt->nmemb - x;
+				for(bs = bs->prev;bs->prev->next;bs = bs->prev, bt = bt->prev){
+					ltemp = (bt->num%mul[x])*mul[BLK-x]+bt->prev->num / mul[x];
+					bs->num = ltemp;
+					bs->nmemb = BLK;
+				}
+				bs->num = bt->num%mul[x];
+				bs->nmemb = x;
+				bs->full = (bs->nmemb == BLK);*/
+			/*}else{
+				if(num->bval > 0){
+					ltemp = bt->num;
+					rtemp = ltemp/mul[x];
+					temp = bt->nmemb - x;
+					bs->next->num = rtemp;
+					bs->next->nmemb = temp;
+					for(bs = bs->prev;bs->next;bt = bt->next, bs = bs->prev){
+						rtemp = (ltemp%mul[x])*mul[BLK-x]+bt->prev->num / mul[x];
+						ltemp = bt->num;
+						temp = BLK;
+						bs->next->num = rtemp;
+						bs->next->nmemb = temp;
+					}
+					bt = bt->prev;
+					bt->prev->num = bt->prev->num%mul[scale];
+					bt->prev->nmemb = scale;
+					bt->prev->full = (bt->prev->nmemb = BLK);*/
+				/*}else{
+					bt->next->num = bt->num/mul[scale];
+					bt->next->nmemb = bt->nmemb - scale;
+					bt->num %= mul[scale];
+					bt->nmemb = scale;
+					bt->full = (bt->nmemb = BLK);
+				}
+			}*/
+		}else{
+			/*x -= x - scale;
+			x = scale - x;
+			bs->num = bt->num/mul[x];
+			bs->nmemb = scale;
+			for(bs = bs->prev;bs->prev->next;bs = bs->prev, bt = bt->prev){
+				ltemp = (bt->num%mul[x])*mul[BLK-x]+bt->prev->num / mul[x];
+				bs->num = ltemp;
+				bs->nmemb = BLK;
+			}
+			bs->num = bt->num%mul[x];
+			bs->nmemb = x;
+			bs->full = (bs->nmemb = BLK);*/
+		}
+	}else{
+		/*x = scale;
+		res = num;
+		for(bs = res->num, bt = num->num;bt->next->nmemb != 0;bs = bs->next)
+			if(bt->nmemb != 0)
+				bt = bt->next;
+		x = bt->nmemb;
+		bs->num = bt->num * mul[BLK-x];
+		bs->num += bt->prev->num/mul[x];
+		bs->nmemb = BLK;
+		for(bs = bs->prev, bt = bt->prev, rtemp = bscale+1;bs->prev->next;bs = bs->prev, bt = bt->prev, rtemp--){
+			bs->num = (bt->num%mul[x])*mul[BLK-x] + bt->prev->num/mul[x];
+			bs->nmemb = BLK;
+		}
+		bs->num = (bt->num%mul[x]);
+		bs->nmemb = x;*/
+		/*bs = bs->prev;
+		bt = bt->prev;
+		bs->num = (bt->num%mul[x])*mul[BLK-x] + bt->prev->num/mul[x];
+		bs->nmemb = BLK;
+		printf("%lu :: %i\n", bs->num, bs->nmemb);*/
+		printf("TO DO\n");
+		exit(0);
+	}
+	for(bt = res->num;bt;bt = bt->next)
+		printf("%lu :: %i\n", bt->num, bt->nmemb);
+	/*print_nbr(res);
+	putchar('\n');*/
+	exit(0);
+	return res;
+}
 #endif
 void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale){
 	struct bin *bn, *nmv, *end;
@@ -1879,6 +1847,11 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 	if(scale == 0 && bscale <= stbdot){
 		if(result == NULL)
 			n = dup_nbr(num);
+		else{
+			n = result;
+			if(n != num)
+			num_cpy(n, num);
+		}
 		n->bval += bscale;
 		n->bdot -= bscale;
 		ADJUST_0(n, nmv, bn);
@@ -1894,8 +1867,9 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 				exit(EXIT_FAILURE);
 			}
 			n->num = new_num(stbval + (stval > 0) +2, stbdot + (stdot > 0));
-		}
-		if(result != num)
+		}else
+			n = result;
+		if(n != num)
 			num_cpy(n, num);
 		for(bn = n->num;bn->next && bn->next->nmemb != 0; bn = bn->next);
 		n->bval += bscale;
@@ -1929,7 +1903,8 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 				exit(EXIT_FAILURE);
 			}
 			n->num = new_num(_bscale + (_scale > 0) + stbval, 1);
-		}
+		}else
+			n = result;
 		if(result != num)
 			num_cpy(n, num);
 		n->dot = n->bdot = 0;
@@ -2013,10 +1988,8 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 				}
 			}
 		}else{
-			fprintf(stderr, "OK1\n");
 			for(nmv = bn->prev;nmv != end && nmv->nmemb != 0;bn = bn->prev, nmv = nmv->prev){
 				if(nmv->nmemb < s){
-					fprintf(stderr, "OK2\n");
 					goto end;
 				}
 				bn->num *= mul[s];
@@ -2189,12 +2162,12 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		bt->next->nmemb = 1;
 		mod->bval = 0;
 		mod->val = 1;
-		/*dot_0 += mod->dot;
+		dot_0 += mod->dot;
 		bdot_0 += mod->bdot;
 		if(dot_0 >= BLK){
 			dot_0 -= BLK;
 			bdot_0++;
-		}*/
+		}
 	}
 	bt = dividende->num;
 	for(bt = dividende->num; dividende->bdot > 0 || dividende->dot > 0; bt = bt->next){
@@ -2247,7 +2220,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 				bdot_0++;
 			}
 		}*/
-		reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0), lsc + (sc > 0) + bdot_0 + (dot_0 > 0));
+		reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0), lsc + (sc > 0) + bdot_0 + (dot_0 > 0) + bdot_0 +(dot_0 > 0));
 		/*reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0), lsc + (sc > 0));*/
 		for(blk = binit + (init > 0), bt = reste->num; blk > 1; blk--, bt = bt->next);
 		breste = bt;
@@ -2381,29 +2354,20 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	}
 	if(modulo){
 		if(mod){
-			/*sc += mod->dot;
-			lsc += mod->bdot;
-			if(sc >= BLK){
-				sc -= BLK;
-				lsc++;
-			}*/
-			dot_0 += mod->dot;
+			/*dot_0 += mod->dot;
 			bdot_0 += mod->bdot;
-			/*lsc += mod->bdot;
-			sc += mod->dot;
-			if(sc >= BLK){
-				sc -= BLK;
-				lsc++;
-			}*/
 			if(dot_0 >= BLK){
 				dot_0 -= BLK;
 				bdot_0++;
-			}
-			temp = mv_dot(reste, NULL, mod->bdot, mod->dot);
-			temp_ = mv_dot(mod, NULL, mod->bdot, mod->dot);
-			(void)addition(temp, temp_, mod);
-			destroy_nbr(temp);
-			destroy_nbr(temp_);
+			}*/
+			/*temp = mv_dot(reste, NULL, mod->bdot, mod->dot);*/
+			/*temp_ = mv_dot(mod, NULL, mod->bdot, mod->dot);*/
+			(void)mv_dot(reste, reste, mod->bdot, mod->dot);
+			(void)mv_dot(mod, mod, mod->bdot, mod->dot);
+			(void)addition(reste, mod, mod);
+			/*(void)addition(temp, temp_, mod);*/
+			/*destroy_nbr(temp);*/
+			/*destroy_nbr(temp_);*/
 			destroy_nbr(reste);
 			*modulo = mod;
 		}
