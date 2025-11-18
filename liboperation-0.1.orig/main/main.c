@@ -66,7 +66,10 @@ int main(int argc, char **argv){
 	exit(0);*/
 	nbr1->n = pn1;
 	nbr2->n = pn2;
-	/*res = mv_dot(nbr1, 0, 0);
+	/*res = calloc(1, sizeof(struct nbr));
+	res->num = new_num(4, 4);
+	num_cpy(res, nbr1);
+	res = bymin10(res, 0, 0);
 	print_nbr(res);
 	putchar('\n');
 	destroy_nbr(res);

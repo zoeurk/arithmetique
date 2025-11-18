@@ -1725,15 +1725,22 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 	struct nbr *res = NULL;
 	struct bin *bs, *bt, *br = NULL;
-	unsigned long int bval, rtemp[3] = { 0, 0, 0 }, rtemp_, btemp;
-	int val, mul[C_BLK] = COEFS, mb[3] = { 0, 0, 0 }, init = 0;
+	unsigned long int bval, bdot, rtemp[3] = { 0, 0, 0 }, rtemp_, btemp;
+	int val, dot, dot_, mul[C_BLK] = COEFS, mb[3] = { 0, 0, 0 }, init = 0;
+	bscale = 0; scale = 3;
 	res = num;
 	bval = num->bval;
 	val = num->val;
+	dot = num->dot;
+	dot_ = num->dot;
+	if(dot >= BLK){
+		dot -= BLK;
+		bdot = num->bdot + bscale +1;
+	}else
+		bdot = num->bdot + bscale;
 	if(num->bval > bscale || (num->bval == bscale && num->val > scale)){
-		if(bval > 1 || (bval == 1 && val > 0)){
 			res->bval -= bscale;
-			res->bdot = bscale;
+			res->bdot += bdot;
 			if(res->val < scale){
 				res->val += BLK;
 				res->val -= scale;
@@ -1744,13 +1751,18 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 			bs = res->num;
 			if(scale == 0)
 				return res;
-			rtemp[0] = bs->num;
+			if(dot_){
+				bs->num *= mul[BLK-dot_];
+				bs->nmemb += BLK-dot_;
+				bs->full = 1;
+				res->bdot++;
+				res->dot = 0;
+			}
 			res->dot = scale;
+			rtemp[0] = bs->num;
 			rtemp[1] = rtemp[0]%mul[scale];
 			mb[1] = scale;
 			mb[0] = BLK;
-			bs->nmemb = scale;
-			bs->full = (bt->nmemb == BLK);
 			for(rtemp_ = rtemp[0]/mul[scale],bs = bs->next, rtemp_ = bt->num;;){
 				rtemp[0] = rtemp_;
 				if(bs)
@@ -1781,28 +1793,33 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 				if(bt)
 					bt = bt->next;
 			}
-		}else{
-			if(res->val < scale){
-				res->val += BLK;
-				res->val -= scale;
-				res->bval--;
-			}else
-				res->val -= scale;
-			rtemp_ = res->num->num;
-			res->num->nmemb = res->dot = scale;
-			res->num->num %= mul[scale];
-			res->num->full = 0;
-			res->num->next->num = rtemp_/mul[scale];
-			res->num->next->nmemb = res->val;
-		}
+			/*for(bt = res->num;bt;bt = bt->next)
+				printf("%lu :: %i :: %i\n", bt->num, bt->nmemb, bt->full);*/
 	}else{
 		if(res->num->next){
 			res->bval = 0;
-			res->bdot = bscale;
+			res->bdot += bscale;
 			res->val = 1;
-			res->dot = scale;
+			res->dot += scale;
 			bs = num->num;
 			bt = res->num;
+			if(dot_){
+				bs->num *= mul[BLK-dot_];
+				bs->nmemb += BLK-dot_;
+				/*printf("%lu (%i) => ", bs->num, bs->nmemb);*/
+				bs->full = 1;
+				bdot  = ++res->bdot;
+				res->dot = 0;
+			}
+			/*if(dot_){
+				printf("%lu (%i) => ", bs->num, bs->nmemb);
+				bs->num *= mul[BLK-dot_];
+				bs->nmemb += BLK-dot_;
+				printf("%lu (%i) => ", bs->num, bs->nmemb);
+				bs->full = 1;
+				res->bdot = 1;
+				res->dot = num->dot = 0;
+			}*/
 			rtemp[0] = bs->num;
 			rtemp[1] = rtemp[0]%mul[scale];
 			bt->num = rtemp[1];
@@ -1810,7 +1827,7 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 			bt->full = (bt->nmemb == BLK);
 			if(bt->nmemb != 0)
 				bt = bt->next;
-			for(bs = bs->next, btemp = bscale ;bs->next && bs->nmemb != 0;btemp--,bs = bs->next, bt = bt->next){
+			for(bs = bs->next, btemp = bscale + bdot;bs->next && bs->nmemb != 0;btemp--,bs = bs->next, bt = bt->next){
 				if(rtemp[1])
 					rtemp[2] = rtemp[1];
 				rtemp[1] = (rtemp[0] / mul[scale]) + bs->num%mul[scale]*mul[BLK-scale];
@@ -1826,7 +1843,7 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 				bt = bt->next;
 				btemp--;
 			}
-			for(;btemp > 0;btemp--, bt = bt->next){
+			for(;bt && btemp > 0;btemp--, bt = bt->next){
 				bt->nmemb = BLK;
 				bt->full = 1;
 				bt->num = 0;
@@ -1834,8 +1851,10 @@ void *bymin10(struct nbr *num, unsigned long int bscale, int scale){
 		}else{
 			bt = res->num;
 		}
-		bt->nmemb = 1;
-		bt->num = 0;
+		if(bt){
+			bt->nmemb = 1;
+			bt->num = 0;
+		}
 	}
 	return res;
 }
