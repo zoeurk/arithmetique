@@ -2117,11 +2117,25 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 	struct bin *bn, *nmv, *end;
 	struct nbr *n;
 	unsigned long int _bscale = 0, ubscale = 0, r_val, bs, stbdot, stbval, mem[3] = { 0, 0, 0 };
-	int _scale = 0, uscale = 0, rb_val, init = 0, mul[C_BLK] = COEFS, s, stdot, stval, bmem[3] = { 0, 0, 0 }, diff;
+	int _scale = 0, uscale = 0, rb_val, init = 0, mul[C_BLK] = COEFS, s, stdot, stval, bmem[3] = { 0, 0, 0 }, diff, idx = 0, dx;
 	printf("WORK HERE: operation.c, mv_dot()\n");
 	exit(EXIT_FAILURE);
-	scale = 2;
+	scale = 4;
 	bscale = 1;
+	if(scale > num->dot){
+		idx = scale - num->dot;
+		dx = mul[idx];
+		num->num->num *= dx;
+		num->num->nmemb+=idx;
+		if(num->num->nmemb == BLK){
+			num->num->full = 1;
+			num->bdot++;
+			num->dot = 0;
+		}else{
+			num->dot += idx;
+		}
+		/*scale+=idx;*/
+	}
 	stval = num->val+scale;
 	stbval = num->bval+bscale;
 	if(scale <= num->dot){
@@ -2144,10 +2158,10 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 		ADJUST_0(n, nmv, bn);
 		return n;
 	}
-	if(bscale < stbdot || (bscale == stbdot && scale <= stdot)){
+	/*if(bscale < stbdot || (bscale == stbdot && scale <= stdot)){
 		if(bscale < stbdot || scale < stdot){
 			init = 2;
-		}
+		}*/
 		if(result == NULL){
 			if((n = calloc(1, sizeof(struct nbr))) == NULL){
 				perror("calloc()");
@@ -2158,6 +2172,23 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 			n = result;
 		if(n != num)
 			num_cpy(n, num);
+		/*printf("=>%i, %i, %i\n", num->dot, scale, num->dot <scale);
+		if(num->dot < scale){
+			printf(">>OK\n");
+			idx = scale - num->dot;
+			num->dot = 0;
+			num->dot++;
+			num->num->nmemb = BLK;
+			num->num->full = 1;
+			num->num->num *= mul[idx];
+			scale+=idx;
+			stdot; 
+			printf("%lu\n", num->num->num);
+			if(scale >= BLK){
+				scale -= BLK;
+				bscale++;
+			}
+		}*/
 		/*for(bn = n->num;bn->next && bn->next->nmemb != 0; bn = bn->next);*/
 		n->bval += bscale;
 		n->bdot -= bscale;
@@ -2175,7 +2206,7 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 		s = scale;
 		bs = bscale;
 		end = bn;
-	}else{
+	/*}else{
 		s = stdot;
 		bs = stbdot;
 		_bscale = stbval + bscale;
@@ -2215,9 +2246,10 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 			}
 		r_val = uscale;
 		rb_val = ubscale;
-	}
+	}*/
 	if(stdot || stbdot){
 		bn = n->num;
+		printf(">>>>%i :: %i\n", bn->nmemb, scale);
 		if(bn->nmemb > scale){
 			mem[0] = bn->num/mul[bn->nmemb-scale];
 			bn->num = bn->num%mul[bn->nmemb-scale];
@@ -2236,11 +2268,11 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 		}else{
 			diff = scale - bn->nmemb;
 			bn->num += (bn->next->num%mul[BLK-bn->nmemb-diff])*mul[bn->nmemb];
-			bn->nmemb = stdot;
+			bn->nmemb = (stdot) ? stdot : BLK;
 			bn->full = (bn->nmemb == BLK);
 			for(	bn = bn->next, mem[0] = bn->num/mul[BLK-scale];
 				bn && bn->next && bn->nmemb == BLK;
-				bn = bn->next, mem[0] = bn->num/mul[BLK-scale]
+				bn = bn->next, mem[0] = bn->num/mul[BLK-scale], bn->num = bn->nmemb = bn->full = 0
 			){
 				bn->num = bn->num/mul[BLK-scale]+(bn->next->num*mul[scale])%mul[BLK];
 				if((bn->next->nmemb+scale) >= BLK){
@@ -2260,6 +2292,9 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 					bn->full = 0;
 				}
 		}
+		printf("%lu :: %i :: %lu :: %i\n", n->bval, n->val, n->bdot, n->dot);
+		for(bn = n->num;bn;bn = bn->next)
+			printf("%lu :: %i :: %i\n", bn->num, bn->nmemb, bn->full);
 		return n;
 		exit(0);
 	}
