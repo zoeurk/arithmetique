@@ -1876,7 +1876,7 @@ void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int
 	return res;
 }
 #endif
-#define MVDOT 0
+#define MVDOT 1
 #if MVDOT == 0
 void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale){
 	struct bin *bn, *nmv, *end;
@@ -2116,12 +2116,21 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale){
 	struct bin *bn, *nmv, *end;
 	struct nbr *n;
-	unsigned long int _bscale = 0, ubscale = 0, r_val, bs, stbdot, stbval;
-	int _scale = 0, uscale = 0, rb_val, init = 0, mul[C_BLK] = COEFS, s, stdot, stval;
-	stval = num->val;
-	stbval = num->bval;
-	stdot = num->dot;
-	stbdot = num->bdot;
+	unsigned long int _bscale = 0, ubscale = 0, r_val, bs, stbdot, stbval, mem[3] = { 0, 0, 0 };
+	int _scale = 0, uscale = 0, rb_val, init = 0, mul[C_BLK] = COEFS, s, stdot, stval, bmem[3] = { 0, 0, 0 }, diff;
+	printf("WORK HERE: operation.c, mv_dot()\n");
+	exit(EXIT_FAILURE);
+	scale = 2;
+	bscale = 1;
+	stval = num->val+scale;
+	stbval = num->bval+bscale;
+	if(scale <= num->dot){
+		stdot = num->dot - scale;
+		stbdot = num->bdot-bscale;
+	}else{
+		stdot = BLK+num->dot-scale;
+		stbdot = num->bdot-bscale-1;
+	}
 	if(scale == 0 && bscale <= stbdot){
 		if(result == NULL)
 			n = dup_nbr(num);
@@ -2144,12 +2153,12 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 				perror("calloc()");
 				exit(EXIT_FAILURE);
 			}
-			n->num = new_num(stbval + (stval > 0) +2, stbdot + (stdot > 0));
+			n->num = new_num(stbval + (stval > 0), stbdot + (stdot > 0));
 		}else
 			n = result;
 		if(n != num)
 			num_cpy(n, num);
-		for(bn = n->num;bn->next && bn->next->nmemb != 0; bn = bn->next);
+		/*for(bn = n->num;bn->next && bn->next->nmemb != 0; bn = bn->next);*/
 		n->bval += bscale;
 		n->bdot -= bscale;
 		n->val += scale;
@@ -2208,141 +2217,51 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 		rb_val = ubscale;
 	}
 	if(stdot || stbdot){
-		if(bn->nmemb + s > BLK){
-			nmv = bn->next;
-			nmv->num = bn->num / mul[BLK-s];
-			nmv->nmemb = n->val;
-			nmv->full = 0;
-			nmv = nmv->prev;
-			nmv->num = (bn->num % mul[BLK-s]) * mul[s] + bn->prev->num / mul[BLK-s];
-			nmv->nmemb = BLK;
-			nmv->full = 1;
-			if(init == 0){
-				for(nmv = nmv->prev, bn = bn->prev; nmv->prev->next != NULL; bn = bn->prev, nmv = nmv->prev){
-					nmv->num = (bn->num % mul[bn->nmemb-s]) * mul[s] + bn->prev->num / mul[bn->prev->nmemb-s];
-					nmv->nmemb = BLK;
-					nmv->full = 1;
-				}
-				if(n->dot == 0 && n->bdot == 0)
-					nmv->num = nmv->nmemb = 0;
-			}else{
-				for(nmv = nmv->prev, bn = bn->prev, bs+=2; bs; bs--, bn = bn->prev, nmv = nmv->prev){
-					nmv->num = (bn->num % mul[bn->nmemb-s]) * mul[s] + bn->prev->num / mul[bn->prev->nmemb-s];
-					nmv->nmemb = BLK;
-					nmv->full = 1;
-				}
-				for(;bn->prev->next != NULL && bn->prev->nmemb >= s; bn = bn->prev){
-					bn->num = (bn->num % mul[bn->nmemb-s])
-							* mul[s] + bn->prev->num / mul[bn->prev->nmemb-s];
-					bn->nmemb = BLK;
-					bn->full = 1;
-				}
-				bn->num %= mul[BLK-s];
-				bn->num *= mul[bn->prev->nmemb];
-				bn->num += bn->prev->num;
-				n->dot = bn->nmemb = BLK - s + bn->prev->nmemb;
-				if(bn->nmemb == BLK){
-					n->dot = 0;
-					n->bdot++;
-					bn->full = 1;
-				}
-				if(bn->nmemb >= BLK){
-					bn->prev->num = bn->num%mul[bn->nmemb - BLK];
-					bn->num/=mul[bn->nmemb-BLK];
-					n->dot = bn->prev->nmemb = bn->nmemb - BLK;
-					bn->nmemb = BLK;
-					bn->full = 1;
-					bn->prev->full = 0;
-					bn->prev->num = bn->prev->nmemb = 0;
-				}else{
-					bn->full = 0;
-					bn->prev->full = 0;
-					bn->prev->nmemb = 0;
-					bn->prev->num = 0;
-					if(stdot >= s){
-						n->dot = bn->nmemb = stdot - s;
-						bn->num %= mul[bn->nmemb];
-					}
-				}
+		bn = n->num;
+		if(bn->nmemb > scale){
+			mem[0] = bn->num/mul[bn->nmemb-scale];
+			bn->num = bn->num%mul[bn->nmemb-scale];
+			bn->nmemb = bn->nmemb - scale;
+			for(bn = bn->next; bn && bn->nmemb == BLK;bn = bn->next){
+				mem[1] = mem[0]+(bn->num%mul[BLK-scale])*mul[scale];
+				mem[0] = bn->num/mul[BLK-scale];
+				bn->num = mem[1];
+				bn->nmemb = BLK;
+				bn->full = 1;
+			}
+			if(bn){
+				bn->num = mem[0]+bn->num*mul[scale];
+				bn->nmemb += scale;
 			}
 		}else{
-			for(nmv = bn->prev;nmv != end && nmv->nmemb != 0;bn = bn->prev, nmv = nmv->prev){
-				if(nmv->nmemb < s){
-					goto end;
-				}
-				bn->num *= mul[s];
-				bn->num += nmv->num / mul[nmv->nmemb-s];
-				nmv->num %= mul[nmv->nmemb-s];
-				nmv->nmemb -= s;
-				bn->nmemb += s;
-				bn->full = (bn->nmemb == BLK);
-			}
-			goto after;
-			end:;
-			bn->num *= mul[bn->prev->nmemb];
-			bn->num += bn->prev->num;
-			bn->nmemb += bn->prev->nmemb;
+			diff = scale - bn->nmemb;
+			bn->num += (bn->next->num%mul[BLK-bn->nmemb-diff])*mul[bn->nmemb];
+			bn->nmemb = stdot;
 			bn->full = (bn->nmemb == BLK);
-			bn->prev->num = 0;
-			bn->prev->nmemb = 0;
-			bn->prev->full = 0;
-			after:;
-		}
-	}
-	if(n->num->nmemb == 0){
-		for(nmv = bn = n->num;bn->nmemb == 0; bn = bn->next);
-		for(;bn;nmv = nmv->next, bn = bn->next){
-			nmv->full = bn->full;
-			nmv->nmemb = bn->nmemb;
-			nmv->num = bn->num;
-		}
-		nmv->nmemb = nmv->full = nmv->num = 0;
-	}
-	if(uscale || ubscale){
-		ubscale -= n->bval;
-		uscale -= n->val;
-		if(uscale < 0){
-			ubscale--;
-			uscale += BLK;
-		}
-		for(nmv = bn = n->num; bn->next && bn->next->nmemb != 0; nmv = bn = bn->next);
-		for(;ubscale > 0; ubscale--, bn = bn->next);
-		if(n->val == 0 || n->val + uscale >= BLK){
-			bn->next->num = nmv->num * mul[uscale] / mul[BLK];
-			bn->next->nmemb = r_val;
-			bn->num %= mul[BLK-uscale];
-		}else{
-			bn->num = nmv->num * mul[uscale] + nmv->prev->num / mul[BLK-uscale];
-			bn->prev->num %= mul[BLK - uscale];
-			bn->nmemb = r_val;
-			bn = bn->prev;
-			nmv = nmv->prev;
-		}
-		if(nmv != bn){
-			for(init = 1;nmv != n->num->prev;nmv->num = 0, nmv->nmemb = BLK, nmv->full = 1,bn = bn->prev, nmv = nmv->prev){
-				bn->num = (nmv->num * mul[uscale] + nmv->prev->num / mul[BLK-uscale])%mul[BLK];
-				bn->prev->num %= mul[BLK - uscale];
-				bn->full = 1;
-				bn->nmemb = BLK;
+			for(	bn = bn->next, mem[0] = bn->num/mul[BLK-scale];
+				bn && bn->next && bn->nmemb == BLK;
+				bn = bn->next, mem[0] = bn->num/mul[BLK-scale]
+			){
+				bn->num = bn->num/mul[BLK-scale]+(bn->next->num*mul[scale])%mul[BLK];
+				if((bn->next->nmemb+scale) >= BLK){
+					bn->nmemb = BLK;
+					bn->full = 1;
+				}else
+					bn->nmemb = bn->next->nmemb+scale;
 			}
-		}else{
-			for(;nmv != n->num->prev;bn = bn->prev, nmv = nmv->prev){
-				bn->num = (nmv->num * mul[uscale] + nmv->prev->num / mul[BLK-uscale])%mul[BLK];
-				bn->prev->num %= mul[BLK - uscale];
-				bn->full = 1;
-				bn->nmemb = BLK;
-			}
-			for(;bn->next;bn->num = 0, bn = bn->prev);
+			if(bn && bn->next && bn->num/mul[BLK-scale]+bn->next->num*mul[scale]){
+				bn->num = bn->num/mul[BLK-scale]+bn->next->num*mul[scale];
+				bn->nmemb = bn->next->nmemb+scale;
+				bn->next->nmemb = bn->full = 0;
+			}else
+				if(bn){
+					bn->num = mem[0];
+					bn->nmemb = scale;
+					bn->full = 0;
+				}
 		}
-		n->val = r_val;
-		n->bval = rb_val;
-		if(init == 1){
-			for(bn = bn;bn->next != NULL;bn = bn->prev){
-				bn->num = 0;
-				bn->full = 1;
-				bn->nmemb = BLK;
-			}
-		}
+		return n;
+		exit(0);
 	}
 	ADJUST_0(n, nmv, bn);
 	return n;
