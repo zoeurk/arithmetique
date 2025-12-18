@@ -66,7 +66,7 @@ int main(int argc, char **argv){
 	exit(0);*/
 	nbr1->n = pn1;
 	nbr2->n = pn2;
-	res = calloc(1, sizeof(struct nbr));
+	/*res = calloc(1, sizeof(struct nbr));
 	res->num = new_num(4, 4);
 	num_cpy(res, nbr1);
 	res = mv_dot(nbr1, res, 0, 0);
@@ -75,7 +75,7 @@ int main(int argc, char **argv){
 	destroy_nbr(res);
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
-	exit(0);
+	exit(0);*/
 	bv = nbr1->bdot + nbr2->bdot;
 	v = nbr1->dot + nbr2->dot;
 	if(v >= BLK){
