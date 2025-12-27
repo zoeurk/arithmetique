@@ -1,5 +1,4 @@
 #include "operation.h"
-/*Voir BUG*/
 void *reset_num(struct nbr *n){
 	struct bin *delete;
 	for(delete = n->num;delete;delete = delete->next)
