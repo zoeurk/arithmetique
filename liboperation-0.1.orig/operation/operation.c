@@ -557,7 +557,7 @@ struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigne
 	}while(letread || letbread);
 	return &ret;
 }
-void *align_dot(struct nbr *_num, unsigned long int blk, int bytes){
+/*void *align_dot(struct nbr *_num, unsigned long int blk, int bytes){
 	struct bin *pb2, *pbr, *pbl, *new, bdix = INIT_BIN(10, 2, NULL, NULL);
 	struct nbr *num, *dres = NULL, *dval, *pui, *nadd = NULL, dix = INIT_NBR(0, 0, 2, 0, 0, NULL, "10");
 	unsigned long int cbdot = blk;
@@ -590,7 +590,6 @@ void *align_dot(struct nbr *_num, unsigned long int blk, int bytes){
 	nbytescpy(&pbr, &pb2, &start, num->bval, num->val);
 	pui = spuissance(&dix, cbdot, cdot);
 	nadd = multiplication(dres, pui, NULL);
-	/**************/
 	if(!nadd->num->prev){
 		new = calloc(1, sizeof(struct bin));
 		nadd->num->next = new;
@@ -600,7 +599,6 @@ void *align_dot(struct nbr *_num, unsigned long int blk, int bytes){
 	pb2 = dval->num->prev;
 	dval->num->prev = nadd->num->prev;
 	nadd->num->prev = (pb2) ? pb2 : dval->num;
-	/**************/
 	nadd->bdot = nadd->bval;
 	nadd->dot = nadd->val;
 	nadd->val = num->val;
@@ -611,7 +609,7 @@ void *align_dot(struct nbr *_num, unsigned long int blk, int bytes){
 	destroy_nbr(pui);
 	free(dval);
 	return nadd;
-}
+}*/
 void *addition(struct nbr *num1, struct nbr *num2, struct nbr *result){
 	struct bin *pb1, *pb2, *pbr;
 	struct nbr *res, *n1, *n2;
@@ -1316,7 +1314,7 @@ void *multiplication(struct nbr *num1, struct nbr *num2, struct nbr *result){
 	putchar('\n');*/
 	return res;
 }
-void *ispuissance(struct nbr *num, int pui){
+/*void *ispuissance(struct nbr *num, int pui){
 	struct bin _un_ = { 1, 1, 0, 0, NULL, NULL };
 	struct nbr *r[2], *n = num, *res = NULL, un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), *pseudo[2];
 	int comp = pui, i, j;
@@ -1391,8 +1389,8 @@ void *ispuissance(struct nbr *num, int pui){
 			destroy_nbr(pseudo[i]);
 	}
 	return res;
-}
-void *spuissance(struct nbr *num, unsigned long int bpui, int pui){
+}*/
+/*void *spuissance(struct nbr *num, unsigned long int bpui, int pui){
 	struct bin _un_ = { 1, 1, 0, 0, NULL, NULL };
 	struct nbr *r[2] = { NULL, NULL }, *pseudo[2], *n = num, *in, *res = NULL, un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL );
 	unsigned long int bcomp = bpui, b_total, db_total;
@@ -1466,7 +1464,7 @@ void *spuissance(struct nbr *num, unsigned long int bpui, int pui){
 	}
 	destroy_nbr(in);
 	return res;
-}
+}*/
 void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale){
 	struct nbr *res = NULL;
 	struct bin *bs, *bt, *br = NULL;
@@ -2180,7 +2178,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		destroy_nbr(reste);
 	return res;
 }
-void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation){
+/*void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation){
 	struct bin _two_ = INIT_BIN(2, 1, NULL, NULL ), _un_ = INIT_BIN( 1, 1, NULL, NULL ), _zero_ = INIT_BIN( 0, 1, NULL, NULL );
 	struct nbr two = INIT_NBR( 0, 0 , 1, 0, 0, NULL, NULL ), un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), zero = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), *pseudo = &un, *p, *div, *d, *mod = NULL, *n, *res = NULL;
 	int neg = 0;
@@ -2248,5 +2246,5 @@ void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigne
 		res = div;
 	}
 	return res;
-}
+}*/
 

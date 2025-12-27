@@ -4,23 +4,13 @@
 #include <stdio.h>
 #include "../operation/operation.h"
 #include "../arithmetique/arithmetique.h"
-/*void *del(struct nbr *n){
-	struct bin *delete;
-	for(delete = n->num;delete;delete = delete->next)
-		delete->num = delete->nmemb = delete->full = 0;
-	n->neg = n->val = n->dot = n->bval = n->bdot = 0;
-	return n;
-}*/
 int main(int argc, char **argv){
-	/*struct retbcpy *cpy;
-	int start = 0;*/
 	struct bin *s;
-	struct bin *dot/*, *delete, bdix = { 10, 2, 0, NULL, NULL }*/;
-	struct nbr *nbr1, *nbr2, *res, *reste = NULL, *result/*, dix = INIT_NBR( 0, 0, 2, 0, 0, NULL, "10" )*/;
+	struct bin *dot;
+	struct nbr *nbr1, *nbr2, *res, *reste = NULL, *result;
 	unsigned long int virgule, bvirg, bv = 0, bl;
 	int comp = 0, approx = 0, virg, v = 0, l;
 	char c, *pn1, *pn2, *end;
-	/*dix.num = &bdix;*/
 	if(argc < 4 || argc > 5){
 		fprintf(stderr, "usage: %s num1 num2 virgule [approximation (yes|no)]\n", argv[0]);
 		exit(EXIT_FAILURE);
@@ -41,13 +31,6 @@ int main(int argc, char **argv){
 	virgule = strtoul(argv[3], &end, 10);
 	virg = virgule%BLK;
 	bvirg = virgule/BLK;
-	/*res = spuissance(&dix, bvirg, virg);
-	print_nbr(res);
-	putchar('\n');
-	for(dot = res->num; dot; dot = dot->next)
-		printf("%lu :: %i :: %i\n", dot->num, dot->nmemb, dot->full);
-	destroy_nbr(res);
-	exit(0);*/
 	if(*end != 0){
 		fprintf(stderr, "Invalid number for dot:\n\tendptr == %s\n\tinput == %s\n", end, argv[3]);
 		exit(EXIT_FAILURE);
@@ -60,22 +43,8 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	nbr1 = encode_nbr(pn1);
 	nbr2 = encode_nbr(pn2);
-	/*b2 = calloc(1, sizeof(struct bin));
-	cpy = nbytescpy(&b2, &nbr1->num->prev, &start, 1, 0);
-	printf("%lu\n", b2->num);
-	exit(0);*/
 	nbr1->n = pn1;
 	nbr2->n = pn2;
-	/*res = calloc(1, sizeof(struct nbr));
-	res->num = new_num(4, 4);
-	num_cpy(res, nbr1);
-	res = mv_dot(nbr1, res, 0, 0);
-	print_nbr(res);
-	putchar('\n');
-	destroy_nbr(res);
-	destroy_nbr(nbr1);
-	destroy_nbr(nbr2);
-	exit(0);*/
 	bv = nbr1->bdot + nbr2->bdot;
 	v = nbr1->dot + nbr2->dot;
 	if(v >= BLK){
@@ -92,13 +61,6 @@ int main(int argc, char **argv){
 		l -= BLK;
 		bl++;
 	}
-	/*res = mv_dot(nbr1, 4, 3);
-	print_nbr(res);
-	putchar('\n');
-	destroy_nbr(res);
-	destroy_nbr(nbr1);
-	destroy_nbr(nbr2);
-	exit(0);*/
 	if((result = calloc(1, sizeof(struct nbr))) == NULL){
 		perror("calloc()");
 		exit(EXIT_FAILURE);
@@ -112,44 +74,18 @@ int main(int argc, char **argv){
 	printf("%s + %s = ", argv[1], argv[2]);
 	print_nbr(result);
 	putchar('\n');
-	/*result->val = result->dot = result->bval = result->bdot = 0;*/
 	result = reset_num(result);
-	/*for(b1 = result->num, b2 = nbr1->num;b2;b1 = b1->next, b2 = b2->next){
-		b1->num = b2->num;
-		b1->full = b2->full;
-		b1->nmemb = b2->nmemb;
-	}
-	result->bval = nbr1->bval;
-	result->bdot = nbr1->bdot;
-	result->val = nbr1->val;
-	result->dot = nbr1->dot;*/
-	/*destroy_nbr(res);
-	destroy_nbr(nbr1);
-	destroy_nbr(nbr2);
-	exit(0);*/
-	/*print_nbr(nbr1);
-	putchar('-');
-	print_nbr(nbr2);
-	putchar('\n');*/
 	res = soustraction(nbr1, nbr2, result);
 	DOT(res, dot, s);
 	printf("%s - %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
-	/*exit(0);*/
 	result = reset_num(result);
 	res = multiplication(nbr1, nbr2, result);
 	DOT(res, dot, s);
 	printf("%s * %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
-	/*destroy_nbr(nbr1);
-	destroy_nbr(nbr2);
-	exit(0);*/
-	/*res = spuissance(nbr1, bvirg, virg);
-	print_nbr(res);
-	putchar('\n');
-	destroy_nbr(res);*/
 	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx)) != NULL){
 		DOT(res, dot, s);
 		DOT(reste, dot, s);

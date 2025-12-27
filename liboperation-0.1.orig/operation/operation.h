@@ -155,9 +155,13 @@ struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigne
 void *addition(struct nbr *num1, struct nbr *num2, struct nbr *result);
 void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result);
 void *multiplication(struct nbr *num1, struct nbr *num2, struct nbr *result);
+/*
 void *ispuissance(struct nbr *num, int pui);
 void *spuissance(struct nbr *num, unsigned long int bpui, int pui);
+*/
 void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale);
 void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
+/*
 void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
+*/
 #endif
