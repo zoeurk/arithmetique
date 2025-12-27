@@ -1574,8 +1574,10 @@ void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int
 				if(rtemp[1])
 					rtemp[2] = rtemp[1];
 				rtemp[1] = (rtemp[0] / mul[scale]) + bs->num%mul[scale]*mul[((btemp > 0)
-					? BLK - scale : (scale <= bs->nmemb)
-					? bs->nmemb-scale+bt->nmemb : scale-bs->nmemb+bt->nmemb)];
+							? BLK - scale
+								: (scale <= bs->nmemb)
+							? bs->nmemb-scale+bt->nmemb
+								: scale-bs->nmemb+bt->nmemb)];
 				rtemp[0] = bs->num;
 				bt->nmemb = BLK;
 				bt->full = 1;
@@ -1604,10 +1606,22 @@ void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int
 	return res;
 }
 void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale){
+	static struct bin bzero = ZERO_BIN;
+	static struct nbr zero = INIT_NBR(0, 0, 1, 0, 0, &bzero, "0");
 	struct bin *bn, *nmv, *end;
 	struct nbr *n;
 	unsigned long int bs, blscale = 0, mem[2] = { 0, 0 };
 	int mul[C_BLK] = COEFS, diff, idx = 0, lscale = 0, uscale = 0;
+	if(equal(&zero, num) == 0){
+		if(result == NULL)
+			n = dup_nbr(num);
+		else{
+			n = result;
+			if(n != num)
+				num_cpy(n, num);
+		}
+		return n;
+	}
 	if(scale == 0 && bscale <= num->bdot){
 		if(result == NULL)
 			n = dup_nbr(num);
@@ -1711,8 +1725,8 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 	if(uscale){
 		if(bn->nmemb > uscale){
 			if(n->dot || n->bdot){
-				mem[0] = bn->num/mul[bn->nmemb-uscale];
-				bn->num = bn->num%mul[bn->nmemb-uscale];
+				mem[0] = bn->num / mul[bn->nmemb-uscale];
+				bn->num = bn->num % mul[bn->nmemb-uscale];
 				if(bn->nmemb >= uscale)
 					bn->nmemb = bn->nmemb - uscale;
 				else
@@ -1720,8 +1734,8 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 				bn->full = (bn->nmemb == BLK);
 				bn = bn->next;
 				for(;bn && bn->nmemb == BLK;bn = bn->next){
-					mem[1] = mem[0]+(bn->num%mul[BLK-uscale])*mul[uscale];
-					mem[0] = bn->num/mul[BLK-uscale];
+					mem[1] = mem[0] + (bn->num%mul[BLK-uscale])*mul[uscale];
+					mem[0] = bn->num / mul[BLK-uscale];
 					bn->num = mem[1];
 					bn->nmemb = BLK;
 					bn->full = 1;
@@ -1753,7 +1767,10 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 				bn->nmemb = (n->val) ? n->val : BLK;
 				bn->full = (bn->nmemb == BLK);
 			}else{
-				bn->nmemb = (n->dot) ? n->dot : (n->bdot) ? BLK : (bn->next && bn->next->nmemb == BLK) ? BLK : n->val;
+				bn->nmemb	= (n->dot)
+						? n->dot : (n->bdot)
+						? BLK : (bn->next && bn->next->nmemb == BLK)
+						? BLK : n->val;
 				bn->full = (bn->nmemb == BLK);
 				for(	bn = bn->next, mem[0] = bn->num/mul[BLK-uscale];
 					bn && bn->nmemb == BLK;
@@ -1801,7 +1818,7 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 		bn->nmemb += lscale;
 		for(diff = bn->nmemb - BLK;
 			bn && bn->nmemb;
-			bn->nmemb = BLK, bn->full = 1,bn = bn->next, bn->num*=mul[diff], bn->num += mem[0])
+			bn->nmemb = BLK, bn->full = 1,bn = bn->next, bn->num *= mul[diff], bn->num += mem[0])
 		{
 			mem[0] = bn->num / mul[BLK];
 			bn->num %= mul[BLK];
@@ -1885,13 +1902,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	if((neg2 = num2->neg)){
 		num2->neg = 0;
 	}
-	/*if(num1->bval > bscale || (num1->bval == bscale && num1->val < scale)){
-		cbscale = num1->bval;
-		cscale = num1->val;
-	}else{
-		cbscale = bscale + num2->bval;
-		cscale = scale + num2->val;
-	}*/
 	if(num2->dot || num2->bdot){
 		bdot_0 = num2->bdot;
 		dot_0 = num2->dot;
@@ -1952,9 +1962,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		}
 	}
 	bt = dividende->num;
-	/*print_nbr(dividende);
-	printf("\n%lu :: %i, %lu :: %i\n", dividende->bval, dividende->val, dividende->bdot, dividende->dot);
-	exit(0);*/
 	for(bt = dividende->num; dividende->bdot > 0 || dividende->dot > 0; bt = bt->next){
 		if(dividende->dot){
 			dividende->dot -= dividende->num->nmemb;
@@ -1970,7 +1977,13 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	}
 	for(bs = bs;bs;bs = bs->next)
 		bs->num = bs->nmemb = bs->full = 0;
-	for(bdividende = (dividende->num->prev) ? dividende->num->prev: dividende->num; bdividende->nmemb == 0 && bdividende != dividende->num;bdividende = bdividende->prev);
+	for(bdividende 	= (dividende->num->prev)
+			? dividende->num->prev
+			: dividende->num;
+		bdividende->nmemb == 0
+			&& bdividende != dividende->num;
+		bdividende = bdividende->prev
+	);
 	bval = dividende->bval;
 	val = dividende->val;
 	blen = diviseur->bval;
@@ -1997,16 +2010,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			}
 		}
 		sclen = M_BLK;
-		/*if(mod){
-			dot_0 += mod->dot;
-			bdot_0 += mod->bdot;
-			if(dot_0 >= BLK){
-				dot_0 -= BLK;
-				bdot_0++;
-			}
-		}*/
-		reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0), lsc + (sc > 0) + bdot_0 + (dot_0 > 0) + bdot_0 +(dot_0 > 0));
-		/*reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0), lsc + (sc > 0));*/
+		reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0),
+										lsc + (sc > 0) + bdot_0 + (dot_0 > 0) + bdot_0 +(dot_0 > 0));
 		for(blk = binit + (init > 0), bt = reste->num; blk > 1; blk--, bt = bt->next);
 		breste = bt;
 		bcpy = nbytescpy(&breste, &bdividende, &start, binit, init);
@@ -2133,64 +2138,18 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		}
 	}
 	if(bscale || scale){
-		/*PRINT_NBR(quotient);*/
 		res = bymin10(quotient, quotient, bscale, scale);
-		/*PRINT_NBR(res);*/
-		/*destroy_nbr(quotient);*/
 	}else{
 		res = quotient;
 	}
 	if(modulo){
 		if(mod){
-			/*dot_0 += mod->dot;
-			bdot_0 += mod->bdot;
-			if(dot_0 >= BLK){
-				dot_0 -= BLK;
-				bdot_0++;
-			}*/
-			/*temp = mv_dot(reste, NULL, mod->bdot, mod->dot);*/
-			/*temp_ = mv_dot(mod, NULL, mod->bdot, mod->dot);*/
-			/*PRINT_NBR(mod);*/
-			/*printf("= = = = = = =%lu :: %i\n", mod->bdot, mod->dot);*/
-			/*printf("MODULO\n");
-			PRINT_NBR(reste);
-			PRINT_NBR(mod);*/
-			/*printf("%lu :: %i\n", mod->bval, mod->val);*/
-			/*for(bs = reste->num;bs;bs = bs->next)
-				printf("MOD == %lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
-			bx.num = 0;
-			bx.nmemb = 1;
-			if(equal(&nx, reste) != 0)
-				(void)mv_dot(reste, reste, mod->bdot, mod->dot);
-			/*PRINT_NBR(reste);*/
-			/*for(bs = reste->num;bs;bs = bs->next)
-				printf("RESTE == %lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
+			(void)mv_dot(reste, reste, mod->bdot, mod->dot);
 			(void)mv_dot(mod, mod, mod->bdot, mod->dot);
-			/*printf("%lu :: %i\n", reste->bval, reste->val);*/
-			/*for(bs = reste->num;bs;bs = bs->next)
-				printf("RESTE == %lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
-			/*PRINT_NBR(mod);*/
-			/*for(bs = mod->num;bs;bs = bs->next)
-				printf("MOD == %lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
 			(void)addition(reste, mod, mod);
-			/*PRINT_NBR(mod);*/
-			/*for(bs = mod->num;bs;bs = bs->next)
-				printf("MOD == %lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
-			/*for(bs = mod->num;bs;bs = bs->next)
-				printf("MOD == %lu :: %i :: %i\n", bs->num, bs->nmemb, bs->full);*/
-			/*printf("= = = = = = =\n");*/
-			/*(void)addition(temp, temp_, mod);*/
-			/*destroy_nbr(temp);*/
-			/*destroy_nbr(temp_);*/
 			destroy_nbr(reste);
 			*modulo = mod;
 		}
-		bx.num = 0;
-		/*if(sc || lsc){
-			mod = bymin10(*modulo, lsc, sc);
-			destroy_nbr(*modulo);
-			*modulo = mod;
-		}*/
 		if(scale || bscale || dot_0 || bdot_0){
 			cscale = scale + dot_0;
 			cbscale = bscale + bdot_0;
@@ -2198,17 +2157,16 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 				cscale -= BLK;
 				cbscale++;
 			}
-			/*PRINT_NBR((*modulo));*/
 			mod = bymin10(*modulo, *modulo, cbscale, cscale);
-			/*destroy_nbr(*modulo);
-			*modulo = mod;*/
 		}
 		if(neg1){
+			bx.num = 0;
 			if(equal(*modulo, &nx) != 0)
 				(*modulo)->neg = 1;
 		}
 	}
 	if(neg1 != neg2){
+		bx.num = 0;
 		if(equal(res, &nx) != 0)	
 			res->neg = 1;
 	}
