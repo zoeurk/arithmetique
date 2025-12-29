@@ -1,1 +1,0 @@
-LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin  909147783627069504844738.54305333028 329823758297093156328679.001 6

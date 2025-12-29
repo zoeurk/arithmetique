@@ -121,7 +121,7 @@ int main(int argc, char **argv){
 				break;
 		}
 	}
-	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx, NULL)) != NULL){
+	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx, div_spaces)) != NULL){
 		DOT(res, dot, s);
 		DOT(reste, dot, s);
 		printf("%s / %s = ", argv[1], argv[2]);
