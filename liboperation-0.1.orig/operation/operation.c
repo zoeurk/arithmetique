@@ -1641,7 +1641,7 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 			perror("calloc()");
 			exit(EXIT_FAILURE);
 		}
-		n->num = new_num(num->bval + (num->val > 0)+(scale > 0) + bscale +1, num->bdot + (num->dot > 0));
+		n->num = new_num(num->bval + (num->val > 0), num->bdot + (num->dot > 0)+(scale > 0) + bscale +1);
 	}else
 		n = result;
 	if(n != num)
@@ -1861,7 +1861,9 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 	print_nbr(n); \
 	putchar('\n');
 #define M_BLK 2
-void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation){
+void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
+		unsigned long int bscale, int scale, int approximation, struct nbr **sp
+){
 	struct retbcpy *bcpy;
 	struct bin *bdividende, *breste, *b,
 		bdix = { 10, 2, 0, 0, NULL, NULL }, bsingle = { 0, 1, 0, 0, NULL, NULL }, *bs = NULL, *bt, bx = { 0, 1, 0, 0, NULL, NULL };
@@ -1902,10 +1904,17 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	if(num2->dot || num2->bdot){
 		bdot_0 = num2->bdot;
 		dot_0 = num2->dot;
-		diviseur = mv_dot(num2, NULL, bdot_0, dot_0);
+		if(sp && sp[DIVISEUR])
+			diviseur = mv_dot(num2, sp[DIVISEUR], bdot_0, dot_0);
+		else
+			diviseur = mv_dot(num2, NULL, bdot_0, dot_0);
 		DOT(diviseur, bs, b);
 	}else{
-		diviseur = dup_nbr(num2);
+		if(sp && sp[DIVISEUR]){
+			num_cpy(sp[DIVISEUR], num2);
+			diviseur = sp[DIVISEUR];
+		}else
+			diviseur = dup_nbr(num2);
 	}
 	if(scale || bscale || bdot_0 || dot_0){
 		mbdot = bdot_0 + bscale;
@@ -1914,10 +1923,18 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			mdot -= BLK;
 			mbdot++;
 		}
-		temp = mv_dot(num1, NULL, mbdot, mdot);
-		dividende = temp;
+		if(sp && sp[DIVIDENDE])
+			dividende = mv_dot(num1, sp[DIVIDENDE], mbdot, mdot);
+		else
+			dividende = mv_dot(num1, NULL, mbdot, mdot);
+		/*temp = mv_dot(num1, NULL, mbdot, mdot);
+		dividende = temp;*/
 	}else{
-		dividende = dup_nbr(num1);
+		if(sp && sp[DIVIDENDE]){
+			dividende = sp[DIVIDENDE];
+			num_cpy(sp[DIVIDENDE], num1);
+		}else
+			dividende = dup_nbr(num1);
 	}
 	/*
 		dividende
@@ -1931,31 +1948,38 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	PRINT_NBR(num2)
 	PRINT_NBR(diviseur);
 	printf("==========\n");*/
-	if(dividende->bdot || dividende->dot){
-		if((mod = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		mod->num = new_num(dividende->bval + (dividende->val > 0)+1, num1->bdot + (num1->dot > 0));
-		num_cpy(mod, dividende);
-		for(bt = mod->num->prev;mod->val || mod->bval;bt = bt->prev){
-			bt->num = 0;
-			if(bt->full){
-				mod->bval--;
-				bt->nmemb = bt->full = 0;
+	if(modulo){
+		if(dividende->bdot || dividende->dot){
+			if(sp && sp[RESTE]){
+				mod = sp[RESTE];
 			}else{
-				mod->val -= bt->nmemb;
-				bt->nmemb = 0;
+				if((mod = calloc(1, sizeof(struct nbr))) == NULL){
+					perror("calloc()");
+					exit(EXIT_FAILURE);
+				}
+				/*mod->num = new_num(dividende->bval + (dividende->val > 0)+1, num1->bdot + (num1->dot > 0));*/
+				mod->num = new_num(dividende->bval + (dividende->val > 0)+1, dividende->bdot + (dividende->dot > 0));
 			}
-		}
-		bt->next->nmemb = 1;
-		mod->bval = 0;
-		mod->val = 1;
-		dot_0 += mod->dot;
-		bdot_0 += mod->bdot;
-		if(dot_0 >= BLK){
-			dot_0 -= BLK;
-			bdot_0++;
+			num_cpy(mod, dividende);
+			for(bt = mod->num->prev;mod->val || mod->bval;bt = bt->prev){
+				bt->num = 0;
+				if(bt->full){
+					mod->bval--;
+					bt->nmemb = bt->full = 0;
+				}else{
+					mod->val -= bt->nmemb;
+					bt->nmemb = 0;
+				}
+			}
+			bt->next->nmemb = 1;
+			mod->bval = 0;
+			mod->val = 1;
+			dot_0 += mod->dot;
+			bdot_0 += mod->bdot;
+			if(dot_0 >= BLK){
+				dot_0 -= BLK;
+				bdot_0++;
+			}
 		}
 	}
 	bt = dividende->num;
@@ -1992,10 +2016,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		lsc++;
 	}
 	if(blen < bval || (blen == bval && len <= val)){
-		if((reste = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
 		binit = diviseur->bval;
 		init = diviseur->val;
 		if(lsc < num1->bdot || (lsc == num1->bdot && sc == num1->dot)){
@@ -2007,8 +2027,20 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			}
 		}
 		sclen = M_BLK;
-		reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0),
-										lsc + (sc > 0) + bdot_0 + (dot_0 > 0) + bdot_0 +(dot_0 > 0));
+		if(sp && sp[MODULO]){
+			reste = sp[MODULO];
+		}else{
+			if((reste = calloc(1, sizeof(struct nbr))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			/*reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0),
+										lsc + (sc > 0) + bdot_0 + (dot_0 > 0) + bdot_0 +(dot_0 > 0));*/
+			reste->num = new_num(num1->bval + (num1->val > 0),
+							num1->bdot + (num1->dot > 0)
+							+ num2->bdot + (num2->dot > 0)
+							+ bscale + (scale > 0) + 3);
+		}
 		for(blk = binit + (init > 0), bt = reste->num; blk > 1; blk--, bt = bt->next);
 		breste = bt;
 		bcpy = nbytescpy(&breste, &bdividende, &start, binit, init);
@@ -2024,11 +2056,15 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 				val--;
 			}
 		}
-		if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
+		if(sp && sp[QUOTIENT]){
+			quotient = sp[QUOTIENT];
+		}else{
+			if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			quotient->num = new_num(num1->bval + (num1->val > 0), bscale + (scale > 0)+1);
 		}
-		quotient->num = new_num(num1->bval + (num1->val > 0), bscale + (scale > 0)+1);
 		for(;;){
 			for(bx.nmemb = 1, bx.num = 0, x = 0; (int)bx.num < mul[M_BLK]; bx.num++){
 				if(equal(reste, diviseur) < 0){
@@ -2086,21 +2122,21 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 			}
 		}
 	}else{
-		if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		if((quotient->num = calloc(1, sizeof(struct bin))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
+		if(sp && sp[QUOTIENT])
+			quotient = sp[QUOTIENT];
+		else{
+			if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			if((quotient->num = calloc(1, sizeof(struct bin))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
 		}
 		quotient->num->alloc = 1;
 		quotient->val = quotient->num->nmemb = 1;
 		if(modulo){
-			if((reste = calloc(1, sizeof(struct nbr))) == NULL){
-				perror("calloc()");
-				exit(EXIT_FAILURE);
-			}
 			if(lsc < num1->bdot || (lsc == num1->bdot && sc == num1->dot)){
 				lsc = num1->bdot + bdot_0;
 				sc = num1->dot + dot_0;
@@ -2109,7 +2145,15 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 					lsc++;
 				}
 			}
-			reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0)+1, lsc + (sc > 0));
+			if(sp && sp[MODULO]){
+				reste = sp[MODULO];
+			}else{
+				if((reste = calloc(1, sizeof(struct nbr))) == NULL){
+					perror("calloc()");
+					exit(EXIT_FAILURE);
+				}
+				reste->num = new_num(num1->bval + num1->bdot + (num1->val > 0) + (num1->dot > 0)+1, lsc + (sc > 0));
+			}
 			num_cpy(reste, dividende);
 		}
 	}
@@ -2143,9 +2187,14 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 		if(mod){
 			(void)mv_dot(reste, reste, mod->bdot, mod->dot);
 			(void)mv_dot(mod, mod, mod->bdot, mod->dot);
-			(void)addition(reste, mod, mod);
-			destroy_nbr(reste);
-			*modulo = mod;
+			/*(void)addition(reste, mod, mod);
+			if(!sp && !sp[RESTE])
+				destroy_nbr(reste);
+			*modulo = mod;*/
+			(void)addition(reste, mod, reste);
+			if(!sp || !sp[MODULO])
+				destroy_nbr(mod);
+			*modulo = reste;
 		}
 		if(scale || bscale || dot_0 || bdot_0){
 			cscale = scale + dot_0;
@@ -2154,7 +2203,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 				cscale -= BLK;
 				cbscale++;
 			}
-			mod = bymin10(*modulo, *modulo, cbscale, cscale);
+			/*mod = bymin10(*modulo, *modulo, cbscale, cscale);*/
+			(void)bymin10(*modulo, *modulo, cbscale, cscale);
 		}
 		if(neg1){
 			bx.num = 0;
@@ -2164,18 +2214,21 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned
 	}
 	if(neg1 != neg2){
 		bx.num = 0;
-		if(equal(res, &nx) != 0)	
+		if(equal(res, &nx) != 0)
 			res->neg = 1;
 	}
 	num1->neg = neg1;
 	num2->neg = neg2;
-	destroy_nbr(diviseur);
-	destroy_nbr(dividende);
+	if(!sp || !sp[DIVISEUR])
+		destroy_nbr(diviseur);
+	if(!sp || !sp[DIVIDENDE])
+		destroy_nbr(dividende);
 	ADJUST_0(res, bs, bt);
 	if(modulo){
 		ADJUST_0((*modulo), bs, bt);
 	}else
-		destroy_nbr(reste);
+		if(!sp || !sp[MODULO])
+			destroy_nbr(reste);
 	return res;
 }
 /*void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation){

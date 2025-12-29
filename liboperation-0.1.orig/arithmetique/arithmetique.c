@@ -178,7 +178,7 @@ void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigne
 	n = num1;
 	div = num2;
 	while(equal(div, &un) != 0){
-		d = division(div, &two, &mod, 0, 0, 0);
+		d = division(div, &two, &mod, 0, 0, 0, NULL);
 		if(div != num2)
 			destroy_nbr(div);
 		if(equal(mod, &un) == 0){
@@ -212,7 +212,7 @@ void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigne
 	if(div != num2)
 		destroy_nbr(div);
 	if(neg){
-		div = division(&un, res, modulo, bscale, scale, approximation);
+		div = division(&un, res, modulo, bscale, scale, approximation, NULL);
 		num2->neg = neg;
 		destroy_nbr(res);
 		res = div;
@@ -253,8 +253,8 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 		exit(EXIT_FAILURE);
 	}
 	fmul->num = new_num(num->bval + (num->val > 0), bscale + 1);
-	half = division(&un, &two, NULL, 0, 1, 0);
-	div = division( n, &un, NULL, bscale, scale, 0 );
+	half = division(&un, &two, NULL, 0, 1, 0, NULL);
+	div = division( n, &un, NULL, bscale, scale, 0, NULL );
 	(void)addition( div, &un, add );
 	(void)multiplication( add, half, fmul );
 	f = fmul;
@@ -288,7 +288,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 		while(equal(f, r) != 0){
 			destroy_nbr(r);
 			r = dup_nbr(f);
-			div = division( n, r, NULL, bscale, scale, 0 );
+			div = division( n, r, NULL, bscale, scale, 0, NULL );
 			reset_num(add);
 			/*print_nbr(div);
 			putchar('\n');*/
@@ -332,7 +332,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 				destroy_nbr(r);
 			}
 			r = f;
-			div = division( num, r, NULL, 0, 0, 0 );
+			div = division( num, r, NULL, 0, 0, 0, NULL );
 			reset_num(add);
 			(void)addition( div, r, add );
 			reset_num(mul);
@@ -356,7 +356,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 		destroy_nbr(r);
 	}
 	if(fac){
-		r = division(f, mul, NULL, bscale, scale, 0);
+		r = division(f, mul, NULL, bscale, scale, 0, NULL);
 		destroy_nbr(fac);
 		/*destroy_nbr(f);*/
 		f = r;
@@ -368,7 +368,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 	destroy_nbr(half);
 	return f;
 	/*DOT(f, dot);*/
-	r = division(f, &un, NULL, bscale, scale, 0);
+	r = division(f, &un, NULL, bscale, scale, 0, NULL);
 	/*DESTROY_MOD(mod);*/
 	destroy_nbr(f);
 	DOT(r, dot, rm);
@@ -405,8 +405,8 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 		destroy_nbr(n);
 		n = temp;
 	}
-	half = division(&un, &two, NULL, 0, 1, 0);
-	div = division( n, &un, NULL, bscale, scale, 0 );
+	half = division(&un, &two, NULL, 0, 1, 0, NULL);
+	div = division( n, &un, NULL, bscale, scale, 0, NULL );
 	add = addition( div, &un, NULL );
 	f = multiplication( add, half, NULL );
 	f->num->num /= 10;
@@ -431,7 +431,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 				destroy_nbr(r);
 			}
 			r = f;
-			div = division( n, r, NULL, bscale, scale, 0 );
+			div = division( n, r, NULL, bscale, scale, 0, NULL );
 			print_nbr(div);
 			putchar('/');
 			print_nbr(r);
@@ -469,7 +469,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 				destroy_nbr(r);
 			}
 			r = f;
-			div = division( num, r, NULL, 0, 0, 0 );
+			div = division( num, r, NULL, 0, 0, 0, NULL );
 			add = addition( div, r, NULL );
 			f = multiplication( add, half, NULL );
 			rm = f->num;
@@ -487,7 +487,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 		destroy_nbr(r);
 	}
 	if(fac){
-		r = division(f, mul, NULL, bscale, scale, 0);
+		r = division(f, mul, NULL, bscale, scale, 0, NULL);
 		destroy_nbr(fac);
 		destroy_nbr(f);
 		f = r;
@@ -508,7 +508,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 	exit(0);*/
 	return f;
 	/*DOT(f, dot);*/
-	r = division(f, &un, NULL, bscale, scale, 0);
+	r = division(f, &un, NULL, bscale, scale, 0, NULL);
 	/*DESTROY_MOD(mod);*/
 	destroy_nbr(f);
 	DOT(r, dot, rm);
