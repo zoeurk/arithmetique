@@ -112,7 +112,8 @@ int main(int argc, char **argv){
 							+ bvirg + (virg > 0) + 3);
 				break;
 			case QUOTIENT:
-				div_spaces[i]->num = new_num(nbr2->bval + (nbr2->val > 0), bvirg + (virg > 0));
+				div_spaces[i]->num = new_num(nbr2->bval + (nbr2->val > 0),
+								nbr2->bdot + (nbr2->dot > 0) + bvirg + (virg > 0) +1);
 				break;
 			case RESTE:
 				div_spaces[i]->num = new_num(nbr1->bval + (nbr1->val > 0),
