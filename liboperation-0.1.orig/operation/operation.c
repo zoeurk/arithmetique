@@ -2223,3 +2223,13 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		}
 	return res;
 }
+struct nbr *_divison(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale){
+	/*
+		Method Newton-Raphson
+		X/Y == X * 1/Y
+			AND:
+		Xn+1 = Xn * (2 - Y * Xn)
+		Xn 1ere itération: 0.1, 0.01, 0.001, ...
+	*/
+	return NULL;
+}
