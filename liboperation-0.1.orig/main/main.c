@@ -75,7 +75,6 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 	result->num = new_num(bl + (l > 0), bv + (v > 0));
-/*
 	comp = equal(nbr1, nbr2);
 	c = (comp == 0) ? '=' : (comp == -1) ? '<' : '>';
 	printf("%s %c %s\n", argv[1], c, argv[2]);
@@ -91,16 +90,15 @@ int main(int argc, char **argv){
 	print_nbr(res);
 	putchar('\n');
 	result = reset_num(result);
-*/
 	res = multiplication(nbr1, nbr2, result);
 	DOT(res, dot, s);
 	printf("%s * %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
-	destroy_nbr(result);
+	/*destroy_nbr(result);
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
-	exit(0);
+	exit(0);*/
 
 	for(i = DIVISEUR; i <= MODULO; i++){
 		if((div_spaces[i] = calloc(1, sizeof(struct nbr))) == NULL){
