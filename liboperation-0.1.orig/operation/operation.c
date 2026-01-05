@@ -1860,7 +1860,8 @@ void *mv_dot(struct nbr *num, struct nbr *result, unsigned long int bscale, int 
 #define PRINT_NBR(n) \
 	print_nbr(n); \
 	putchar('\n');
-#define M_BLK 2
+#define M_BLK 1
+ 
 void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		unsigned long int bscale, int scale, int approximation, struct nbr **sp
 ){
@@ -1936,18 +1937,6 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		}else
 			dividende = dup_nbr(num1);
 	}
-	/*
-		dividende
-		diviseur
-	*/
-	/*printf("==========\n");
-	printf("%lu :: %i ; %lu :: %i\n", dividende->bval, dividende->val, dividende->bdot, dividende->dot);
-	PRINT_NBR(num1);
-	PRINT_NBR(dividende);
-	printf("%lu :: %i ; %lu :: %i\n", diviseur->bval, diviseur->val, diviseur->bdot, diviseur->dot);
-	PRINT_NBR(num2)
-	PRINT_NBR(diviseur);
-	printf("==========\n");*/
 	if(modulo){
 		if(dividende->bdot || dividende->dot){
 			if(sp && sp[RESTE]){
@@ -2073,7 +2062,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				}
 				soustraction(reste, diviseur, reste);
 			}
-			quotient = bymul10(quotient, mul[sclen], sclen);
+			/*quotient = bymul10(quotient, mul[sclen], sclen);*/
+			quotient = mv_dot(quotient, quotient, 0, sclen);
 			quotient->num->num += x;
 			if(val || bval){
 				if((binit || init)){
@@ -2117,7 +2107,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				reste->num->num = bs->num;
 				reste->val = reste->num->nmemb = bs->nmemb;
 			}else{
-				bymul10(reste, mul[sclen], sclen);
+				/*bymul10(reste, mul[sclen], sclen);*/
+				mv_dot(reste, reste, 0, sclen);
 				reste->num->num += bs->num;
 			}
 		}
@@ -2227,77 +2218,8 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 	if(modulo){
 		ADJUST_0((*modulo), bs, bt);
 	}else
-		if(!sp || !sp[MODULO])
+		if(!sp || !sp[MODULO]){
 			destroy_nbr(reste);
+		}
 	return res;
 }
-/*void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation){
-	struct bin _two_ = INIT_BIN(2, 1, NULL, NULL ), _un_ = INIT_BIN( 1, 1, NULL, NULL ), _zero_ = INIT_BIN( 0, 1, NULL, NULL );
-	struct nbr two = INIT_NBR( 0, 0 , 1, 0, 0, NULL, NULL ), un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), zero = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), *pseudo = &un, *p, *div, *d, *mod = NULL, *n, *res = NULL;
-	int neg = 0;
-	two.num = &_two_;
-	un.num = &_un_;
-	zero.num = &_zero_;
-	if(equal(num2, &zero) == 0){
-		if((res = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		if((res->num = calloc(1, sizeof(struct bin))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		memcpy(res, &un, sizeof(struct nbr));
-		memcpy(res->num, &_un_, sizeof(struct bin));
-		res->num->alloc = 1;
-		return res;
-	}
-	if(num2->neg){
-		neg = num2->neg;
-		num2->neg = 0;
-	}
-	n = num1;
-	div = num2;
-	while(equal(div, &un) != 0){
-		d = division(div, &two, &mod, 0, 0, 0);
-		if(div != num2)
-			destroy_nbr(div);
-		if(equal(mod, &un) == 0){
-			p = multiplication(n, pseudo, NULL);
-			if(pseudo != &un)
-				destroy_nbr(pseudo);
-			pseudo = p;
-		}
-		if(equal(d, &zero) != 0){
-			res = multiplication(n, n, NULL);
-			if(n != num1)
-				destroy_nbr(n);
-			n = res;
-		}
-		if(n->dot > BLK){
-			exit(0);
-		}
-		div = d;
-		destroy_nbr(mod);
-		mod = NULL;
-	}
-	if(pseudo != &un){
-		res = multiplication(pseudo, n, NULL);
-		destroy_nbr(pseudo);
-		if(n != num1)
-			destroy_nbr(n);
-	}else{
-		if(n == num1)
-			res = dup_nbr(n);
-	}
-	if(div != num2)
-		destroy_nbr(div);
-	if(neg){
-		div = division(&un, res, modulo, bscale, scale, approximation);
-		num2->neg = neg;
-		destroy_nbr(res);
-		res = div;
-	}
-	return res;
-}*/
-

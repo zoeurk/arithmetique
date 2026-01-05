@@ -148,7 +148,8 @@ int main(int argc, char **argv){
 		destroy_nbr(res);
 	}else
 		printf("Square Root Not Computable: %s < 0", argv[1]);
-	/*destroy_nbr(nbr1);
+	/*destroy_nbr(result);
+	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	exit(0);*/
 	if(!nbr2->neg){
@@ -159,6 +160,7 @@ int main(int argc, char **argv){
 		destroy_nbr(res);
 	}else
 		printf("Square Root Not Computable: %s < 0", argv[2]);
+	destroy_nbr(result);
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	exit(0);
