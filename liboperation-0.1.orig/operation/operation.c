@@ -2196,7 +2196,7 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 			two = INIT_NBR(0, 0, 1, 0, 0, NULL, "2"),
 			*nill, *result[3], *sub;
 	unsigned long int brmd = bscale+1, bdot;
-	int neg1, neg2, i = 0, r, dot, approx, rmd = scale, mul[C_BLK] = COEFS;
+	int check = 0, neg1, neg2, i = 0, r, dot, approx, rmd = scale, mul[C_BLK] = COEFS;
 	un.num = &bun;
 	zero.num = &bzero;
 	two.num = &btwo;
@@ -2268,7 +2268,7 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 	(void)multiplication(result[i], num1, result[!i]);
 	i = !i;
 	PRINT_NBR(result[i]);
-	while(result[i]->bdot > bscale || (result[i]->bdot == bscale && result[i]->dot > scale)){
+	/*while(result[i]->bdot > bscale || (result[i]->bdot == bscale && result[i]->dot > scale)){
 		if(((result[i]->dot -scale == 1 && result[i]->bdot == bscale))
 			|| (scale == BLK -1 && (result[i]->dot == BLK-1 && result[i]->bdot == bscale+1)))
 		{
@@ -2284,6 +2284,25 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 			addition(nill, result[i], result[2]);
 			num_cpy(result[i], result[2]);
 		}
+		result[i]->num->num -= result[i]->num->num%mul[1];
+		DOT(result[i], r1, r2);
+	}*/
+	while(result[i]->bdot > bscale || (result[i]->bdot == bscale && result[i]->dot > scale)){
+		if(check == 2)
+		{
+			approx = (int)(result[i]->num->num%mul[1]);
+			reset_num(nill);
+			if(approx >= 5){
+				nill->num->num = 1;
+				nill->val = nill->num->nmemb = 1;
+				bymin10(nill, nill, bscale, scale);
+			}else{
+				nill->val = nill->num->nmemb = 1;
+			}
+			addition(nill, result[i], result[2]);
+			num_cpy(result[i], result[2]);
+		}
+		check += (check < BLK);
 		result[i]->num->num -= result[i]->num->num%mul[1];
 		DOT(result[i], r1, r2);
 	}
