@@ -2240,12 +2240,7 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		*/
 		reset_num(result[!i]);
 		(void)multiplication(result[i], num2, result[!i]);
-		sub = soustraction(&two, result[!i], result[2]);
-		reset_num(result[!i]);
-		(void)multiplication(result[i], sub, result[!i]);
-		reset_num(result[2]);
-		i = !i;
-		for(	r = 1/*, r_ = 0*/, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
+		/*for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
 			bdot > brmd || (bdot == brmd && dot > rmd);
 			r++
 		){
@@ -2259,12 +2254,33 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 				bdot--;
 				
 			}
+		}*/
+		sub = soustraction(&two, result[!i], result[2]);
+		reset_num(result[!i]);
+		(void)multiplication(result[i], sub, result[!i]);
+		reset_num(result[2]);
+		i = !i;
+		/*for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
+			bdot > brmd || (bdot == brmd && dot > rmd);
+			r++
+		){
+			r1->num -= r1->num%mul[r];
+			if(r == BLK){
+				r = 0;
+				r1 = r1->next;
+			}
+			if(--dot == -1){
+				dot = BLK-1;
+				bdot--;
+				
+			}
 		}
-		DOT(result[i], r1, r2);
-		/*while(result[i]->bdot > brmd || (result[i]->bdot == brmd && result[i]->dot > rmd)){
+		DOT(result[i], r1, r2);*/
+		for(;result[i]->bdot > brmd || (result[i]->bdot == brmd && result[i]->dot > rmd);){
 			result[i]->num->num -= result[i]->num->num%mul[1];
 			DOT(result[i], r1, r2);
-		}*/
+		}
+		/*PRINT_NBR(result[i]);*/
 	}
 	reset_num(result[!i]);
 	(void)multiplication(result[i], num1, result[!i]);
