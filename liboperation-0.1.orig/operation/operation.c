@@ -2204,11 +2204,9 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		fprintf(stderr, "Division by 0\n");
 		return NULL;
 	}
-	/*rmd = scale;*/
 	/*
-		+1 blk for approximation
+		bscale +1 for approximation
 	*/
-	/*brmd = bscale+1;*/
 	/*
 		approximation
 		temporaire
@@ -2221,14 +2219,14 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		perror("calloc()");
 		exit(EXIT_FAILURE);
 	}
-	nill->num = new_num(1, bscale + (scale > 0));
+	nill->num = new_num(1, brmd + (rmd > 0));
 	for(i = 0; i < 3; i++){
 		if((result[i] = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
 		}
 		result[i]->num = new_num(num1->bval + (num1->val > 0) + num2->bdot + (num2->dot > 0),
-						num1->bdot + (num1->dot > 0) + 2*brmd + (2*scale > 0) +1);
+						num1->bdot + (num1->dot > 0) + 2*brmd + (2*rmd > 0) +3);
 	}
 	(void)num_cpy(result[0], &un);
 	(void)bymin10(result[0], result[0], num2->bval, num2->val);
@@ -2240,53 +2238,40 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		*/
 		reset_num(result[!i]);
 		(void)multiplication(result[i], num2, result[!i]);
-		/*for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
-			bdot > brmd || (bdot == brmd && dot > rmd);
-			r++
-		){
-			if(r == BLK+1){
-				r = 1;
-				r1 = r1->next;
-			}
-			r1->num -= r1->num%mul[r];
-			if(--dot == -1){
-				dot = BLK-1;
-				bdot--;
-				
-			}
-		}*/
 		sub = soustraction(&two, result[!i], result[2]);
 		reset_num(result[!i]);
 		(void)multiplication(result[i], sub, result[!i]);
 		reset_num(result[2]);
 		i = !i;
-		/*for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
+		for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
 			bdot > brmd || (bdot == brmd && dot > rmd);
 			r++
 		){
+			
 			r1->num -= r1->num%mul[r];
-			if(r == BLK){
-				r = 0;
+			if(--dot <= 0){
 				r1 = r1->next;
-			}
-			if(--dot == -1){
-				dot = BLK-1;
+				dot = BLK;
 				bdot--;
-				
+				r = 0;
 			}
 		}
-		DOT(result[i], r1, r2);*/
+		DOT(result[i], r1, r2);
+		/*PRINT_NBR(result[i]);
 		for(;result[i]->bdot > brmd || (result[i]->bdot == brmd && result[i]->dot > rmd);){
 			result[i]->num->num -= result[i]->num->num%mul[1];
 			DOT(result[i], r1, r2);
-		}
+		}*/
 		/*PRINT_NBR(result[i]);*/
 	}
 	reset_num(result[!i]);
 	(void)multiplication(result[i], num1, result[!i]);
 	i = !i;
+	PRINT_NBR(result[i]);
 	while(result[i]->bdot > bscale || (result[i]->bdot == bscale && result[i]->dot > scale)){
-		if(result[i]->dot - scale == 1 && result[i]->bdot - bscale == 0){
+		if(((result[i]->dot -scale == 1 && result[i]->bdot == bscale))
+			|| (scale == BLK -1 && (result[i]->dot == BLK-1 && result[i]->bdot == bscale+1)))
+		{
 			approx = (int)(result[i]->num->num%mul[1]);
 			reset_num(nill);
 			if(approx >= 5){

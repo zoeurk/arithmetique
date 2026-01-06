@@ -1,0 +1,3 @@
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 1 2 5003
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 0.3333296519077525202645123 1.0000110442767424392064631 500
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1 2 5
