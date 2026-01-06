@@ -2196,7 +2196,7 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 			two = INIT_NBR(0, 0, 1, 0, 0, NULL, "2"),
 			*nill, *result[3], *sub;
 	unsigned long int brmd = bscale;
-	int i = 0, approx, rmd = scale, mul[C_BLK] = COEFS;
+	int neg1, neg2, i = 0, approx, rmd = scale, mul[C_BLK] = COEFS;
 	un.num = &bun;
 	zero.num = &bzero;
 	two.num = &btwo;
@@ -2214,6 +2214,9 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		temporaire
 		result[2]
 	*/
+	neg1 = num1->neg;
+	neg2 = num2->neg;
+	num1->neg = num2->neg = 0;
 	if((nill = calloc(1, sizeof(struct nbr))) == NULL){
 		perror("calloc()");
 		exit(EXIT_FAILURE);
@@ -2266,6 +2269,10 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		result[i]->num->num -= result[i]->num->num%mul[1];
 		DOT(result[i], r1, r2);
 	}
+	if(neg1 != neg2)
+		result[i]->neg = '-';
+	num1->neg = neg1;
+	num2->neg = neg2;
 	destroy_nbr(result[2]);
 	destroy_nbr(result[!i]);
 	destroy_nbr(nill);

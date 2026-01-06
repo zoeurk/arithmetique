@@ -127,7 +127,7 @@ int main(int argc, char **argv){
 				break;
 		}
 	}*/
-	/*if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx, div_spaces)) != NULL){
+	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx, NULL)) != NULL){
 		DOT(res, dot, s);
 		DOT(reste, dot, s);
 		printf("%s / %s = ", argv[1], argv[2]);
@@ -138,7 +138,7 @@ int main(int argc, char **argv){
 		putchar('\n');
 	}else
 		printf("NULL\n");
-	for(i = DIVISEUR; i <= MODULO;i++)
+	/*for(i = DIVISEUR; i <= MODULO;i++)
 		destroy_nbr(div_spaces[i]);
 	destroy_nbr(result);*/
 	if((res = _division(nbr1, nbr2, bvirg, virg, NULL)) != NULL){
