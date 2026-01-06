@@ -169,6 +169,7 @@ enum div_values{
 };
 void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		unsigned long int bscale, int scale, int approximation, struct nbr **sp);
+void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale, struct nbr **sp);
 /*
 void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
 */

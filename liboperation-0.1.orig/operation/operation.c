@@ -557,59 +557,6 @@ struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigne
 	}while(letread || letbread);
 	return &ret;
 }
-/*void *align_dot(struct nbr *_num, unsigned long int blk, int bytes){
-	struct bin *pb2, *pbr, *pbl, *new, bdix = INIT_BIN(10, 2, NULL, NULL);
-	struct nbr *num, *dres = NULL, *dval, *pui, *nadd = NULL, dix = INIT_NBR(0, 0, 2, 0, 0, NULL, "10");
-	unsigned long int cbdot = blk;
-	int start = 0, cdot = bytes;
-	dix.num = &bdix;
-	num = dup_nbr(_num);
-	if((dres = calloc(1, sizeof(struct nbr))) == NULL){
-		perror("calloc()");
-		exit(EXIT_FAILURE);
-	}
-	if((dval = calloc(1, sizeof(struct nbr))) == NULL){
-		perror("calloc()");
-		exit(EXIT_FAILURE);
-	}
-	pb2 = num->num;
-	pbl = new_num(num->bdot + (num->dot > 0), 0);
-	dval->num = new_num(num->bval + (num->val > 0), 0);
-	dres->bdot = num->bval;
-	if(num->val)
-		pb2 = pb2->prev;
-	for(;dres->bdot > 0; dres->bdot--, pb2 = pb2->prev);
-	dres->num = pbl;
-	dres->bval = num->bdot;
-	dres->val = num->dot;
-	pbr = (pbl->prev) ? pbl->prev : pbl;
-	nbytescpy(&pbr, &pb2->prev, &start, num->bdot, num->dot);
-	pbr = (dval->num->prev) ? dval->num->prev : dval->num;
-	pb2 = num->num->prev;
-	start = 0;
-	nbytescpy(&pbr, &pb2, &start, num->bval, num->val);
-	pui = spuissance(&dix, cbdot, cdot);
-	nadd = multiplication(dres, pui, NULL);
-	if(!nadd->num->prev){
-		new = calloc(1, sizeof(struct bin));
-		nadd->num->next = new;
-		nadd->num->prev = new;
-	}
-	nadd->num->prev->next = dval->num;
-	pb2 = dval->num->prev;
-	dval->num->prev = nadd->num->prev;
-	nadd->num->prev = (pb2) ? pb2 : dval->num;
-	nadd->bdot = nadd->bval;
-	nadd->dot = nadd->val;
-	nadd->val = num->val;
-	nadd->bval = num->bval;
-	pb2 = nadd->num;
-	destroy_nbr(num);
-	destroy_nbr(dres);
-	destroy_nbr(pui);
-	free(dval);
-	return nadd;
-}*/
 void *addition(struct nbr *num1, struct nbr *num2, struct nbr *result){
 	struct bin *pb1, *pb2, *pbr;
 	struct nbr *res, *n1, *n2;
@@ -1109,11 +1056,20 @@ void *multiplication(struct nbr *num1, struct nbr *num2, struct nbr *result){
 	unsigned long int n1, n2, n3, dot, bdot, dot_, val, bval, retenue;
 	int ret, nmemb1, rnmemb1, nmemb2, rnmemb2, nmemb3, rnmemb3, mul[C_BLK] = COEFS;
 	zero.num = &z;
-	/*printf("MULTIPLICATION\n");
+	/*printf("MULTIPLICATION(%lu:%i,%lu:%i * %lu:%i,%lu:%i)\n",
+		num1->bval, num1->val, num1->bdot, num1->dot, num2->bval, num2->val, num2->bdot, num2->dot);
 	print_nbr(num1);
 	putchar('*');
 	print_nbr(num2);
 	putchar('\n');*/
+	/*for(pbr1 = num1->num;pbr1;pbr1 = pbr1->next)
+		printf("%lu :: %i :: %i\n", pbr1->num, pbr1->nmemb, pbr1->full);
+	for(pbr1 = num2->num;pbr1;pbr1 = pbr1->next)
+		printf("%lu :: %i :: %i\n", pbr1->num, pbr1->nmemb, pbr1->full);*/
+	/*printf("RESULT:\n");
+	for(pbr1 = result->num;pbr1;pbr1 = pbr1->next)
+		printf("%lu :: %i :: %i\n", pbr1->num, pbr1->nmemb, pbr1->full);
+	printf("\n= = = = = = = = =\n");*/
 	if(!result){
 		if((res = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
@@ -1309,8 +1265,8 @@ void *multiplication(struct nbr *num1, struct nbr *num2, struct nbr *result){
 	ADJUST_0(res, pbr1, pbr2);
 	if(num1->neg != num2->neg)
 		res->neg = 1;
-	/*printf("FIN MULTIPLICATION\n");*/
-	/*print_nbr(res);
+	/*printf("FIN MULTIPLICATION : ");
+	print_nbr(res);
 	putchar('\n');*/
 	return res;
 }
@@ -2223,7 +2179,7 @@ void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		}
 	return res;
 }
-struct nbr *_divison(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale){
+void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale, struct nbr **sp){
 	/*
 		Method Newton-Raphson
 		X/Y == X * 1/Y
@@ -2231,5 +2187,87 @@ struct nbr *_divison(struct nbr *num1, struct nbr *num2, unsigned long int bscal
 		Xn+1 = Xn * (2 - Y * Xn)
 		Xn 1ere itération: 0.1, 0.01, 0.001, ...
 	*/
-	return NULL;
+	struct bin bun = INIT_BIN(1, 1, NULL, NULL),
+			bzero = INIT_BIN(0, 1, NULL, NULL),
+			btwo = INIT_BIN(2, 1, NULL, NULL),
+			*r1, *r2;
+	struct nbr un = INIT_NBR(0, 0, 1, 0, 0, NULL, "1"),
+			zero = INIT_NBR(0, 0, 1, 0, 0, NULL, "0"),
+			two = INIT_NBR(0, 0, 1, 0, 0, NULL, "2"),
+			*nill, *result[3], *sub;
+	unsigned long int brmd = bscale;
+	int i = 0, approx, rmd = scale, mul[C_BLK] = COEFS;
+	un.num = &bun;
+	zero.num = &bzero;
+	two.num = &btwo;
+	if(equal(num2, &zero) == 0){
+		fprintf(stderr, "Division by 0\n");
+		return NULL;
+	}
+	rmd++;
+	if(rmd == BLK){
+		rmd = 0;
+		brmd++;
+	}
+	/*
+		approximation
+		temporaire
+		result[2]
+	*/
+	if((nill = calloc(1, sizeof(struct nbr))) == NULL){
+		perror("calloc()");
+		exit(EXIT_FAILURE);
+	}
+	nill->num = new_num(1, bscale + (scale > 0));
+	for(i = 0; i < 3; i++){
+		if((result[i] = calloc(1, sizeof(struct nbr))) == NULL){
+			perror("calloc()");
+			exit(EXIT_FAILURE);
+		}
+		result[i]->num = new_num(num1->bval + (num1->val > 0) + num2->bdot + (num2->dot > 0), num1->bdot + (num1->dot > 0) + 2*bscale + (2*scale > 0) +1);
+	}
+	(void)num_cpy(result[0], &un);
+	(void)bymin10(result[0], result[0], num2->bval, num2->val);
+	(void)num_cpy(result[1], &zero);
+	i = 0;
+	while(equal(result[0], result[1]) != 0){
+		/*
+			Xn+1 = result[i] * (2 - diviseur * result[i])
+		*/
+		reset_num(result[!i]);
+		(void)multiplication(result[i], num2, result[!i]);
+		sub = soustraction(&two, result[!i], result[2]);
+		reset_num(result[!i]);
+		(void)multiplication(result[i], sub, result[!i]);
+		reset_num(result[2]);
+		i = !i;
+		while(result[i]->bdot > brmd || (result[i]->bdot == brmd && result[i]->dot > rmd)){
+			result[i]->num->num -= result[i]->num->num%mul[1];
+			DOT(result[i], r1, r2);
+		}
+	}
+	reset_num(result[!i]);
+	(void)multiplication(result[i], num1, result[!i]);
+	i = !i;
+	while(result[i]->bdot > bscale || (result[i]->bdot == bscale && result[i]->dot > scale)){
+		if(result[i]->dot - scale == 1 && result[i]->bdot - bscale == 0){
+			approx = (int)(result[i]->num->num%mul[1]);
+			reset_num(nill);
+			if(approx >= 5){
+				nill->num->num = 1;
+				nill->val = nill->num->nmemb = 1;
+				bymin10(nill, nill, bscale, scale);
+			}else{
+				nill->val = nill->num->nmemb = 1;
+			}
+			addition(nill, result[i], result[2]);
+			num_cpy(result[i], result[2]);
+		}
+		result[i]->num->num -= result[i]->num->num%mul[1];
+		DOT(result[i], r1, r2);
+	}
+	destroy_nbr(result[2]);
+	destroy_nbr(result[!i]);
+	destroy_nbr(nill);
+	return result[i];
 }

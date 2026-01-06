@@ -5,3 +5,4 @@ SEC=${DATE%:*}
 SEC=${SEC##*:}
 NANO=${DATE#$MIN:$SEC:}
 echo "$MIN*60*1000000000+$SEC*1000000000+$NANO"
+test "$1" = "q" && echo "quit"
