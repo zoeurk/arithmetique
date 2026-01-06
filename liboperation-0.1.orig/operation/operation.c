@@ -2204,11 +2204,11 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		fprintf(stderr, "Division by 0\n");
 		return NULL;
 	}
-	rmd++;
-	if(rmd == BLK){
-		rmd = 0;
-		brmd++;
-	}
+	rmd = scale;
+	/*
+		+1 blk for approximation
+	*/
+	brmd = bscale+1;
 	/*
 		approximation
 		temporaire
@@ -2227,7 +2227,7 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 			perror("calloc()");
 			exit(EXIT_FAILURE);
 		}
-		result[i]->num = new_num(num1->bval + (num1->val > 0) + num2->bdot + (num2->dot > 0), num1->bdot + (num1->dot > 0) + 2*bscale + (2*scale > 0) +1);
+		result[i]->num = new_num(num1->bval + (num1->val > 0) + num2->bdot + (num2->dot > 0), num1->bdot + (num1->dot > 0) + 2*brmd + (2*scale > 0) +1);
 	}
 	(void)num_cpy(result[0], &un);
 	(void)bymin10(result[0], result[0], num2->bval, num2->val);
@@ -2245,6 +2245,19 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		reset_num(result[2]);
 		i = !i;
 		while(result[i]->bdot > brmd || (result[i]->bdot == brmd && result[i]->dot > rmd)){
+			/*if(result[i]->dot - scale == 1 && result[i]->bdot - bscale == 0){
+				approx = (int)(result[i]->num->num%mul[1]);
+				reset_num(nill);
+				if(approx >= 5){
+					nill->num->num = 1;
+					nill->val = nill->num->nmemb = 1;
+					bymin10(nill, nill, bscale, scale);
+				}else{
+					nill->val = nill->num->nmemb = 1;
+				}
+				addition(nill, result[i], result[2]);
+				num_cpy(result[i], result[2]);
+			}*/
 			result[i]->num->num -= result[i]->num->num%mul[1];
 			DOT(result[i], r1, r2);
 		}

@@ -100,7 +100,7 @@ int main(int argc, char **argv){
 	destroy_nbr(nbr2);
 	exit(0);*/
 
-	/*for(i = DIVISEUR; i <= MODULO; i++){
+	for(i = DIVISEUR; i <= MODULO; i++){
 		if((div_spaces[i] = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
@@ -126,8 +126,8 @@ int main(int argc, char **argv){
 							+ bvirg + (virg > 0) + 1);
 				break;
 		}
-	}*/
-	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx, NULL)) != NULL){
+	}
+	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx, div_spaces)) != NULL){
 		DOT(res, dot, s);
 		DOT(reste, dot, s);
 		printf("%s / %s = ", argv[1], argv[2]);
@@ -138,9 +138,8 @@ int main(int argc, char **argv){
 		putchar('\n');
 	}else
 		printf("NULL\n");
-	/*for(i = DIVISEUR; i <= MODULO;i++)
+	for(i = DIVISEUR; i <= MODULO;i++)
 		destroy_nbr(div_spaces[i]);
-	destroy_nbr(result);*/
 	if((res = _division(nbr1, nbr2, bvirg, virg, NULL)) != NULL){
 		printf("%s / %s = ", argv[1], argv[2]);
 		print_nbr(res);
