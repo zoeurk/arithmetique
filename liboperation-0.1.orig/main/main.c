@@ -127,6 +127,7 @@ int main(int argc, char **argv){
 				break;
 		}
 	}
+	fprintf("Method of Euclide\n");
 	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx, div_spaces)) != NULL){
 		DOT(res, dot, s);
 		DOT(reste, dot, s);
@@ -140,6 +141,7 @@ int main(int argc, char **argv){
 		printf("NULL\n");
 	for(i = DIVISEUR; i <= MODULO;i++)
 		destroy_nbr(div_spaces[i]);
+	fprintf("Method of Newton-Raphston\n");
 	if((res = _division(nbr1, nbr2, bvirg, virg, NULL)) != NULL){
 		printf("%s / %s = ", argv[1], argv[2]);
 		print_nbr(res);
