@@ -1270,157 +1270,6 @@ void *multiplication(struct nbr *num1, struct nbr *num2, struct nbr *result){
 	putchar('\n');*/
 	return res;
 }
-/*void *ispuissance(struct nbr *num, int pui){
-	struct bin _un_ = { 1, 1, 0, 0, NULL, NULL };
-	struct nbr *r[2], *n = num, *res = NULL, un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL ), *pseudo[2];
-	int comp = pui, i, j;
-	unsigned long int n_bdot = num->bdot, n_dot = num->dot, n_bval = num->bval, n_val = num->val;
-	un.num = &_un_;
-	if(pui == 0){
-		if((res = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		memcpy(res, &un, sizeof(struct nbr));
-		if((res->num = calloc(1, sizeof(struct bin))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		memcpy(res->num, &_un_, sizeof(struct bin));
-		res->num->alloc = 1;
-		return res;
-	}
-	n_dot *= pui;
-	n_bdot *= pui;
-	n_bval *= pui;
-	n_val *= pui;
-	while(n_dot >= BLK){
-		n_dot -= BLK;
-		n_bdot++;
-	}
-	while(n_val >= BLK){
-		n_val -= BLK;
-		n_bval++;
-	}
-	for(i = 0; i < 2; i++){
-		if((r[i] = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		if((pseudo[i] = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		r[i]->num = new_num(n_bval + (n_val > 0), n_bdot + (n_dot > 0));
-		pseudo[i]->num = new_num(n_bval + (n_val > 0), n_bdot + (n_dot > 0));
-	}
-	num_cpy(pseudo[0], &un);
-	num_cpy(r[0], num);
-	n = r[0];
-	while(comp > 1){
-		if(comp%2){
-			comp--;
-			j = (pseudo[0]->num->nmemb == 0);
-			(void)multiplication(n, pseudo[j], pseudo[!j]);
-			reset_num(pseudo[j]);
-		}else{
-			comp /= 2;
-			i = (r[0]->num->nmemb == 0);
-			res = multiplication(n, n, r[!i]);
-			n = r[!i];
-			reset_num(r[i]);
-		}
-	}
-	j = (pseudo[0]->num->nmemb == 0);
-	if(equal(pseudo[j], &un) != 0){
-		res = multiplication(pseudo[j], n, pseudo[!j]);
-	}else{
-		if(pui == 1)
-			res = dup_nbr(num);
-	}
-	for(i = 0; i < 2;i++){
-		if(res != r[i])
-			destroy_nbr(r[i]);
-		if(res != pseudo[i])
-			destroy_nbr(pseudo[i]);
-	}
-	return res;
-}*/
-/*void *spuissance(struct nbr *num, unsigned long int bpui, int pui){
-	struct bin _un_ = { 1, 1, 0, 0, NULL, NULL };
-	struct nbr *r[2] = { NULL, NULL }, *pseudo[2], *n = num, *in, *res = NULL, un = INIT_NBR( 0, 0, 1, 0, 0, NULL, NULL );
-	unsigned long int bcomp = bpui, b_total, db_total;
-	int i, j;
-	un.num = &_un_;
-	if(pui == 0 && bpui == 0){
-		if((res = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		memcpy(res, &un, sizeof(struct nbr));
-		if((res->num = calloc(1, sizeof(struct bin))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		memcpy(res->num, &_un_, sizeof(struct bin));
-		res->num->alloc = 1;
-		return res;
-	}
-	in = ispuissance(num, pui);
-	if(!bpui){
-		return in;
-	}
-	b_total = n->val * bpui + n->bval * bpui * BLK;
-	db_total = n->dot *bpui + n->bdot * bpui * BLK;
-	for(i = 0; i < 2; i++){
-		if((r[i] = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		r[i]->num = new_num(b_total, db_total);
-		if((pseudo[i] = calloc(1, sizeof(struct nbr))) == NULL){
-			perror("calloc()");
-			exit(EXIT_FAILURE);
-		}
-		pseudo[i]->num = new_num(b_total, db_total);
-	}
-	num_cpy(pseudo[0], &un);
-	n = ispuissance(num, BLK);
-	num_cpy(r[0], n);
-	destroy_nbr(n);
-	n = r[0];
-	while(bcomp > 1){
-		if(bcomp%2){
-			bcomp--;
-			j = (pseudo[0]->num->nmemb == 0);
-			(void)multiplication(n, pseudo[j], pseudo[!j]);
-			reset_num(pseudo[j]);
-		}else{
-			bcomp /= 2;
-			i = (r[0]->num->nmemb == 0);
-			res = multiplication(n, n, r[!i]);
-			n = r[!i];
-			reset_num(r[i]);
-		}
-	}
-	j = (pseudo[0]->num->nmemb == 0);
-	if(equal(pseudo[j], &un) != 0){
-		res = multiplication(pseudo[j], n, pseudo[!j]);
-		n = pseudo[!j];
-	}else{
-		if(pui == 1)
-			res = num;
-	}
-	res = multiplication(n, in, NULL);
-	for(i = 0; i < 2;i++){
-		if(res != r[i])
-			destroy_nbr(r[i]);
-		if(res != pseudo[i])
-			destroy_nbr(pseudo[i]);
-	}
-	destroy_nbr(in);
-	return res;
-}*/
 void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale){
 	struct nbr *res = NULL;
 	struct bin *bs, *bt, *br = NULL;
@@ -2209,6 +2058,13 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		fprintf(stderr, "Division by 0\n");
 		return NULL;
 	}
+	if(equal(num2, &un) == 0){
+		if(!sp)
+			result[0] = dup_nbr(num2);
+		else
+			num_cpy(result[0], num2);
+		return result[0];
+	}
 	/*
 		bscale +1 for approximation
 	*/
@@ -2302,8 +2158,11 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		result[i]->neg = '-';
 	num1->neg = neg1;
 	num2->neg = neg2;
-	destroy_nbr(result[2]);
-	destroy_nbr(result[!i]);
-	destroy_nbr(nill);
+	if(!sp){
+		destroy_nbr(result[2]);
+		destroy_nbr(result[!i]);
+	}
+	if(!sp || !sp[3])
+		destroy_nbr(nill);
 	return result[i];
 }
