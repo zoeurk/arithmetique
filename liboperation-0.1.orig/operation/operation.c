@@ -2195,7 +2195,12 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 			zero = INIT_NBR(0, 0, 1, 0, 0, NULL, "0"),
 			two = INIT_NBR(0, 0, 1, 0, 0, NULL, "2"),
 			*nill, *result[3], *sub;
-	unsigned long int brmd = bscale+1, bdot;
+	unsigned long int bdot,
+	#if __WORDSIZE == 32
+		brmd = bscale+2;
+	#else
+		brmd = bscale+1;
+	#endif
 	int check = 0, neg1, neg2, i = 0, r, dot, approx, rmd = scale, mul[C_BLK] = COEFS;
 	un.num = &bun;
 	zero.num = &bzero;
@@ -2215,18 +2220,22 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 	neg1 = num1->neg;
 	neg2 = num2->neg;
 	num1->neg = num2->neg = 0;
-	if((nill = calloc(1, sizeof(struct nbr))) == NULL){
-		perror("calloc()");
-		exit(EXIT_FAILURE);
-	}
-	nill->num = new_num(1, brmd + (rmd > 0));
-	for(i = 0; i < 3; i++){
-		if((result[i] = calloc(1, sizeof(struct nbr))) == NULL){
+	if(!sp || !sp[3]){
+		if((nill = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
 		}
-		result[i]->num = new_num(num1->bval + (num1->val > 0) + num2->bdot + (num2->dot > 0),
-						num1->bdot + (num1->dot > 0) + 2*brmd + (2*rmd > 0) +3);
+		nill->num = new_num(1, bscale + (scale > 0));
+	}
+	if(!sp){
+		for(i = 0; i < 3; i++){
+			if((result[i] = calloc(1, sizeof(struct nbr))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			result[i]->num = new_num(num1->bval + (num1->val > 0) + num2->bdot + (num2->dot > 0),
+							num1->bdot + (num1->dot > 0) + 2*brmd + (2*rmd > 0) +3);
+		}
 	}
 	(void)num_cpy(result[0], &un);
 	(void)bymin10(result[0], result[0], num2->bval, num2->val);
@@ -2257,55 +2266,10 @@ void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 			}
 		}
 		DOT(result[i], r1, r2);
-		/*PRINT_NBR(result[i]);
-		for(;result[i]->bdot > brmd || (result[i]->bdot == brmd && result[i]->dot > rmd);){
-			result[i]->num->num -= result[i]->num->num%mul[1];
-			DOT(result[i], r1, r2);
-		}*/
-		/*PRINT_NBR(result[i]);*/
 	}
 	reset_num(result[!i]);
 	(void)multiplication(result[i], num1, result[!i]);
 	i = !i;
-	/*PRINT_NBR(result[i]);*/
-	/*while(result[i]->bdot > bscale || (result[i]->bdot == bscale && result[i]->dot > scale)){
-		if(((result[i]->dot -scale == 1 && result[i]->bdot == bscale))
-			|| (scale == BLK -1 && (result[i]->dot == BLK-1 && result[i]->bdot == bscale+1)))
-		{
-			approx = (int)(result[i]->num->num%mul[1]);
-			reset_num(nill);
-			if(approx >= 5){
-				nill->num->num = 1;
-				nill->val = nill->num->nmemb = 1;
-				bymin10(nill, nill, bscale, scale);
-			}else{
-				nill->val = nill->num->nmemb = 1;
-			}
-			addition(nill, result[i], result[2]);
-			num_cpy(result[i], result[2]);
-		}
-		result[i]->num->num -= result[i]->num->num%mul[1];
-		DOT(result[i], r1, r2);
-	}*/
-	/*while(result[i]->bdot > bscale || (result[i]->bdot == bscale && result[i]->dot > scale)){
-		if(check == 2)
-		{
-			approx = (int)(result[i]->num->num%mul[1]);
-			reset_num(nill);
-			if(approx >= 5){
-				nill->num->num = 1;
-				nill->val = nill->num->nmemb = 1;
-				bymin10(nill, nill, bscale, scale);
-			}else{
-				nill->val = nill->num->nmemb = 1;
-			}
-			addition(nill, result[i], result[2]);
-			num_cpy(result[i], result[2]);
-		}
-		check += (check < BLK);
-		result[i]->num->num -= result[i]->num->num%mul[1];
-		DOT(result[i], r1, r2);
-	}*/
 	for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
 		bdot > bscale || (bdot == bscale && dot > scale);
 		r++
