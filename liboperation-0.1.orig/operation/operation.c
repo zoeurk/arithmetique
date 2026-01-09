@@ -2274,12 +2274,13 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 	if(lread->num/mul[lread->nmemb-1]<5){
 		for(i = 9;(norm = (int)(lread->num*i)/mul[lread->nmemb-1]) >= mul[1];i--);
 		bnx.num = norm = i;
-		if(lread->prev->num*i/mul[lread->prev->nmemb] != 0 && (int)(lread->num*i+1)/mul[lread->nmemb-1] >= mul[1]){
+		/*if(lread->prev->num*i/mul[lread->prev->nmemb] != 0 && (int)(lread->num*i+1)/mul[lread->nmemb-1] >= mul[1]){
 			norm = (int)--bnx.num;
-		}
+		}*/
 		SMALL_MUL(ret, diviseur, diviseur, bnx.num, n1, nr);
 		SMALL_MUL(ret, dividende[0], dividende[0], bnx.num, n1, nr);
 	}
+	printf("Normalisttion: %i\n", norm);
 	num_cpy(dividende[1], dividende[0]);
 	/************************************/
 	if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
@@ -2321,8 +2322,8 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		if(equal(reste, &zero) != 0){
 			for(b1 = reste->num->prev;b1->nmemb == 0; b1 = b1->prev);
 			for(bnx.num = 9;bnx.num > 0 && (k = b2->num*bnx.num) > (int)b1->num;bnx.num--);
-			if((b2->prev->num*bnx.num)/mul[b2->prev->nmemb] != 0 && k +1 > (int)b1->num)
-				bnx.num--;
+			/*if((b2->prev->num*bnx.num)/mul[b2->prev->nmemb] != 0 && k +1 > (int)b1->num)
+				bnx.num--;*/
 			if(bnx.num > 0){
 				SMALL_MUL(ret, diviseur, dividende[1], bnx.num, n1, nr);
 				(void)soustraction(reste, dividende[1], reste);
