@@ -2166,7 +2166,13 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 				r = 0;
 			}
 	}else{
-		fprintf(stderr, "Remove dote please\n");
+		for(r1 = result[i]->num, bdot = result[i]->bdot, dot = result[i]->dot;bdot > 0 || dot > 0; r1 = r1->next){
+			r1->num = 0;
+			if(dot)
+				dot = 0;
+			else
+				bdot--;
+		}
 	}
 	DOT(result[i], r1, r2);
 	if(neg1 != neg2)
@@ -2194,8 +2200,6 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 	unsigned long int bj, bdot = 0, sbdot = bscale;
 	int i, j, k, a = -1, dot = 0, sdot = scale, blk, mul[C_BLK] = COEFS, norm = 0, start = 0, ret;
 	/*nx.num = &bnx;*/
-	PRINT_NBR(num1);
-	PRINT_NBR(num2);
 	zero.num = &bzero;
 	if(equal(num2, &zero) == 0){
 		fprintf(stderr, "Division by 0\n");
@@ -2280,7 +2284,6 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		SMALL_MUL(ret, diviseur, diviseur, bnx.num, n1, nr);
 		SMALL_MUL(ret, dividende[0], dividende[0], bnx.num, n1, nr);
 	}
-	printf("Normalisttion: %i\n", norm);
 	num_cpy(dividende[1], dividende[0]);
 	/************************************/
 	if((quotient = calloc(1, sizeof(struct nbr))) == NULL){
@@ -2350,23 +2353,27 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 	if(bscale || scale)
 		(void)bymin10(quotient, quotient, bscale, scale);
 	if(equal(reste, &zero) != 0){
+		printf("\tCalcule Reste\n");
 		if(norm){
 			bnx.num = norm;
 			n.num = &bnx;
 			n.val = bnx.nmemb = 1;
 			n.bval = bnx.full = 0;
 			modulo = kdivision(reste, &n, 0, 0);
+			printf("reste: ");
 			PRINT_NBR(modulo);
 			destroy_nbr(modulo);
 		}else{
+			printf("reste: ");
 			PRINT_NBR(reste);
 		}
+		printf("\tFin Reste\n");
 	}
 	destroy_nbr(diviseur);
 	destroy_nbr(dividende[0]);
 	destroy_nbr(dividende[1]);
 	destroy_nbr(reste);
-	printf("END\n");
+	printf("Resultat: ");
 	PRINT_NBR(quotient);
 	return quotient;
 }
