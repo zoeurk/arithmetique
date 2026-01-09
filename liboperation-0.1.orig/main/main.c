@@ -137,6 +137,7 @@ int main(int argc, char **argv){
 	}else
 		printf("NULL\n");
 	destroy_nbr(result);
+	fprintf(stderr, "Method of Kuhn\n");
 	res = kdivision(nbr1, nbr2, bvirg, virg);
 	destroy_nbr(res);
 	destroy_nbr(nbr1);
