@@ -178,7 +178,7 @@ void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigne
 	n = num1;
 	div = num2;
 	while(equal(div, &un) != 0){
-		d = division(div, &two, &mod, 0, 0, 0, NULL);
+		d = edivision(div, &two, &mod, 0, 0, 0, NULL);
 		if(div != num2)
 			destroy_nbr(div);
 		if(equal(mod, &un) == 0){
@@ -212,7 +212,7 @@ void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigne
 	if(div != num2)
 		destroy_nbr(div);
 	if(neg){
-		div = division(&un, res, modulo, bscale, scale, approximation, NULL);
+		div = edivision(&un, res, modulo, bscale, scale, approximation, NULL);
 		num2->neg = neg;
 		destroy_nbr(res);
 		res = div;
@@ -333,7 +333,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 	while(equal(m, n) > 0){
 		/*destroy_nbr(m);*/
 		r = f;
-		div = division( n, r, NULL, 0, 0, 0, for_div );
+		div = edivision( n, r, NULL, 0, 0, 0, for_div );
 		reset_num(add);
 		(void)addition( div, r, add );
 		/*destroy_nbr(fmul);
@@ -361,7 +361,7 @@ void *r_square(struct nbr *num, unsigned long int bscale, int scale){
 		destroy_nbr(r);
 	}*/
 	if(fac){
-		r = division(f, mul, NULL, bscale, scale, 0, NULL);
+		r = edivision(f, mul, NULL, bscale, scale, 0, NULL);
 		destroy_nbr(fac);
 		f = r;
 	}

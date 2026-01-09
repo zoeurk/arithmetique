@@ -4,19 +4,11 @@
 #include <stdio.h>
 #include "../operation/operation.h"
 #include "../arithmetique/arithmetique.h"
-/*enum div{
-	DIVISEUR,
-	DIVIDENDE,
-	QUOTIENT,
-	RESTE,
-	RESULT,
-	MODULO
-};*/
 int main(int argc, char **argv){
 	struct bin *s;
 	struct bin *dot;
-	struct nbr *nbr1, *nbr2, *res, *reste = NULL, *result, *div_spaces[5] = { NULL, NULL, NULL, NULL, NULL };
-	enum div_values i;
+	struct nbr *nbr1, *nbr2, *res, *reste = NULL, *result, *ediv_spaces[5] = { NULL, NULL, NULL, NULL, NULL };
+	enum ediv_values i;
 	unsigned long int virgule, bvirg, bv = 0, bl;
 	int comp = 0, approx = 0, virg, v = 0, l;
 	char c, *pn1, *pn2, *end;
@@ -95,40 +87,35 @@ int main(int argc, char **argv){
 	printf("%s * %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
-	/*destroy_nbr(result);
-	destroy_nbr(nbr1);
-	destroy_nbr(nbr2);
-	exit(0);*/
-
 	for(i = DIVISEUR; i <= MODULO; i++){
-		if((div_spaces[i] = calloc(1, sizeof(struct nbr))) == NULL){
+		if((ediv_spaces[i] = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
 		}
 		switch(i){
 			case DIVISEUR:
-				div_spaces[i]->num = new_num(nbr2->bval + (nbr2->val > 0),
+				ediv_spaces[i]->num = new_num(nbr2->bval + (nbr2->val > 0),
 								nbr2->bdot + (nbr2->dot > 0));
 				break;
 			case DIVIDENDE: case MODULO:
-				div_spaces[i]->num = new_num(nbr1->bval + (nbr1->val > 0),
+				ediv_spaces[i]->num = new_num(nbr1->bval + (nbr1->val > 0),
 							nbr1->bdot + (nbr1->dot > 0)
 							+ nbr2->bdot + (nbr2->dot > 0)
 							+ bvirg + (virg > 0) + 3);
 				break;
 			case QUOTIENT:
-				div_spaces[i]->num = new_num(nbr2->bval + (nbr2->val > 0),
-								nbr2->bdot + (nbr2->dot > 0) + bvirg + (virg > 0) +1);
+				ediv_spaces[i]->num = new_num(nbr1->bval + (nbr1->val > 0),
+								nbr1->bdot + (nbr1->dot > 0) + bvirg + (virg > 0) +1);
 				break;
 			case RESTE:
-				div_spaces[i]->num = new_num(nbr1->bval + (nbr1->val > 0),
+				ediv_spaces[i]->num = new_num(nbr1->bval + (nbr1->val > 0),
 							nbr1->bdot + (nbr1->dot > 0)
 							+ bvirg + (virg > 0) + 1);
 				break;
 		}
 	}
 	fprintf(stderr, "Method of Euclide\n");
-	if((res = division(nbr1, nbr2, &reste, bvirg, virg, approx, div_spaces)) != NULL){
+	if((res = edivision(nbr1, nbr2, &reste, bvirg, virg, approx, ediv_spaces)) != NULL){
 		DOT(res, dot, s);
 		DOT(reste, dot, s);
 		printf("%s / %s = ", argv[1], argv[2]);
@@ -140,9 +127,9 @@ int main(int argc, char **argv){
 	}else
 		printf("NULL\n");
 	for(i = DIVISEUR; i <= MODULO;i++)
-		destroy_nbr(div_spaces[i]);
+		destroy_nbr(ediv_spaces[i]);
 	fprintf(stderr, "Method of Newton-Raphston\n");
-	if((res = _division(nbr1, nbr2, bvirg, virg, NULL)) != NULL){
+	if((res = nrdivision(nbr1, nbr2, bvirg, virg, NULL)) != NULL){
 		printf("%s / %s = ", argv[1], argv[2]);
 		print_nbr(res);
 		putchar('\n');
@@ -150,6 +137,8 @@ int main(int argc, char **argv){
 	}else
 		printf("NULL\n");
 	destroy_nbr(result);
+	res = kdivision(nbr1, nbr2, bvirg, virg);
+	destroy_nbr(res);
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	exit(0);

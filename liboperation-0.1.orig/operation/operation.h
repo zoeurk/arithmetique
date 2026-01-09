@@ -154,22 +154,63 @@ struct retbcpy{
 struct retbcpy *nbytescpy(struct bin **b2, struct bin **b1, int *bstart, unsigned long int lbytes, unsigned long int bytes);
 void *addition(struct nbr *num1, struct nbr *num2, struct nbr *result);
 void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result);
+#define SMALL_MUL(ret, nbr1, big_num, small_num, bn1, bnr) \
+	for(	ret = 0, \
+		big_num->bval = big_num->val = 0, \
+		bn1 = nbr1->num, \
+		bnr = big_num->num \
+		; bn1 && bn1->nmemb == BLK ; \
+		bn1 = bn1->next, \
+		bnr = bnr->next \
+	){ \
+		bnr->num = bn1->num * small_num + ret; \
+		ret = bnr->num/mul[BLK]; \
+		bnr->num -= ret*mul[BLK]; \
+		bnr->nmemb = BLK; \
+		bnr->full = 1; \
+		big_num->bval++; \
+	} \
+	if(bn1){ \
+		bnr->num = bn1->num * small_num + ret; \
+		ret = bnr->num/mul[bn1->nmemb]; \
+		bnr->nmemb = bn1->nmemb + (ret > 0); \
+		for(bnr->nmemb = BLK;bnr->num/mul[bnr->nmemb-1] == 0; bnr->nmemb--);\
+		if(bnr->nmemb == BLK){ \
+			bnr->full = 1; \
+			big_num->bval++; \
+		}else \
+			big_num->val = bnr->nmemb; \
+		bnr = bnr->next; \
+	}else{ \
+		if(ret){ \
+			bnr->num = ret; \
+			for(bnr->nmemb = BLK;bnr->num/mul[bnr->nmemb-1] == 0; bnr->nmemb--);\
+			if(bnr->nmemb == BLK) \
+				bnr->full = 1; \
+			big_num->val = bnr->nmemb; \
+			bnr = bnr->next; \
+		} \
+	} \
+	for(;bnr;bnr = bnr->next) \
+		bnr->num = bnr->nmemb = bnr->full = 0; \
+
 void *multiplication(struct nbr *num1, struct nbr *num2, struct nbr *result);
 /*
 void *ispuissance(struct nbr *num, int pui);
 void *spuissance(struct nbr *num, unsigned long int bpui, int pui);
 */
 void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int scale);
-enum div_values{
+enum ediv_values{
 	DIVISEUR,
 	DIVIDENDE,
 	QUOTIENT,
 	RESTE,
 	MODULO
 };
-void *division(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
+void *edivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		unsigned long int bscale, int scale, int approximation, struct nbr **sp);
-void *_division(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale, struct nbr **sp);
+void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale, struct nbr **sp);
+void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale);
 /*
 void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
 */
