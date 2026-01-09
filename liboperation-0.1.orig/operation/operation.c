@@ -2121,7 +2121,7 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 		reset_num(result[2]);
 		i = !i;
 		for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
-			bdot > brmd || (bdot == brmd && dot > rmd+1);
+			bdot > brmd || (bdot == brmd && dot > rmd);
 			r++
 		){
 			
