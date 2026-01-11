@@ -2051,9 +2051,9 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 			*nill, *result[3], *sub;
 	unsigned long int bdot,
 	#if __WORDSIZE == 32
-		brmd = bscale+2;
+		brmd = bscale+4;
 	#else
-		brmd = bscale+1;
+		brmd = bscale+2;
 	#endif
 	int check = 0, neg1, neg2, i = 0, r, dot, approx, rmd = scale, mul[C_BLK] = COEFS;
 	un.num = &bun;
@@ -2143,8 +2143,8 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 	reset_num(result[!i]);
 	(void)multiplication(result[i], num1, result[!i]);
 	i = !i;
-	PRINT_NBR(result[i])
-	if(scale || bscale)
+	/*PRINT_NBR(result[i])*/
+	/*if(scale || bscale)*/
 		for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
 			bdot > bscale || (bdot == bscale && dot > scale);
 			r++
@@ -2165,23 +2165,24 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 			}
 			check += (check < BLK);
 			r1->num -= r1->num%mul[r];
-			if(--dot <= 0){
+			if(dot-- <= 0){
 				r1 = r1->next;
 				dot = BLK;
 				bdot--;
 				r = 0;
 			}
-	}else{
+	}/*else{
 		for(r1 = result[i]->num, bdot = result[i]->bdot, dot = result[i]->dot;bdot > 0 || dot > 0; r1 = r1->next){
-			if(bdot <= 1 && r1->num/mul[r1->nmemb-1] >= 5 && (result[i]->bval > 0 ||(result[i]->bval == 0 && result[i]->val > 1)))
-				addition(&un, result[i], result[i]);
+			if(check == 2 && r1->num/mul[r1->nmemb-1] >= 5)
+			addition(&un, result[i], result[i]);
+			check += (check < BLK);
 			r1->num = 0;
 			if(dot > 0)
 				dot = 0;
 			else
 				bdot--;
 		}
-	}
+	}*/
 	DOT(result[i], r1, r2);
 	if(neg1 != neg2)
 		result[i]->neg = '-';
