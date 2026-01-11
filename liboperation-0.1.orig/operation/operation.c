@@ -2085,6 +2085,11 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 		temporaire
 		result[2]
 	*/
+	rmd+=4;
+	if(rmd >= BLK){
+		brmd++;
+		rmd -= BLK;
+	}
 	neg1 = num1->neg;
 	neg2 = num2->neg;
 	num1->neg = num2->neg = 0;
@@ -2138,6 +2143,7 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 	reset_num(result[!i]);
 	(void)multiplication(result[i], num1, result[!i]);
 	i = !i;
+	PRINT_NBR(result[i])
 	if(scale || bscale)
 		for(	r = 1, bdot = result[i]->bdot, dot = result[i]->dot,r1 = result[i]->num;
 			bdot > bscale || (bdot == bscale && dot > scale);
@@ -2167,7 +2173,7 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 			}
 	}else{
 		for(r1 = result[i]->num, bdot = result[i]->bdot, dot = result[i]->dot;bdot > 0 || dot > 0; r1 = r1->next){
-			if(bdot <= 1 && r1->num/mul[r1->nmemb-1] >= 5)
+			if(bdot <= 1 && r1->num/mul[r1->nmemb-1] >= 5 && (result[i]->bval > 0 ||(result[i]->bval == 0 && result[i]->val > 1)))
 				addition(&un, result[i], result[i]);
 			r1->num = 0;
 			if(dot > 0)
@@ -2347,10 +2353,8 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				cmp_n1 > b1->num && bnx.num > 0;
 				bnx.num--
 			);
-			if(bnx.num > 0){
-				SMALL_MUL(ret, diviseur, dividende[1], bnx.num, n1, nr);
-				(void)soustraction(reste, dividende[1], reste);
-			}
+			SMALL_MUL(ret, diviseur, dividende[1], bnx.num, n1, nr);
+			(void)soustraction(reste, dividende[1], reste);
 		}else
 			bnx.num = 0;
 		(void)mv_dot(quotient, quotient, 0, 1);
