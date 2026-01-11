@@ -2055,7 +2055,7 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 	#else
 		brmd = bscale+1;
 	#endif
-	int check = 0, neg1, neg2, i = 0, r, dot, approx, rmd = scale+1, mul[C_BLK] = COEFS;
+	int check = 0, neg1, neg2, i = 0, r, dot, approx, rmd = scale, mul[C_BLK] = COEFS;
 	un.num = &bun;
 	zero.num = &bzero;
 	two.num = &btwo;
@@ -2338,7 +2338,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		bj -= reste->bval;
 	}
 	for(j++;;){
-		if(equal(reste, &zero) != 0){
+		if(equal(reste, diviseur) >= 0){
 			for(b1 = reste->num->prev;b1->nmemb == 0; b1 = b1->prev);
 			for(	bnx.num = 9;
 				cmp_n1 = (b2->prev) ? b2->prev->num * bnx.num : 0,
