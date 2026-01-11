@@ -2167,8 +2167,10 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 			}
 	}else{
 		for(r1 = result[i]->num, bdot = result[i]->bdot, dot = result[i]->dot;bdot > 0 || dot > 0; r1 = r1->next){
+			if(bdot <= 1 && r1->num/mul[r1->nmemb-1] >= 5)
+				addition(&un, result[i], result[i]);
 			r1->num = 0;
-			if(dot)
+			if(dot > 0)
 				dot = 0;
 			else
 				bdot--;
@@ -2187,17 +2189,19 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 		destroy_nbr(nill);
 	return result[i];
 }
-void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale){
+void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
+		unsigned long int bscale, int scale, int approximation, struct nbr **sp
+){
 	/*
 		Kuhn Algorithm ou ce que j'en ai compris... :/)]
 	*/
 	struct retbcpy *bcpy;
 	struct bin bnx = INIT_BIN(5, 1, NULL, NULL), bzero = ZERO_BIN,
 			*r1, *r2, *b1, *b2, *lread, *breste, *n1, *nr/*, *bnr, *bn1*/;
-	struct nbr *diviseur, *dividende[2], *quotient, *reste, *modulo,
+	struct nbr *diviseur, *dividende[2], *quotient, *reste, *mod,
 			n = INIT_NBR(0, 0, 1, 0, 0, NULL, NULL),
 			zero = INIT_NBR(0, 0, 1, 0, 0, NULL, NULL);
-	unsigned long int bj, bdot = 0, sbdot = bscale;
+	unsigned long int cmp_n1, cmp_n2, bj, bdot = 0, sbdot = bscale;
 	int i, j, k, a = -1, dot = 0, sdot = scale, blk, mul[C_BLK] = COEFS, norm = 0, start = 0, ret;
 	/*nx.num = &bnx;*/
 	zero.num = &bzero;
@@ -2263,9 +2267,13 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		destroy_nbr(dividende[0]);
 		destroy_nbr(dividende[1]);
 		quotient = dup_nbr(&zero);
-		modulo = dup_nbr(num1);
-		PRINT_NBR(modulo);
-		destroy_nbr(modulo);
+		mod = dup_nbr(num1);
+		printf("\tCalcule Reste\nReste: ");
+		PRINT_NBR(mod);
+		printf("\tFin Reste\n");
+		destroy_nbr(mod);
+		printf("Resultat: ");
+		PRINT_NBR(quotient);
 		return quotient;
 	}
 	if(dividende[0]->num->prev)
@@ -2276,9 +2284,17 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 		Normalisation
 	*/
 	if(lread->num/mul[lread->nmemb-1]<5){
-		for(i = 9;(norm = (int)(lread->num*i)/mul[lread->nmemb-1]) >= mul[1];i--);
+		for(	i = 9;
+			cmp_n1 = (lread->prev) ? lread->prev->num * i : 0,
+			cmp_n1 /= mul[BLK],
+			cmp_n1 += lread->num*i,
+			(int)cmp_n1/mul[lread->nmemb-1] >= mul[1];
+			i--
+		);
+		/*for(i = 9;(norm = (int)(lread->num*i)/mul[lread->nmemb-1]) >= mul[1];i--);*/
 		bnx.num = norm = i;
-		/*if(lread->prev->num*i/mul[lread->prev->nmemb] != 0 && (int)(lread->num*i+1)/mul[lread->nmemb-1] >= mul[1]){
+		printf("Normalizer %i\n", norm);
+		/*while(lread->prev->num*i/mul[lread->prev->nmemb] != 0 && (int)(lread->num*i+1)/mul[lread->nmemb-1] >= mul[1]){
 			norm = (int)--bnx.num;
 		}*/
 		SMALL_MUL(ret, diviseur, diviseur, bnx.num, n1, nr);
@@ -2292,7 +2308,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 	}
 	quotient->num = new_num(num1->bval + (num1->val > 0),
 					(bscale + (scale > 0) > num1->bdot + (num1->dot > 0))
-						? bscale + (scale > 0)
+						? bscale + (scale > 0) +1
 						: num1->bdot + (num1->dot > 0) +1
 				);
 	num_cpy(quotient, &zero);
@@ -2324,9 +2340,13 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 	for(j++;;){
 		if(equal(reste, &zero) != 0){
 			for(b1 = reste->num->prev;b1->nmemb == 0; b1 = b1->prev);
-			for(bnx.num = 9;bnx.num > 0 && (k = b2->num*bnx.num) > (int)b1->num;bnx.num--);
-			/*if((b2->prev->num*bnx.num)/mul[b2->prev->nmemb] != 0 && k +1 > (int)b1->num)
-				bnx.num--;*/
+			for(	bnx.num = 9;
+				cmp_n1 = (b2->prev) ? b2->prev->num * bnx.num : 0,
+				cmp_n1 /= mul[BLK],
+				cmp_n1 += b2->num*bnx.num,
+				cmp_n1 > b1->num && bnx.num > 0;
+				bnx.num--
+			);
 			if(bnx.num > 0){
 				SMALL_MUL(ret, diviseur, dividende[1], bnx.num, n1, nr);
 				(void)soustraction(reste, dividende[1], reste);
@@ -2359,15 +2379,17 @@ void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, in
 			n.num = &bnx;
 			n.val = bnx.nmemb = 1;
 			n.bval = bnx.full = 0;
-			modulo = kdivision(reste, &n, 0, 0);
-			printf("reste: ");
-			PRINT_NBR(modulo);
-			destroy_nbr(modulo);
+			mod = kdivision(reste, &n, NULL, 0, 0, 0, NULL);
+			printf("Reste: ");
+			PRINT_NBR(mod);
+			destroy_nbr(mod);
 		}else{
-			printf("reste: ");
+			printf("Reste: ");
 			PRINT_NBR(reste);
 		}
 		printf("\tFin Reste\n");
+	}else{
+		printf("\tCalcule Reste\n0 (Resultat Du Reste)\n\tFin Reste\n");
 	}
 	destroy_nbr(diviseur);
 	destroy_nbr(dividende[0]);

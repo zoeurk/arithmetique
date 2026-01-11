@@ -165,7 +165,7 @@ void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result);
 	){ \
 		bnr->num = bn1->num * small_num + ret; \
 		ret = bnr->num/mul[BLK]; \
-		bnr->num -= ret*mul[BLK]; \
+		bnr->num -= (unsigned long int)ret*mul[BLK]; \
 		bnr->nmemb = BLK; \
 		bnr->full = 1; \
 		big_num->bval++; \
@@ -210,7 +210,8 @@ enum ediv_values{
 void *edivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		unsigned long int bscale, int scale, int approximation, struct nbr **sp);
 void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale, struct nbr **sp);
-void *kdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, int scale);
+void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
+		unsigned long int bscale, int scale, int approximation, struct nbr **sp);
 /*
 void *puissance(struct nbr *num1, struct nbr *num2, struct nbr **modulo, unsigned long int bscale, int scale, int approximation);
 */
