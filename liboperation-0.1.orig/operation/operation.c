@@ -2279,7 +2279,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		r2->nmemb = r1->nmemb;
 		r2->full = r1->full;
 	}
-	for(r2 = r2;r2;r2 = r2->next)
+	for(r2 = r2;r2;r2 = r2->next){
 		r2->num = r2->nmemb = r2->full = 0;
 	}
 	if(equal(dividende[0], diviseur) < 0){
@@ -2438,7 +2438,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				if(tmod){
 					(void)addition(tmod, reste, tmod);
 					PRINT_NBR(tmod);
-				else{
+				}else{
 					PRINT_NBR(reste);
 				}
 			}
