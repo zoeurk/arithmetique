@@ -2158,7 +2158,7 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 			bdot > bscale || (bdot == bscale && dot > scale);
 			r++
 		){
-			if(check == 2)
+			if(check == 2*BLK)
 			{
 				approx = (int)(r1->num%mul[r]);
 				reset_num(nill);
@@ -2171,8 +2171,10 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 				}
 				addition(nill, result[i], result[2]);
 				num_cpy(result[i], result[2]);
+				check++;
 			}
-			check += (check < BLK);
+			if(check < 2*BLK)
+				check++;
 			r1->num -= r1->num%mul[r];
 			if(dot-- <= 0){
 				r1 = r1->next;
