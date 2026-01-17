@@ -138,9 +138,22 @@ int main(int argc, char **argv){
 		printf("NULL\n");
 	destroy_nbr(result);
 	fprintf(stderr, "Method of Kuhn\n");
-	res = kdivision(nbr1, nbr2, &reste, bvirg, virg, 0, NULL);
-	if(res)
+	if((res = kdivision(nbr1, nbr2, &reste, bvirg, virg, approx, NULL)) != NULL){
+		DOT(res, dot, s);
+		DOT(reste, dot, s);
+		printf("%s / %s = ", argv[1], argv[2]);
+		print_nbr(res);
+		putchar('\n');
+		printf("%s %% %s = ", argv[1], argv[2]);
+		print_nbr(reste);
+		putchar('\n');
+	}else
+		printf("NULL\n");
+	if(res){
 		destroy_nbr(res);
+	}
+	if(reste)
+		destroy_nbr(reste);
 	destroy_nbr(nbr1);
 	destroy_nbr(nbr2);
 	exit(0);
