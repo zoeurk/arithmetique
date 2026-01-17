@@ -1372,8 +1372,14 @@ void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int
 			bt->num = rtemp[1];
 			bt->nmemb = scale;
 			bt->full = (bt->nmemb == BLK);
-			if(bt->nmemb != 0)
+			if(bt->nmemb != 0 && bt->num != 0)
 				bt = bt->next;
+			else
+				if(idx){
+					idx -= bt->nmemb;
+					bt->nmemb = 0;
+				}else
+					bt = bt->next;
 			for(bs = bs->next, btemp = bscale + bdot;bs && bs->nmemb > 0;btemp--,bs = bs->next, bt = bt->next){
 				if(rtemp[1])
 					rtemp[2] = rtemp[1];
@@ -1414,18 +1420,18 @@ void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int
 			res->num->full = 0;
 			res->bdot--;
 			res->dot = BLK - idx;
-		}else{
+		}/*else{
 			res->num->next->num /= mul[idx - res->num->nmemb];
 			res->dot = res->num->next->nmemb = idx - res->num->nmemb,
 			res->num->next->full = res->num->full = res->num->nmemb = 0;
 			res->bdot--;
-		}
-		for(bt = res->num;bt->nmemb == 0;bt = bt->next);
+		}*/
+		/*for(bt = res->num;bt->nmemb == 0;bt = bt->next);
 		for(bs = res->num;bt && bt->nmemb > 0;bs = bs->next, bt = bt->next){
 			bs->num = bt->num;
 			bs->nmemb = bt->nmemb;
 			bs->full = bt->full;
-		}
+		}*/
 	}
 	return res;
 }
