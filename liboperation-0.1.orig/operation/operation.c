@@ -1372,14 +1372,12 @@ void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int
 			bt->num = rtemp[1];
 			bt->nmemb = scale;
 			bt->full = (bt->nmemb == BLK);
-			if(bt->nmemb != 0 && bt->num != 0)
+			if(bt->nmemb != 0 && idx == 0)
 				bt = bt->next;
-			else
-				if(idx){
+			else{
 					idx -= bt->nmemb;
 					bt->nmemb = 0;
-				}else
-					bt = bt->next;
+			}
 			for(bs = bs->next, btemp = bscale + bdot;bs && bs->nmemb > 0;btemp--,bs = bs->next, bt = bt->next){
 				if(rtemp[1])
 					rtemp[2] = rtemp[1];
