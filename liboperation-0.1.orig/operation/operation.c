@@ -2394,12 +2394,15 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		);
 		bnx.num = norm = i;
 		if(diviseur->val == 0 && diviseur == num2){
-			if((diviseur = calloc(1, sizeof(struct nbr))) == NULL){
-				perror("calloc()");
-				exit(EXIT_FAILURE);
+			for(n1 = (diviseur->num->prev) ? diviseur->num->prev : diviseur->num;n1->nmemb == 0;n1 = n1->prev);
+			if(n1->num*bnx.num/mul[BLK] > 0){
+				if((diviseur = calloc(1, sizeof(struct nbr))) == NULL){
+					perror("calloc()");
+					exit(EXIT_FAILURE);
+				}
+				diviseur->num = new_num(num2->bval + 1, 0);
+				(void)num_cpy(diviseur, num2);
 			}
-			diviseur->num = new_num(num2->bval + 1, 0);
-			(void)num_cpy(diviseur, num2);
 		}
 		SMALL_MUL(ret, diviseur, diviseur, bnx.num, n1, nr);
 		SMALL_MUL(ret, dividende[0], dividende[0], bnx.num, n1, nr);
