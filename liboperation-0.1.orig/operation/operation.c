@@ -2267,35 +2267,35 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		fprintf(stderr, "Division by 0\n");
 		return NULL;
 	}
-	if((diviseur = calloc(1, sizeof(struct nbr))) == NULL){
+	/*if((diviseur = calloc(1, sizeof(struct nbr))) == NULL){
 		perror("calloc()");
 		exit(EXIT_FAILURE);
-	}
-	if((dividende[0] = calloc(1, sizeof(struct nbr))) == NULL){
+	}*/
+	/*if((dividende[0] = calloc(1, sizeof(struct nbr))) == NULL){
 		perror("calloc()");
 		exit(EXIT_FAILURE);
-	}
+	}*/
 	if((dividende[1] = calloc(1, sizeof(struct nbr))) == NULL){
 		perror("calloc()");
 		exit(EXIT_FAILURE);
 	}
-	diviseur->num = new_num(num2->bval + (num2->val > 0) + num2->bdot + (num2->dot > 0), 0);
-	dividende[0]->num = new_num(num2->bval + (num2->val > 0) + num1->bdot + (num1->dot > 0) +1, bscale+ (scale > 0)+1);
+	/*diviseur->num = new_num(num2->bval + (num2->val > 0) + num2->bdot + (num2->dot > 0), 0);*/
+	/*dividende[0]->num = new_num(num2->bval + (num2->val > 0) + num1->bdot + (num1->dot > 0) +1, bscale+ (scale > 0)+1);*/
 	dividende[1]->num = new_num(num2->bval + (num2->val > 0) + num1->bdot + (num1->dot > 0) +1, bscale+ (scale > 0)+1);
 	if(num2->dot || num2->bdot){
-		/*if((diviseur = calloc(1, sizeof(struct nbr))) == NULL){
+		if((diviseur = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
 		}
-		diviseur->num = new_num(num2->bval + (num2->val > 0) + num2->bdot + (num2->dot > 0), 0);*/
+		diviseur->num = new_num(num2->bval + (num2->val > 0) + num2->bdot + (num2->dot > 0), 0);
 		bdot = num2->bdot;
 		dot = num2->dot;
 		(void)num_cpy(diviseur, num2);
 		(void)mv_dot(diviseur, diviseur, bdot, dot);
 		/*DOT(diviseur, r1, r2);*/
 	}else{
-		(void)num_cpy(diviseur, num2);
-		/*diviseur = num2;*/
+		/*(void)num_cpy(diviseur, num2);*/
+		diviseur = num2;
 	}
 	sdot += dot;
 	sbdot += bdot;
@@ -2304,17 +2304,17 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		sbdot++;
 	}
 	if(sdot || sbdot){
-		/*if((dividende[0] = calloc(1, sizeof(struct nbr))) == NULL){
+		if((dividende[0] = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
 		}
-		dividende[0]->num = new_num(num2->bval + (num2->val > 0) + num1->bdot + (num1->dot > 0) +1, bscale+ (scale > 0)+1);*/
+		dividende[0]->num = new_num(num2->bval + (num2->val > 0) + num1->bdot + (num1->dot > 0) +1, bscale+ (scale > 0)+1);
 		(void)num_cpy(dividende[0], num1);
 		(void)mv_dot(dividende[0], dividende[0], sbdot, sdot);
 		/*DOT(dividende[0], r1, r2);*/
 	}else{
-		(void)num_cpy(dividende[0], num1);
-		/*dividende[0] = num1;*/
+		/*(void)num_cpy(dividende[0], num1);*/
+		dividende[0] = num1;
 	}
 	if(modulo && (dividende[0]->bdot > 0 || dividende[0]->dot > 0)){
 		/*tmod = dup_nbr(dividende[0]);
@@ -2359,11 +2359,15 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		r2->num = r2->nmemb = r2->full = 0;
 	}
 	if(equal(dividende[0], diviseur) < 0){
-		destroy_nbr(diviseur);
-		destroy_nbr(dividende[0]);
+		if(diviseur != num2)
+			destroy_nbr(diviseur);
+		if(dividende[0] != num1)
+			destroy_nbr(dividende[0]);
 		destroy_nbr(dividende[1]);
 		quotient = dup_nbr(&zero);
-		*modulo = dup_nbr(num1);
+		if(modulo)
+			*modulo = dup_nbr(num1);
+		/**modulo = NULL;*/
 		/*printf("\tCalcule Reste\nReste: ");
 		PRINT_NBR(mod);
 		printf("\tFin Reste\n");
@@ -2385,11 +2389,18 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 			cmp_n1 = (lread->prev && lread->prev->next) ? lread->prev->num * i : 0,
 			cmp_n1 /= mul[BLK],
 			cmp_n1 += lread->num*i,
-			(int)cmp_n1/mul[lread->nmemb-1] >= mul[1];
+			(int)((unsigned int)cmp_n1/mul[lread->nmemb-1]) >= mul[1];
 			i--
 		);
-		/*printf("norm = %i\n", i);*/
 		bnx.num = norm = i;
+		if(diviseur->val == 0 && diviseur == num2){
+			if((diviseur = calloc(1, sizeof(struct nbr))) == NULL){
+				perror("calloc()");
+				exit(EXIT_FAILURE);
+			}
+			diviseur->num = new_num(num2->bval + 1, 0);
+			(void)num_cpy(diviseur, num2);
+		}
 		SMALL_MUL(ret, diviseur, diviseur, bnx.num, n1, nr);
 		SMALL_MUL(ret, dividende[0], dividende[0], bnx.num, n1, nr);
 	}
@@ -2527,7 +2538,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		}else
 			bnx.num = 0;
 		if(quotient->bval == 0 && quotient->num->num == 0){
-			quotient->val = quotient->num->nmemb = 2;
+			quotient->val = quotient->num->nmemb = 1;
 			quotient->num->num = bnx.num;
 		}else{
 			(void)mv_dot(quotient, quotient, 0, cread);
