@@ -2100,6 +2100,7 @@ void *nrdivision(struct nbr *num1, struct nbr *num2, unsigned long int bscale, i
 		brmd = bscale+2;
 	#endif
 	int check = 0, neg1, neg2, i = 0, r, dot, approx, rmd = scale, mul[C_BLK] = COEFS;
+	return NULL;
 	un.num = &bun;
 	zero.num = &bzero;
 	two.num = &btwo;
@@ -2547,21 +2548,25 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 					bnx.num--
 				);
 			#endif
-			SMALL_MUL(ret, diviseur, dividende[1], bnx.num, n1, nr);
-			(void)soustraction(reste, dividende[1], reste);
-			/*for(n1 = diviseur->num,nr = reste->num, cmp_n2 = ret = ret_ = 0;n1 && n1->nmemb > 0;n1 = n1->next, nr = nr->next){
+			/*SMALL_MUL(ret, diviseur, dividende[1], bnx.num, n1, nr);
+			(void)soustraction(reste, dividende[1], reste);*/
+			for(n1 = diviseur->num,nr = reste->num, cmp_n2 = ret = ret_ = 0;n1 && n1->nmemb > 0;n1 = n1->next, nr = nr->next){
 				cmp_n1 = n1->num * bnx.num + ret;
 				ret = cmp_n1/mul[n1->nmemb];
+				/*cmp_n1 %= mul[BLK];*/
 				if(cmp_n1 > nr->num){
-					cmp_n2 = cmp_n1 - nr->num - ret_;
+					printf("---%lu::%lu\n", cmp_n1, bnx.num);
+					cmp_n2 = bnx.num*mul[BLK] + nr->num - cmp_n1 - ret_;
+					cmp_n2 -= (cmp_n2/mul[BLK])*mul[BLK];
 					ret_ = 0;
 				}else{
-					printf("<* * %lu,%lu * *>", nr->num, cmp_n1);
+					printf("+++>");
 					cmp_n2 = nr->num - cmp_n1 - ret_;
 					ret_ = 1;
 				}
 				nr->num = cmp_n2;
-				if(nr->num/mul[n1->nmemb-1] == 0){
+				printf("%lu\n", cmp_n2);
+				if(nr->num/mul[nr->nmemb-1] == 0){
 					nr->nmemb--;
 					nr->full = 0;
 					if(reste->val == 0){
@@ -2570,7 +2575,13 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 					}else
 						reste->val = nr->nmemb;
 				}
-			}*/
+			}
+			printf("\t\tSTART(%lu)\n", nr->num);
+			if(nr->nmemb != reste->val)
+				nr->nmemb = nr->num = 0;
+			for(nr = reste->num;nr;nr = nr->next)
+				printf("%lu :: %i\n", nr->num, nr->nmemb);
+			printf("\t\tEND\n");
 			/*if(reste->neg){
 				PRINT_NBR(diviseur);
 				PRINT_NBR(reste);
@@ -2580,7 +2591,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				printf("neg = %i\n", reste->neg);
 				PRINT_NBR(reste);
 			}*/
-			/*PRINT_NBR(reste);*/
+			PRINT_NBR(reste);
 			/*printf(" = %lu\n", bnx.num);*/
 		}else
 			bnx.num = 0;
