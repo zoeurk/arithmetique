@@ -1375,7 +1375,7 @@ void *bymin10(struct nbr *num, struct nbr *result, unsigned long int bscale, int
 			if(bt->nmemb != 0 && bt->num != 0)
 				bt = bt->next;
 			else{
-				if(idx)
+				if(idx){
 					idx -= bt->nmemb;
 					bt->nmemb = 0;
 				}else
