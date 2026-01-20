@@ -2590,11 +2590,12 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 			}
 			if(nr->nmemb != reste->val)
 				nr->nmemb = nr->num = 0;
-			printf("\t\tSTART(%lu, %i)\n", reste->bval, reste->val);
+			ADJUST_0(reste, b1, b2);
+			/*printf("\t\tSTART(%lu, %i)\n", reste->bval, reste->val);
 			PRINT_NBR(reste);
 			for(nr = reste->num;nr;nr = nr->next)
 				printf("%lu :: %i\n", nr->num, nr->nmemb);
-			printf("\t\tEND\n");
+			printf("\t\tEND\n");*/
 			/*if(reste->neg){
 				PRINT_NBR(diviseur);
 				PRINT_NBR(reste);
@@ -2694,7 +2695,6 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				idx = scale;
 				bidx = bscale;
 			}
-			printf("%i\n", idx);
 			if(norm){
 				bnx.num = norm;
 				n.num = &bnx;
@@ -2714,16 +2714,13 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 					(void)addition(tmod, reste, tmod);
 					(void)bymin10(tmod, reste, bidx, idx);
 				}else{
-					PRINT_NBR(reste);
-					printf("%lu :: %i, %lu :: %i\n", reste->bval, reste->val, reste->bdot, reste->dot);
 					(void)bymin10(reste, reste, bidx, idx);
-					printf("%lu :: %i, %lu :: %i\n", reste->bval, reste->val, reste->bdot, reste->dot);
 				}
-				*modulo = reste;
 			}
 			if(tmod)
 				destroy_nbr(tmod);
 		}
+		*modulo = reste;
 	}else
 		destroy_nbr(reste);
 	if(diviseur != num2)
