@@ -567,13 +567,15 @@ void *addition(struct nbr *num1, struct nbr *num2, struct nbr *result){
 	if(num1->neg && !num2->neg){
 		num1->neg = 0;
 		res = soustraction(num2, num1, result);
-		num1->neg = 1;
+		if(res != num1)
+			num1->neg = 1;
 		return res;
 	}else{
 		if(!num1->neg && num2->neg){
 			num2->neg = 0;
 			res = soustraction(num1, num2, result);
-			num2->neg = 1;
+			if(res != num2)
+				num2->neg = 1;
 			return res;
 		}
 	}
@@ -798,15 +800,18 @@ void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result){
 		if(!num1->neg && num2->neg){
 			num2->neg = 0;
 			res = addition(num2, num1, result);
-			num2->neg = 1;
+			if(res != num2)
+				num2->neg = 1;
 			return res;
 		}else{
 			if(num1->neg && num2->neg){
 				num2->neg = 0;
 				num1->neg = 0;
 				res = soustraction(num2, num1, result);
-				num2->neg = 1;
-				num1->neg = 1;
+				if(res != num2)
+					num2->neg = 1;
+				if(res != num1)
+					num1->neg = 1;
 				return res;
 			}
 		}
@@ -2402,7 +2407,8 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		bnx.num = norm = i;
 		if(diviseur->val == 0 && diviseur == num2){
 			for(n1 = (diviseur->num->prev) ? diviseur->num->prev : diviseur->num;n1->nmemb == 0;n1 = n1->prev);
-			if(n1->num*bnx.num/mul[BLK] > 0){
+			cmp_n1 = n1->num*bnx.num + (diviseur->bval) ? n1->prev->num * bnx.num / mul[BLK] : 0;
+			if(/*n1->num*bnx.num/mul[BLK]*/ cmp_n1 / mul[BLK]> 0){
 				if((diviseur = calloc(1, sizeof(struct nbr))) == NULL){
 					perror("calloc()");
 					exit(EXIT_FAILURE);
@@ -2496,9 +2502,9 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		print_nbr(diviseur);
 		printf(">>> %lu :: %i, %lu :: %i == %i\n", reste->bval, reste->val, diviseur->bval, diviseur->val, equal(reste, diviseur));*/
 		if(equal(reste, diviseur) >= 0){
-			print_nbr(reste);
+			/*print_nbr(reste);
 			putchar('/');
-			PRINT_NBR(diviseur);
+			PRINT_NBR(diviseur);*/
 			if(reste->num->prev){
 				for(b1 = reste->num->prev;b1->nmemb == 0; b1 = b1->prev);
 			}else
@@ -2555,17 +2561,17 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				ret = cmp_n1/mul[n1->nmemb];
 				/*cmp_n1 %= mul[BLK];*/
 				if(cmp_n1 > nr->num){
-					printf("---%lu::%lu\n", cmp_n1, bnx.num);
+					/*printf("---%lu::%lu\n", cmp_n1, bnx.num);*/
 					cmp_n2 = bnx.num*mul[BLK] + nr->num - cmp_n1 - ret_;
 					cmp_n2 -= (cmp_n2/mul[BLK])*mul[BLK];
 					ret_ = 0;
 				}else{
-					printf("+++>");
+					/*printf("+++>");*/
 					cmp_n2 = nr->num - cmp_n1 - ret_;
 					ret_ = 1;
 				}
 				nr->num = cmp_n2;
-				printf("%lu\n", cmp_n2);
+				/*printf("%lu\n", cmp_n2);*/
 				if(nr->num/mul[nr->nmemb-1] == 0){
 					nr->nmemb--;
 					nr->full = 0;
@@ -2576,12 +2582,12 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 						reste->val = nr->nmemb;
 				}
 			}
-			printf("\t\tSTART(%lu)\n", nr->num);
+			/*printf("\t\tSTART(%lu)\n", nr->num);*/
 			if(nr->nmemb != reste->val)
 				nr->nmemb = nr->num = 0;
-			for(nr = reste->num;nr;nr = nr->next)
+			/*for(nr = reste->num;nr;nr = nr->next)
 				printf("%lu :: %i\n", nr->num, nr->nmemb);
-			printf("\t\tEND\n");
+			printf("\t\tEND\n");*/
 			/*if(reste->neg){
 				PRINT_NBR(diviseur);
 				PRINT_NBR(reste);
@@ -2591,7 +2597,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				printf("neg = %i\n", reste->neg);
 				PRINT_NBR(reste);
 			}*/
-			PRINT_NBR(reste);
+			/*PRINT_NBR(reste);*/
 			/*printf(" = %lu\n", bnx.num);*/
 		}else
 			bnx.num = 0;
@@ -2668,7 +2674,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		PRINT_NBR(quotient);*/
 	}
 	if(modulo){
-		/*if(equal(reste, &zero) != 0){
+		if(equal(reste, &zero) != 0){
 			idx = bidx = 0;
 			if(tmod){
 				idx = scale + num2->dot;
@@ -2705,7 +2711,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 			}
 			if(tmod)
 				destroy_nbr(tmod);
-		}*/
+		}
 		*modulo = reste;
 	}else
 		destroy_nbr(reste);
