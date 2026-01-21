@@ -164,6 +164,7 @@ void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result);
 		bnr = bnr->next \
 	){ \
 		bnr->num = bn1->num * small_num + ret; \
+		printf("%lu = %lu * %lu + %i\n", bnr->num, bn1->num, small_num, ret); \
 		ret = bnr->num/mul[BLK]; \
 		bnr->num -= (unsigned long int)ret*mul[BLK]; \
 		bnr->nmemb = BLK; \
