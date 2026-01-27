@@ -1,0 +1,110 @@
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 322112376 223456789 10000
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 322112376 223456789 2500
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 322112376 223456789 5000
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 11111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 1111111111 
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 111111111 10
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 1111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 1111111111 1
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 1111111111 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 111111111 16
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 1111111111 6
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 111111111 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 111111111 5000
+LD_LIBRARY_PATH='./operation/;./arithmetique/' ./main-bin 8808888888810 111111111 6
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 0.00000000331834300000000000013910293 1.59032802841937299998282679892170823 26
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 1 2 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 1 2 1
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 1 2 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 122112376 123456789 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 1 2 3
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 2.21123 3.12 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 22112376 3 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 22211237600 123456789 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 222112376 123456789 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 222112376 123456789 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 222112376 3 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 322112376 223456789 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 322112376 223456789 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 322112376 223456789 2500
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind --leak-check=full ./main-bin 322112376 223456789 5000
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 111011111 111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111111111 111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111111111 1111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111111111 11111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111111111 111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111111111 1111111110 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111111111 1111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111111111 11111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111111111 111111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 111111111111 11111111110 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 111111111111 11111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1111211111 111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 120 2 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 12 2 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 122 2 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1234567890 430737610 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1282349223423 332409235403 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1282349223423 3324092.35403 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1282349.2234234 3324092.351 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1282349.2234234 3324092.35 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1282349.2234234 3324092.35403 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 12823492234234 332409235403 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1282349.2234234 3324092.35403 16
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1282349.2234234 3324092.35403 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 128234922342.34 332409235403 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1282349.2234234 3324092.35678901 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 12823492234234 332409235678901 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1395403872 235893273
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1395403872 235893273 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1395403872 235893273 6
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1425 131 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 1511562549 7 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 322112376 22345 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 322112376 22345 16
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 322112376 223456789 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 322112376 223456789 10
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 322112376 223456789 10000
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 322112376 223456789 16
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 322112376 223456789 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin -430737610 1234567890 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 80000000000 111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 80000000000 11111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 82112376 2 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 82112376200 123456789 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 82112376200 1234567890 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8211237620 12345678 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8211237620 123456789 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8211237620 1234567890 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 821123762 1234567890 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 821123762 2 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 821123762 21 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 822112376 2 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 822112376 22345 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8425 131
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8425 131 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 11111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 11111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 11111111111 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 11111111.11 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 111111111 12
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 1111111111 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 111111111 1500
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 111111111 5000
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 11111111 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 18111111 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 1811111188 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8808888888810 8888911111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 880888888881 11011111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 880888888881 11011111111 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 880888888881 11011111111 4
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 880888888881 111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 880888888881 11111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8888888888810 11111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 8888888888810 1111111111 2
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 888888888881 111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 88888888888 11111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 888888888881 11111111111 0
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 911011111 111 0

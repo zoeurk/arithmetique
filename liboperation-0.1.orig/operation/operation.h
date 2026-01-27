@@ -62,20 +62,17 @@ struct nbr{
 		bin_ptr->full = 0; \
 		if(--bin_ptr->nmemb == 0){ \
 			bin_ptr = bin_ptr->next; \
-			/*bin_ptr = res_nbr->num; \
-			res_nbr->num->next->prev = res_nbr->num->prev; \
-			res_nbr->num = res_nbr->num->next; \
-			res_nbr->num->prev->next = NULL; \
-			free(bin_ptr);*/ \
 		} \
 	} \
-	for(;bin_ptr; bin_ptr = bin_ptr->next, start = start->next){ \
-		start->num = bin_ptr->num; \
-		start->nmemb = bin_ptr->nmemb; \
-		start->full = bin_ptr->full; \
-	} \
-	for(;start; start = start->next) \
-		start->num = start->nmemb = start->full = 0;
+	if(bin_ptr != start){ \
+		for(;bin_ptr; bin_ptr = bin_ptr->next, start = start->next){ \
+			start->num = bin_ptr->num; \
+			start->nmemb = bin_ptr->nmemb; \
+			start->full = bin_ptr->full; \
+		} \
+		for(;start; start = start->next) \
+			start->num = start->nmemb = start->full = 0; \
+	}
 /*
 #define DOT(res_nbr, bin_ptr) \
 	while((res_nbr->dot || res_nbr->bdot) && res_nbr->num->num%10 == 0){ \
@@ -164,7 +161,6 @@ void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result);
 		bnr = bnr->next \
 	){ \
 		bnr->num = bn1->num * small_num + ret; \
-		printf("%lu = %lu * %lu + %i\n", bnr->num, bn1->num, small_num, ret); \
 		ret = bnr->num/mul[BLK]; \
 		bnr->num -= (unsigned long int)ret*mul[BLK]; \
 		bnr->nmemb = BLK; \
@@ -175,12 +171,14 @@ void *soustraction(struct nbr *num1, struct nbr *num2, struct nbr *result);
 		bnr->num = bn1->num * small_num + ret; \
 		ret = bnr->num/mul[bn1->nmemb]; \
 		bnr->nmemb = bn1->nmemb + (ret > 0); \
-		for(bnr->nmemb = BLK;bnr->num/mul[bnr->nmemb-1] == 0; bnr->nmemb--);\
+		/*for(bnr->nmemb = BLK;bnr->num/mul[bnr->nmemb -1] == 0; bnr->nmemb--); */\
+		for(bnr->nmemb = BLK;bnr->nmemb > 0 && bnr->num/mul[bnr->nmemb -1] == 0; bnr->nmemb--);\
 		if(bnr->nmemb == BLK){ \
 			bnr->full = 1; \
 			big_num->bval++; \
-		}else \
+		}else{ \
 			big_num->val = bnr->nmemb; \
+		} \
 		bnr = bnr->next; \
 	}else{ \
 		if(ret){ \

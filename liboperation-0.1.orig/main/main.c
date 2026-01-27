@@ -87,7 +87,7 @@ int main(int argc, char **argv){
 	printf("%s * %s = ", argv[1], argv[2]);
 	print_nbr(res);
 	putchar('\n');
-	for(i = DIVISEUR; i <= MODULO; i++){
+	/*for(i = DIVISEUR; i <= MODULO; i++){
 		if((ediv_spaces[i] = calloc(1, sizeof(struct nbr))) == NULL){
 			perror("calloc()");
 			exit(EXIT_FAILURE);
@@ -135,11 +135,14 @@ int main(int argc, char **argv){
 		putchar('\n');
 		destroy_nbr(res);
 	}else
-		printf("NULL\n");
+		printf("NULL\n");*/
 	destroy_nbr(result);
-	fprintf(stderr, "Method of Kuhn\n");
+	/*fprintf(stderr, "Method of Kuhn\n");*/
 	if((res = kdivision(nbr1, nbr2, &reste, bvirg, virg, approx, NULL)) != NULL){
 		DOT(res, dot, s);
+		/*printf("%lu :: %i => %lu\n", reste->bdot, reste->dot, reste->num->num);
+		for(s = reste->num;s; s = s->next)
+			printf("%lu :: %i :: %i\n", s->num, s->nmemb, s->full);*/
 		DOT(reste, dot, s);
 		printf("%s / %s = ", argv[1], argv[2]);
 		print_nbr(res);
