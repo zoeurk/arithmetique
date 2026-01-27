@@ -2726,7 +2726,10 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				else
 					cmp_n1 = b1->num * mul[BLK-b1->nmemb+1] + b1->prev->num/mul[b1->nmemb-1];
 				cmp_n2 = b2->num * mul[BLK-b2->nmemb] + b2->prev->num/mul[b2->nmemb];
+				/*for(bnx.num = mul[1] -1;cmp_n2 * bnx.num > cmp_n1;bnx.num--);*/
+				/*printf("%lu :: %lu, %lu :: %lu => ", b1->num, b1->prev->num, b2->num, b2->prev->num);*/
 				bnx.num = cmp_n1/cmp_n2;
+				/*printf("%lu\n", bnx.num);*/
 				if((int)bnx.num > mul[1]-1)
 					bnx.num--;
 				/*for(ret = b1->num - b2->num * bnx.num, s1 = b1->prev, s2 = b2->prev; s1->next; s1 = s1->prev, s2 = s2->prev){
@@ -2748,12 +2751,14 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 					cmp_n2 = b1->num*mul[b2->nmemb] + b1->prev->num/mul[BLK-b2->nmemb];
 				else
 					cmp_n2 = b1->num;
+				cmp_n1 = b2->num;
 				/*for(	bnx.num = mul[M_BLK]-1;
 					cmp_n1 = b2->num*bnx.num,
 					cmp_n1 > cmp_n2 && bnx.num > 0;
 					bnx.num--
 				);*/
-				bnx.num = cmp_n1/bnx.num;
+				/*printf("%lu :: %lu\n", cmp_n1, cmp_n2);*/
+				bnx.num = cmp_n2/cmp_n1;
 			}
 			/*if(bnx.num == 0)
 				printf("ERROR:%lu, %lu\n", b1->num, b2->num);*/
@@ -2782,7 +2787,7 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 			printf("*%lu = \n", bnx.num);*/
 			/*ADJUST_0(reste, b1, b2);*/
 			for(n1 = diviseur->num,nr = reste->num, reste->bval = reste->val = 0/*, nrmemb = nr->nmemb*/, cmp_n2 = ret = ret_ = 0;
-				n1 && n1->nmemb > 0;
+				/*n1 && n1->nmemb > 0*/;
 				n1 = n1->next,
 				nr = nr->next
 			){
@@ -2790,13 +2795,10 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				cmp_n1 = n1->num * bnx.num + ret;
 				ret = cmp_n1/mul[BLK];
 				cmp_n1 %= mul[BLK];
-				/*printf("%lu - %lu (%i) = ", nr->num, cmp_n1, ret_);*/
 				if(nr->num >= cmp_n1 +ret_){
-					/*printf("* * * * * * * * *\n");*/
 					cmp_n2 = nr->num - cmp_n1 - ret_;
 					ret_ = 0;
 				}else{
-					/*printf("~~~~~~~~~~~~~~~~~\n");*/
 					nrmemb = cmp_n1/mul[BLK];
 					if(nrmemb == 0)
 						nrmemb = 1;
@@ -2809,7 +2811,9 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				nr->num = cmp_n2;
 				nr->nmemb = BLK;
 				nr->full = 1;
-				if(n1->next && n1->next->nmemb == 0){
+				if(!n1->next || n1->next->nmemb == 0){
+					if(nr->next && nr->next->num)
+						ret_ = 0;
 					if(nr->next)
 						nr->next->num = nr->next->nmemb = nr->next->full = 0;
 					if(nr->num/mul[nr->nmemb-1] == 0){
@@ -2828,12 +2832,10 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 			}
 			/*printf("%lu => ", bnx.num);*/
 			if(ret_){
-				if(bnx.num == 10)
-					exit(0);
 				bnx.num--;
 				for(s1 = nr = reste->num, s2 = diviseur->num, ret = ret_ = 0;s1 && s1->nmemb;s1 = s1->next, s2 = s2->next, nr = nr->next){
 					nr->num = mul[BLK] - s1->num - ret;
-					if((int)s2->num >= (int)(nr->num -= ret_)){
+					if((unsigned int)s2->num >= (unsigned int)(nr->num -= ret_)){
 						nr->num = s2->num - nr->num;
 						ret_ = 0;
 					}else{
@@ -2850,7 +2852,9 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 			}
 			/*PRINT_NBR(reste);*/
 			ADJUST_0(reste, b1, b2);
-			/*PRINT_NBR(reste);*/
+			/*for(b1 = reste->num;b1;b1 = b1->next)
+				printf("%lu :: %i\n", b1->num, b1->nmemb);
+			PRINT_NBR(reste);*/
 		}else
 			bnx.num = 0;
 		if(quotient->bval == 0 && quotient->num->num == 0){
@@ -2913,9 +2917,9 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 		}else
 			reste->val--;
 	}*/
-	/*PRINT_NBR(quotient);*/
-	/*PRINT_NBR(reste);
-	printf("%lu :: %i\n", reste->bval, reste->val);*/
+	PRINT_NBR(quotient);
+	PRINT_NBR(reste);
+	/*printf("%lu :: %i\n", reste->bval, reste->val);*/
 	/*ADJUST_0(quotient, r1,r2);
 	ADJUST_0(reste, r1,r2);*/
 	if(approximation){
@@ -3028,8 +3032,8 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 					PRINT_NBR(tmod);
 					printf("%lu :: %i, %lu :: %i\n", tmod->bval, tmod->val, tmod->bdot, tmod->dot);*/
 					(void)addition(tmod, reste, tmod);
-					/*PRINT_NBR(tmod);
-					printf("%lu :: %i, %lu :: %i => %lu :: %i\n",
+					PRINT_NBR(tmod);
+					/*printf("%lu :: %i, %lu :: %i => %lu :: %i\n",
 							tmod->bval, tmod->val, tmod->bdot, tmod->dot, bidx, idx);
 					for(r1 = tmod->num;r1;r1=r1->next)
 						printf("%lu :: %i\n", r1->num, r1->nmemb);
