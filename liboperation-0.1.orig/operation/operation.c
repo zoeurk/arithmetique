@@ -2371,8 +2371,6 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 					cmp_n1 = b1->num * mul[BLK-b1->nmemb+1] + b1->prev->num/mul[b1->nmemb-1];
 				cmp_n2 = b2->num * mul[BLK-b2->nmemb] + b2->prev->num/mul[b2->nmemb];
 				bnx.num = cmp_n1/cmp_n2;
-				if((int)bnx.num > mul[1]-1)
-					bnx.num--;
 			}else{
 				if(b1->prev && b1->prev->next /*diviseur->bval + (diviseur->val > 0) > 1*/)
 					cmp_n2 = b1->num*mul[b2->nmemb] + b1->prev->num/mul[BLK-b2->nmemb];
@@ -2381,6 +2379,8 @@ void *kdivision(struct nbr *num1, struct nbr *num2, struct nbr **modulo,
 				cmp_n1 = b2->num;
 				bnx.num = cmp_n2/cmp_n1;
 			}
+			if((int)bnx.num > mul[1]-1)
+				bnx.num--;
 			#else
 				for(	bnx.num = mul[cread]-1;
 					cmp_n2 = b2->prev->num * bnx.num,
