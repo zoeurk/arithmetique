@@ -127,9 +127,9 @@ int main(int argc, char **argv){
 	}else
 		printf("NULL\n");
 	for(i = DIVISEUR; i <= MODULO;i++)
-		destroy_nbr(ediv_spaces[i]);
+		destroy_nbr(ediv_spaces[i]);*/
 	fprintf(stderr, "Method of Newton-Raphston (Not Really Tested)\n");
-	if((res = nrdivision(nbr1, nbr2, bvirg, virg, NULL)) != NULL){
+	/*if((res = nrdivision(nbr1, nbr2, bvirg, virg, NULL)) != NULL){
 		printf("%s / %s = ", argv[1], argv[2]);
 		print_nbr(res);
 		putchar('\n');
