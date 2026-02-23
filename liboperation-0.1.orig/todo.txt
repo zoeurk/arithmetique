@@ -1,0 +1,1 @@
+LD_LIBRARY_PATH='./operation/;./arithmetique/' valgrind ./main-bin 12345678901 9 6
